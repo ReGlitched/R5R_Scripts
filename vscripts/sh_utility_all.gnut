@@ -3088,7 +3088,6 @@ FXHandle function CleanupFXHandle( FXHandle fxHandle, bool doRemoveAllParticlesN
 }
 #endif // SERVER || CLIENT
 
-//more mkos func
 const string E = ""
 bool function empty( string a )
 {

@@ -44,7 +44,7 @@ void function Flowstate_InitAFKThreadForPlayer( entity player )
 	)
 	return
 
-	AfkThread_AddPlayerCallbacks( player ) //readded mkos
+	AfkThread_AddPlayerCallbacks( player )
 	//player.SetSendInputCallbacks( true ) //disabled internal call
 	AfkThread_PlayerMoved( player )
 	thread CheckAfkKickThread(player)
@@ -160,9 +160,6 @@ void function AfkThread_AddPlayerCallbacks( entity player )
 	AddPlayerPressedBackCallback( player, AfkThread_PlayerMoved, 1 )
 	AddPlayerPressedLeftCallback( player, AfkThread_PlayerMoved, 1 )
 	AddPlayerPressedRightCallback( player, AfkThread_PlayerMoved, 1 )
-	
-	
-	//disabled and reworked to above (fixed callback move inputs) -- mkos
 	
 	/*
 	AddButtonPressedPlayerInputCallback( player, IN_ATTACK, AfkThread_PlayerMoved )

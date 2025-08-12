@@ -40,7 +40,6 @@ void function PilotHealthRegenThinkMP( entity player )
 	player.Signal( "PilotHealthRegenThink" )
 	player.EndSignal( "PilotHealthRegenThink" )
 	
-	// There's a delay when you change legends, have to compensate
 	wait 1
 	
 	if( !HealthRegen_IsPlayerAllowed(player) )

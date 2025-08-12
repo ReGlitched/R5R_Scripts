@@ -1,8 +1,8 @@
 untyped																			
 globalize_all_functions
-#if TRACKER && HAS_TRACKER_DLL																	//~mkos
+#if TRACKER && HAS_TRACKER_DLL
 
-const bool STORE_STAT = true //this constant is not a toggle.
+const bool STORE_STAT = true 
 
 struct StatResetData
 {
@@ -75,7 +75,7 @@ void function Tracker_ResyncAllForPlayer( entity playerToSync )
 void function Tracker_ResyncStatForPlayer( entity playerToSync, string statKey )
 {
 	int statKeyLen = statKey.len()
-	mAssert( statKeyLen <= 9, "Cannot transmit statkey len > 9 chars for resync" )//for now (uses a single remote call this way)
+	mAssert( statKeyLen <= 9, "Cannot transmit statkey len > 9 chars for resync" )
 	
 	foreach( player in GetPlayerArray() )
 	{
@@ -87,87 +87,14 @@ void function Tracker_ResyncStatForPlayer( entity playerToSync, string statKey )
 	}
 }
 
-//////////////////////////////////////////////////
-// These stats are global stats registered in 	//
-//	api backend. 								//
-//											  	//
-// For server-instance settings, register a   	//
-// setting with AddCallback_PlayerData()		//
-//												//
-// Those settings will be unique to each server //
-// for each player.								//
-//					Player-persistence settings //	
-//					can be fetched with 		//
-//					Tracker_FetchPlayerData()	//
-//					and saved with				//
-//					Tracker_SavePlayerData()	//
-//										   ~mkos//
-//////////////////////////////////////////////////
 void function Script_RegisterAllStats()
 {
-	// It is not necessary to add stats for core stats to a gamemode (kills,deaths,etc), as r5r.dev is capable
-	// of sorting by various factors(todo). However, it is usful if you want to do it for display purposes.
-	// Generally, stats are registered here to add new stats specific to that gamemode.
-
-	// void function Tracker_RegisterStat( string statname, void functionref( entity ) ornull inboundCallbackFunc = null, var functionref( string ) ornull outboundCallbackFunc = null, bool bLocalAllowed = false )
-	// EXAMPLE: Tracker_RegisterStat( "backend_stat_name", data_in_callback, data_out_callback, USE_LOCAL )
-	
-	// null can be used as substitutes if specific in/out is not needed.
-	// Stats don't need an in function to be fetched from server cache with the getter functions:
-	// GetPlayerStat%TYPE%( playerUID, "statname" )  %TYPE% = [ Int, Bool, Float, String, Array, ArrayInt, ArrayBool, ArrayFloat, ArrayString ]
-
-	// They can also, all be fetched at once, when stats for a player loads.
-	// see: AddCallback_PlayerDataFullyLoaded below.
-
-	// Each stat will only load in if they get registered here. 
-	// After stats load in for a player,
-	// your AddCallback_PlayerDataFullyLoaded callbackFunc will get called
-	// 
-	//
-	// Additionally, an api constant REGISTER_ALL will trigger the return of the entire 
-	// script-registered live-table stats.
-	//
-	// There are limits in place:   - int must not exceed 32bit int limit 
-	//								- string must not exceed 30char
-	//								- bool 0/1 true/false 
-	//								- float must not exceed 32bit 
-	//								- all numericals are signed. 
-	//								
-	//								There also exists api rate-limiting. 
-	//
-	//	Stats registerd under 'recent_match_data' group in the backend do NOT aggregate.
-	//	These stats should be prefixed with 'previous_' for clarity.
-	
-	
-	// IF USING: STORE_STAT
-	// {
-			// Purpose:
-			
-			// If Tracker_RegisterStat is passed with fourth parameter of true, ( STORE_STAT )
-			// a local copy is maintained of accumulated stats for the round, regardless of disconnects/rejoins.  
-			// This means you can use getters based on player entity 
-			
-			// Should be used: if using any stat value that will be garbage cleaned on disconnect etc
-			// ( player net int, player struct var, etc )
-			
-			// WARNING:	Do not set the same var in an inbound stat func, that the outbound stat func returns. 
-			// This will result in player stat data aggregation inflation on next disconnect. 		
-				
-			// For base stats, the player will have a record associated automatically by uid 
-			// Tracker_ReturnKills
-			// Tracker_ReturnDeaths
-			// Tracker_ReturnDamage    etc... 
-	//	}
-	
-	//Script required stats
 	Tracker_RegisterStat( "settings" )
 	Tracker_RegisterStat( "isDev" )
 	
-	//Global mute ( helper controlled set via web panel/mod api only )
 	if( Chat_GlobalMuteEnabled() )
 		Tracker_RegisterStat( "globally_muted", Chat_CheckGlobalMute )
 
-	//Core stats - can disable for gamemode purposes.
 	if( file.RegisterCoreStats )
 	{
 		Tracker_RegisterStat( "kills", null, Tracker_ReturnKills )
@@ -196,15 +123,13 @@ void function Script_RegisterAllStats()
 		//Tracker_RegisterStat( "test_int_array", null, TrackerStats_TestIntArray, STORE_STAT )
 		//Tracker_RegisterStat( "test_float_array", null, TrackerStats_TestFloatArray )
 	#endif 
-	
-	//Reporting
+
 	if( Flowstate_EnableReporting() )
 	{	
 		Tracker_RegisterStat( "cringe_reports", null, TrackerStats_CringeReports, STORE_STAT )
 		Tracker_RegisterStat( "was_reported_cringe", null, TrackerStats_WasReportedCringe, STORE_STAT  )
 	}
 		
-	//Conditional by playlist stats
 	switch( Playlist() )
 	{
 		default:
@@ -214,16 +139,8 @@ void function Script_RegisterAllStats()
 	}
 }
 
-////////////////////
-// STAT FUNCTIONS //
-////////////////////
-
 void function Callback_CoreStatInit( entity player )
 {
-	// setting frequently computed stats in player struct is cheaper than using 
-	// type matching/casting stat fetchers getting vars from untyped table.
-	// net ints also used in match making / stat display features.
-	
 	string uid = player.p.UID
 	
 	int player_season_kills = GetPlayerStatInt( uid, "kills" )
@@ -277,16 +194,15 @@ var function TrackerStats_FSDMRailjumps( string uid )
 	return player.p.railjumptimes 
 }
 
-//Tracker already has a gamemode play count, which is different from this stat.
 var function TrackerStats_GamesCompleted( string uid ) //Todo: Handle accumulation from rejoins
 {
 	entity player = GetPlayerEntityByUID( uid ) 
 	if( !IsValid( player ) )
-		return 0 //check to make sure player is still in server at round end
+		return 0
 	
 	int roundTime = fsGlobal.EndlessFFAorTDM ? 600 : FlowState_RoundTime()
 	if( ( Time() - player.p.connectTime ) < ( roundTime / 2 )  )
-		return 0 // if player did not play 1/2 of the round, or atleast 5 minutes for endless, dont credit a play count.
+		return 0
 		
 	return 1
 }
@@ -391,14 +307,6 @@ void function Callback_CheckBadges( entity player )
 	if( !Tracker_IsValidBadge( badge_1, uid ) )
 	{
 		Tracker_SetShouldResetStatOnShip( uid, "badge_1", badge_1 ) 
-		/* 
-			we do this, becase the main stat table is what is synced to clients, however 
-			Tracker_IsValidBadge can return false for dev badges or unlocked badges 
-			if the player isn't dev or doesn't own a badge, however for servers
-			that allow all badges, we must reset this invalid back to the player's 
-			chosen badge so that it reflects their choice which may be valid on those 
-			allowed servers. 		
-		*/
 		
 		SetPlayerStatInt( uid, "badge_1", 0 )
 	}
@@ -418,34 +326,15 @@ void function Callback_CheckBadges( entity player )
 	}
 }
 
-
-//////////////////////////////////////////////////////////
-//														//
-//	Any player settings that do not get registered 		//
-//	will not be loaded in. To load all settings 		//
-//	you can use RegisterAllSettings()					//
-//	however, you do not need to register settings		//
-//	manually, they will be registered when you add		//
-//	a callback via AddCallback_PlayerData()				//
-//														//
-//////////////////////////////////////////////////////////
-
 void function Script_RegisterAllPlayerDataCallbacks()
 {
-	////////////////////////////////////////////////////////////////////
-	//
-	// Add a callback to register a setting to be loaded.
-	// Must be in the tracker backend.
-	//
+
 	// AddCallback_PlayerData( string setting, void functionref( entity player, string data ) callbackFunc )
 	// AddCallback_PlayerData( "setting", func ) -- omit second param or use null for no func. AddCallback_PlayerData( "setting" )
 	// void function func( entity player, string data )
-	//
-	// utility:
-	//
+
 	// Tracker_FetchPlayerData( uid, setting ) -- string|string
 	// Tracker_SavePlayerData( uid, "settingname", value )  -- value: [bool|int|float|string]
-	////////////////////////////////////////////////////////////////////
 	
 	Chat_RegisterPlayerData()
 		
@@ -461,34 +350,13 @@ void function Script_RegisterAllPlayerDataCallbacks()
 	//func
 }
 
-///////////////////////////// QUERIES ////////////////////////////////////////////
-// usage=   AddCallback_QueryString("category:query", resultHandleFunction )	//
-// 			see r5r.dev/info for details about available categories.		 	//
-// 			verfified hosts: Add custom queries from host cp				 	//
-//																				//
-//			EX: restricted_rank:500   returns minimum player score for var "500"//
-//////////////////////////////////////////////////////////////////////////////////
-
 void function Script_RegisterAllQueries()
 {
-	////// INIT FUNCTIONS FOR GAMEMODES //////
-	
 	Tracker_QueryInit()
 	//CustomGamemodeQueries_Init()
 	//Gamemode1v1Queries_Init()
 	//etc...etc..
 }
-
-
-
-
-///////////////////////////// ON SHIP ////////////////////////////////////////////
-// RegisterShipFuction( void functionref( string uid ) callbackFunc )			//
-//																				//
-//	Registers a function that executes before building Stats/PlayerData out		//
-//	If provided with a second paramater of true, runs on player disconnect 		//
-//  Usful for performing custom operations with custom stats or cleanup/prep	//
-//////////////////////////////////////////////////////////////////////////////////
 
 void function Script_RegisterAllShipFunctions()
 {
@@ -497,12 +365,6 @@ void function Script_RegisterAllShipFunctions()
 		
 	//more
 }
-
-
-///////////////////////////////////
-/// ON STATS SHIPPING FUNCTIONS ///
-///////////////////////////////////
-
 
 void function OnStatsShipping_Cringe( string uid ) //todo deprecate
 {

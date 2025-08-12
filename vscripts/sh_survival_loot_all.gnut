@@ -1065,7 +1065,7 @@ void function RegisterWeapon( CustomWeaponData weaponData )
 	// precache the weapon, obviously.
 	#if !UI
 		PrecacheWeapon(weaponData.className)
-		RegisterCustomWeaponDamageDef( weaponData.className, weaponData.name, weaponData.hudIcon ) //~mkos
+		RegisterCustomWeaponDamageDef( weaponData.className, weaponData.name, weaponData.hudIcon )
 		//RegisterCustomWeaponDamageSource(weaponData.className)
 	#endif
 	// rarity

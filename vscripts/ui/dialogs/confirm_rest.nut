@@ -1,4 +1,4 @@
-global function InitConfirmRestDialog													//mkos
+global function InitConfirmRestDialog
 global function ConfirmRestDialog_Open
 global function ServerCallback_UiConfirmRest
 

@@ -2414,24 +2414,18 @@ void function Survival_PlayerCharacterSetup( entity player, ItemFlavor character
 	if ( IsLobby() )
 		return
 
-	player.TakeOffhandWeapon( OFFHAND_TACTICAL )
-	player.TakeOffhandWeapon( OFFHAND_ULTIMATE )
+	//player.TakeOffhandWeapon( OFFHAND_TACTICAL )
+	//player.TakeOffhandWeapon( OFFHAND_ULTIMATE )
 
-	TakeAllPassives( player )
+	//TakeAllPassives( player )
 
-	// clear all mods (b/c we added a passive weapon mod, we have to
-	//  explicitly clear the passive mods if we were to change character types, and we have to
-	//  reapply the mods that are true for all survival games.
 	ClearExtraWeaponMods( player )
 	Survival_SetupWeaponMods( player )
 
 	asset setFile = CharacterClass_GetSetFile( character )
 	player.SetPlayerSettingsWithMods( setFile, [] )
 
-
-	// GiveLoadoutRelatedWeapons( player )
-
-	// camo and skin are set elsewhere
+	//GiveLoadoutRelatedWeapons( player )
 
 	// Setup shields ( if player isn't bleeding out ):
 	// if( !Bleedout_IsBleedingOut( player ) )

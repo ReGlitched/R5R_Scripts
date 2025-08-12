@@ -1,6 +1,3 @@
-// mp server motd															//mkos
-																			//used a template
-
 global function Init_Server_MOTD
 global function OpenServerMOTD
 global function ServerMOTD_OnOpen

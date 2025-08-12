@@ -115,7 +115,6 @@ void function AddLegendButtonsCallBacks(array<ItemFlavor> characters)
 
 			if (file.defaultabilitys)
 			{
-				//Could sometimes cause a very rare index out of range crash, i couldnt find out why so try catch will save the day
 				try {
 					ItemFlavor ultiamteAbility = CharacterClass_GetUltimateAbility( character )
         			ItemFlavor tacticalAbility = CharacterClass_GetTacticalAbility( character )

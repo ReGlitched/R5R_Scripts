@@ -1,5 +1,4 @@
 untyped
-// Localized strings framework 																	//mkos
 
 global function INIT_Flowstate_Localization_Strings
 global function Flowstate_FetchToken
@@ -1105,7 +1104,6 @@ void function DisplayMessage( string str1, string str2, float duration, int uiTy
 	AnnouncementFromClass( player, announcement )
 }
 
-//Unused :C Cafe ----- used now :) ~Mkos
 void function FS_IBMM_Msg( string msgString, string subMsgString, float duration = 5 )
 {
 	entity player = GetLocalClientPlayer()

@@ -1,31 +1,3 @@
-
-#if SERVER
-global function DropshipBringDummyBack
-global function PlayerStartsTraining
-
-const asset CHARACTER_BLOODHOUND 	= $"settings/player/mp/pilot_survival_tracker.rpak"
-const asset CHARACTER_PATHFINDER 	= $"settings/player/mp/pilot_survival_grapple.rpak"
-const asset TRAINING_DUMMY_MODEL 	= $"mdl/humans/class/medium/pilot_medium_generic.rmdl"
-const asset REVIVE_CHAMBER_MODEL 	= $"mdl/Robots/mobile_hardpoint/mobile_hardpoint_static.rmdl"
-
-const string LOOT_NAME_FRAG = "mp_weapon_frag_grenade"
-const string LOOT_NAME_THERMITE = "mp_weapon_thermite_grenade"
-const string LOOT_NAME_HEALTH_KIT = "health_pickup_health_small"
-const string LOOT_NAME_WEAPON = "mp_weapon_rspn101"
-
-const asset CHARACTER_ASSET_LIFELINE = $"settings/itemflav/character/lifeline.rpak"
-
-const float TRAINING_RETURN_TO_MENU_DURATION = 20.0
-#endif
-
-#if CLIENT
-global function ServerCallback_MonitorCommsMenuUsage
-global function ServerCallback_SetCommsDialogueEnabled
-#endif
-
-const string RESPAWN_CHAMBER_TARGET_NAME = "TrainingRespawnChamber"
-global const string DEATH_BOX_TARGETNAME_TRAINING = "player_death_box_training"
-
 global function Tutorial_TryAction_OpenLootBin1
 global function Tutorial_TryAction_OpenLootBin2
 global function Tutorial_TryAction_TakeFrag
@@ -51,7 +23,37 @@ global function Tutorial_TryAction_PickUpDNA
 global function Tutorial_TryAction_UsedRespawnChamber
 global function Tutorial_TryAction_UsedUltimate
 
+#if CLIENT
+global function ServerCallback_MonitorCommsMenuUsage
+global function ServerCallback_SetCommsDialogueEnabled
+#endif
+
 global function ShSurvivalTraining_Init
+
+#if SERVER
+global function DropshipBringDummyBack
+global function PlayerStartsTraining
+
+const asset CHARACTER_BLOODHOUND 	= $"settings/player/mp/pilot_survival_tracker.rpak"
+const asset CHARACTER_PATHFINDER 	= $"settings/player/mp/pilot_survival_grapple.rpak"
+const asset TRAINING_DUMMY_MODEL 	= $"mdl/humans/class/medium/pilot_medium_generic.rmdl"
+const asset REVIVE_CHAMBER_MODEL 	= $"mdl/Robots/mobile_hardpoint/mobile_hardpoint_static.rmdl"
+
+const asset TARGET_SPINNING_BASE = $"mdl/barriers/shooting_range_target_02_stand.rmdl"
+const asset TARGET_SPINNING_MODEL = $"mdl/barriers/shooting_range_target_02.rmdl"
+
+const string LOOT_NAME_FRAG = "mp_weapon_frag_grenade"
+const string LOOT_NAME_THERMITE = "mp_weapon_thermite_grenade"
+const string LOOT_NAME_HEALTH_KIT = "health_pickup_health_small"
+const string LOOT_NAME_WEAPON = "mp_weapon_rspn101"
+
+const asset CHARACTER_ASSET_LIFELINE = $"settings/itemflav/character/lifeline.rpak"
+
+const float TRAINING_RETURN_TO_MENU_DURATION = 20.0
+#endif
+
+const string RESPAWN_CHAMBER_TARGET_NAME = "TrainingRespawnChamber"
+global const string DEATH_BOX_TARGETNAME_TRAINING = "player_death_box_training"
 
 struct PlayerTrainingData
 {
@@ -131,9 +133,16 @@ void function ShSurvivalTraining_Init()
 		RegisterSignal( "playerUsedRespawnBeacon" )
 		RegisterSignal( "UltimateDropped" )
 
+		RegisterSignal( "GunRangeTargetDamaged" )
+		RegisterSignal( "SlideTargetSpeedReset" )
+		RegisterSignal( "SlideTargetThinkStart" )
+		RegisterSignal( "SlideTargetWaitForReset" )
+
 		PrecacheModel( TRAINING_DUMMY_MODEL )
 		PrecacheModel( REVIVE_CHAMBER_MODEL )
 		PrecacheModel( RESPAWN_DROPSHIP_MODEL )
+		PrecacheModel( TARGET_SPINNING_BASE )
+		PrecacheModel( TARGET_SPINNING_MODEL )
 
 		PrecacheParticleSystem( $"P_pilot_slide_dust" )
 
@@ -509,7 +518,6 @@ void function QuitToLobbyDelayed( entity player, float time )
 
 
 #if SERVER
-
 entity function GetTrainingNPCForPlayer( entity player, asset characterSettingsAsset )
 {
 	Assert( player in file.playerTrainingData )

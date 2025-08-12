@@ -1,8 +1,5 @@
 untyped
 
-//////////////////////////////////////////
-// placing this here temp (mkos Assert) //
-//////////////////////////////////////////
 global function mAssert
 
 void function mAssert( var condition, string errorMsg = "error", ... )
@@ -21,7 +18,7 @@ void function mAssert( var condition, string errorMsg = "error", ... )
 		#if UI || CLIENT
 			ScriptError( errorMsg + appenderr )
 		#elseif SERVER
-			ErrorServer( errorMsg + appenderr ) //This allows running servers to send mAssert errors to all clients.
+			ErrorServer( errorMsg + appenderr )
 		#endif
 	}
 }

@@ -1,4 +1,4 @@
-untyped //stub script - mkos
+untyped
 #if !TRACKER
 global function Stats__GetStatKeys
 

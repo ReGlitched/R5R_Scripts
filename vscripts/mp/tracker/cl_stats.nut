@@ -1,4 +1,4 @@
-untyped																											//mkos
+untyped
 global function Tracker_ClientStats_Init
 
 global function Tracker_SetPlayerStatBool

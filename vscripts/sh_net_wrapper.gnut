@@ -1,4 +1,3 @@
-//(mk): Stuff to help track down and organize net registration.													//mkos
 untyped
 
 global function ScriptRegisterNetworkedVariable 					//wrapper for RegisterNetworkedVariable

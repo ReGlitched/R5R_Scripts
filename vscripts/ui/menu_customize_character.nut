@@ -44,12 +44,10 @@ void function InitCustomizeCharacterMenu( var newMenuArg )
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, CustomizeCharacterMenu_OnNavigateBack )
 }
 
-
 void function CustomizeCharacterMenu_SetCharacter( ItemFlavor character )
 {
 	file.characterOrNull = character
 }
-
 
 void function CustomizeCharacterMenu_OnOpen()
 {
@@ -78,9 +76,7 @@ void function CustomizeCharacterMenu_OnOpen()
 	RuiSetGameTime( file.decorationRui, "initTime", Time() )
 
 	RegisterNewnessCallbacks( character )
-
 }
-
 
 void function CustomizeCharacterMenu_OnClose()
 {
@@ -93,7 +89,6 @@ void function CustomizeCharacterMenu_OnClose()
 	RunMenuClientFunction( "ClearAllCharacterPreview" )
 }
 
-
 void function RegisterNewnessCallbacks( ItemFlavor character )
 {
 	string cardPanelString = "CharacterCardsPanelV2"
@@ -102,7 +97,6 @@ void function RegisterNewnessCallbacks( ItemFlavor character )
 	//Newness_AddCallbackAndCallNow_OnRerverseQueryUpdated( NEWNESS_QUERIES.CharacterQuipsTab[character], OnNewnessQueryChangedUpdatePanelTab, GetPanel( "CharacterQuipsPanel" ) )
 	Newness_AddCallbackAndCallNow_OnRerverseQueryUpdated( NEWNESS_QUERIES.CharacterFinishersTab[character], OnNewnessQueryChangedUpdatePanelTab, GetPanel( "CharacterExecutionsPanel" ) )
 }
-
 
 void function DeregisterNewnessCallbacks( ItemFlavor character )
 {
@@ -113,7 +107,6 @@ void function DeregisterNewnessCallbacks( ItemFlavor character )
 	Newness_RemoveCallback_OnRerverseQueryUpdated( NEWNESS_QUERIES.CharacterFinishersTab[character], OnNewnessQueryChangedUpdatePanelTab, GetPanel( "CharacterExecutionsPanel" ) )
 }
 
-
 void function CustomizeCharacterMenu_OnNavigateBack()
 {
 	Assert( GetActiveMenu() == file.menu )
@@ -123,18 +116,15 @@ void function CustomizeCharacterMenu_OnNavigateBack()
 	CloseActiveMenu()
 }
 
-
 void function CustomizeCharacterMenu_PrevButton_OnActivate( var button )
 {
 	SwitchCharacters( PREV )
 }
 
-
 void function CustomizeCharacterMenu_NextButton_OnActivate( var button )
 {
 	SwitchCharacters( NEXT )
 }
-
 
 void function SwitchCharacters( bool direction )
 {
@@ -167,5 +157,3 @@ void function SwitchCharacters( bool direction )
 	SetTopLevelCustomizeContext( nextCharacter )
 	RuiSetString( file.titleRui, "title", Localize( ItemFlavor_GetLongName( nextCharacter ) ).toupper() )
 }
-
-

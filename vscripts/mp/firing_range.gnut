@@ -78,37 +78,24 @@ global enum eGunRangeTargetTypes
 
 global enum eFRSettingType
 {
-	// ----- Personal FR Bool Settings.
-	// To add new Personal Settings, add to the end of this section.
-	SHOWRUI,				// Show the Settings RUI Overlay?
-	SHOWDYNSTATS,			// Show Dynamic Stats?
-	SHOWDYNTIMER,			// Show Dynamic Stats Timer?
-	LEGENDUPGRADES_RESET,	// Reset Legend Upgrades.
-	INFINITEMAGS,			// Infinite Reloads: ON/OFF
-	SHOWHITMARKS,			// Hit Markers: ON/OFF
-	SHOW3RDPERSON,			// 3rd-Person Mode: ON/OFF
+	SHOWRUI,
+	SHOWDYNSTATS,
+	SHOWDYNTIMER,
+	LEGENDUPGRADES_RESET,
+	INFINITEMAGS,
+	SHOWHITMARKS,
+	SHOW3RDPERSON,
 	                    
 		LEGENDUPGRADESENABLED,
                            
-
-	// ----- Shared FR bool Settings.
-	// To add new Shared Settings, add to the end of this section.
-	FRIENDLYFIRE,			// Friendly Fire: ON/OFF
-	FRDUMMIEHELMETMATCHSHIELDS,	// Dummie Helmets Match Shield Levels.
+	FRIENDLYFIRE,
+	FRDUMMIEHELMETMATCHSHIELDS,	
 	                   
-	DYNAMICDUMMIESON,	// Dynamic Dummies Enabled/Disabled
-	DUMMIEHIGHLIGHTSON,	// Whether or not to highlight dummies.
+	DYNAMICDUMMIESON,	
+	DUMMIEHIGHLIGHTSON,
        
-	//	// ----- Shared Int Settings.
-	// To add new Shared Int Setting:
-	//		- add to the end of this section
-	//		- register a new NetVar and PVar.
-	//		- follow the function patterns established by targetspeed and frdummieshieldlvl.
-	//			- UCB_SV_FRSetting_<SettingName>_Change(): called from UI.
-	//			- FRSetting_<SettingName>_Set_OnPlayer(): called from above to set the data.
-	//			- SCB_Broadcast_FRSettings_<SettingName>_Change(): Remote called from above to notify players of change.
-	TARGETSPEED,			// TARGET SPEED: < number >
-	FRDUMMIESHIELDLVL,		// FIRING RANGE DUMMIE SHIELD LEVEL: < number >
+	TARGETSPEED,
+	FRDUMMIESHIELDLVL,
 	FRDUMMIESPEED,
 	FRDUMMIEMOVEMENT,
 	FRDUMMIESTANCE,
@@ -184,7 +171,7 @@ void function FiringRangeGameMode_Init()
 	#endif
 	#if CLIENT
 		IntroDisplayThread()
-	#endif //CLIENT
+	#endif
 }
 
 #if CLIENT
@@ -198,7 +185,7 @@ void function SCB_BroadcastFriendlyFireChange( entity playerThatChanged )
 	AnnouncementMessage( localPlayer, mainText, subText, titleColor )
 }
 
-#endif //
+#endif
 
 void function OnEntitiesDidLoad()
 {
@@ -235,9 +222,8 @@ void function OnEntitiesDidLoad()
 #if SERVER
 void function FiringRangeProps()
 {
-	// Init
-	CreateLegendaryRack()//Create 6th weapon rack to support sniper ammo
-	CreateBowRack()//Create 7th weapon rack to support arrows
+	CreateLegendaryRack()
+	CreateBowRack()
 	array<entity> movers = GetEntArrayByScriptName("script_mover_lightweight")
 
 	foreach(entity e in GetEntArrayByScriptName("weapon_racks"))
@@ -246,11 +232,11 @@ void function FiringRangeProps()
 		file.rackSpawns.append(r)
 	}
 
-	FillWeaponTable() // load first to know where the rest goes
-	FillAttachmentTable() // requires weapons to be loaded
-	FillEquipmentTable() // armor + helmet + bp + shield
-	FillOrdnanceTable() // nades
-	FillItemTable() // health + batts + the rest
+	FillWeaponTable() 
+	FillAttachmentTable()
+	FillEquipmentTable()
+	FillOrdnanceTable() 
+	FillItemTable()
 	
 	CreateRackGroups()
 	if ( !IsSurvivalTraining() )

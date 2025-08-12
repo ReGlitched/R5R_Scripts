@@ -513,9 +513,9 @@ void function CodeCallback_DamagePlayerOrNPC( entity ent, var damageInfo )
 				attacker.SetPlayerNetInt( "damage", attacker.GetPlayerNetInt( "damage" ) + damage )
 			}
 			
-			DamageInfo_SetDamage( damageInfo, 0) //hack, the damage value was only required for proper client display. Colombia
+			DamageInfo_SetDamage( damageInfo, 0) //hack, the damage value was only required for proper client display
 		} 
-		else //Applies for npc titans as well
+		else
 		{
 			if( attackerIsPlayer )
 			{
@@ -531,7 +531,6 @@ void function CodeCallback_DamagePlayerOrNPC( entity ent, var damageInfo )
 		
 		if( !entIsPlayer && file.register_dummie_kill_as_actual_kill && !file.firingrange_aimtrainerbycolombia )
 		{
-			//(mk): was missing damage history for shields for non-players
 			float actualDamageDone = damage ? damage : DamageInfo_GetDamage( damageInfo )
 			StoreDamageHistoryAndUpdate( ent, MAX_DAMAGE_HISTORY_TIME, actualDamageDone, attacker.GetOrigin(), DamageInfo_GetCustomDamageType( damageInfo ), damageSourceId, attacker, GetWeaponModsFromDamageInfo( damageInfo ) )
 		}
@@ -557,7 +556,7 @@ void function CodeCallback_DamagePlayerOrNPC( entity ent, var damageInfo )
 				
 				__IncrementPlayerNetInt( attacker, "kills" )
 				
-				#if TRACKER //(mk)todo: add OnPlayerKilledNpc callbacks
+				#if TRACKER //TODO: add OnPlayerKilledNpc callbacks
 					Tracker_EndFight( ent, attacker, damageInfo )
 				#endif
 			}

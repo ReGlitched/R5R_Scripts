@@ -2072,8 +2072,6 @@ void function DumpScriptColorCorrections()
 #endif
 */
 
-// mkos
-
 table function GetPlayerPos( entity player = null )
 {
 	if ( !player )
@@ -2085,21 +2083,6 @@ table function GetPlayerPos( entity player = null )
 
 	return { origin = org, angles = ang }
 }
-
-/*
-void function DEV_TestImg()
-{
-	entity player = GetLocalClientPlayer()
-	
-	Dev_BuildWorldImageRUI
-	( 
-		$"rui/flowstate_custom/mkos/1v1banner", 
-		expect vector ( GetPlayerPos( player ).origin ),
-		expect vector ( GetPlayerPos( player ).angles ),
-		800,
-		505
-	)
-}*/
 
 int function KeyNameToKeyCode( string keyName )
 {

@@ -2159,7 +2159,7 @@ void function ActualUpdateNestedGladiatorCard( NestedGladiatorCardHandle handle 
 	handle.updateQueued = false
 }
 
-bool function IsValidPlayerForR5RDevBadge( entity player ) //deprecated
+bool function IsValidPlayerForR5RDevBadge( entity player )
 {
 	if( !IsValid( player ) )
 		return false
@@ -2167,7 +2167,6 @@ bool function IsValidPlayerForR5RDevBadge( entity player ) //deprecated
 	if( !GetServerVar( "tracker_enabled" ) )
 		return IsValidPlayerForR5RDevBadge_NoTracker( player )
 	
-	//isDev is preloaded on clients when player is created.
 	var isDev = Tracker_FetchStat( player, "isDev" )
 	
 	if( isDev != null )
@@ -2186,18 +2185,13 @@ bool function IsValidPlayerForR5RDevBadge_NoTracker( entity player )
 		return true
 	}
 	
-	switch( player.GetPlayerName() )
+	switch( player.GetPlayerName() ) //Either everybody is valid or nobody is valid <3
 	{
-		case "r5r_CafeFPS":
-		case "R5mkos":
-		case "zee_x64":
-		case "amos_x64":
-		case "rexx_x64":
-		case "LorryLeKral":
+		case "unnamed":
 		return true
 	}
 	
-	return false
+	return true
 }
 #endif
 
@@ -2272,7 +2266,6 @@ void function ManageCharacterCaptureStateForNestedCard( NestedGladiatorCardHandl
 	}
 }
 #endif
-
 
 #if CLIENT
 CharacterCaptureState function GetOrStartCharacterCapture( NestedGladiatorCardHandle handle, float startTime, EHI playerEHI, bool isMoving, ItemFlavor character, ItemFlavor skin, ItemFlavor ornull frameOrNull, ItemFlavor stance )

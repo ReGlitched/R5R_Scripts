@@ -5850,7 +5850,6 @@ bool function IsOriginInvalidForPlacingPermanentOnto( vector origin )
 	return false
 }
 
-//~mkos
 void function DEV_PrintClientCommands( table< string, void functionref( entity, array< string > ) > callbackTable )
 {
 	string data = "\n\n ------ CLIENTCOMMAND CALLBACK TABLE ------ \n\n"

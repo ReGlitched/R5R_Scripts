@@ -880,10 +880,6 @@ global struct ServerPlayerStruct
 	int ziplineUsages = 0
 	float lastmoved
 	
-	
-	////////////////////////////////////////////////////////////////
-	//mkos /or/ r5r stats /r5r.dev Todo: clean this up and remove the need for most
-	
 	int handle 					= -1
 	string UID 					= ""
 	string name 				= ""

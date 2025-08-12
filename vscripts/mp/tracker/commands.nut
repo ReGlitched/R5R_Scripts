@@ -1,5 +1,3 @@
-//commands.nut																//mkos
-
 global function Commands_ReturnBaseCmdForAlias
 global function Commands_ReturnBaseArgForAlias
 

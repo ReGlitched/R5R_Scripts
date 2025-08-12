@@ -115,6 +115,18 @@ void function InitDevMenu( var newMenuArg )
 	AddUICallback_LevelShutdown( ClearCodeDevMenu )
 }
 
+void function SetDevMenu_MP()
+{
+	if ( file.initializingCodeDevMenu )
+	{
+		SetupDefaultDevCommandsMP()
+		return
+	}
+	PushPageHistory()
+	file.currentPage.devMenuFunc = SetupDefaultDevCommandsMP
+	UpdateDevMenuButtons()
+}
+
 void function SetupDefaultDevCommandsMP()
 {
 	RunClientScript("DEV_SendCheatsStateToUI")
@@ -164,17 +176,6 @@ void function SetupDefaultDevCommandsMP()
 	{
 		SetupDevCommand( "Cheats are disabled! Type 'sv_cheats 1' in console to enable dev menu if you're the server admin.", "empty" )
 	}
-}
-
-void function AddLevelDevCommand( string label, string command )
-{
-	string codeDevMenuAlias = DEV_MENU_NAME + "/" + label
-	DevMenu_Alias_DEV( codeDevMenuAlias, command )
-
-	DevCommand cmd
-	cmd.label = label
-	cmd.command = command
-	file.levelSpecificCommands.append( cmd )
 }
 
 void function OnOpenDevMenu()
@@ -262,18 +263,6 @@ void function UpdateDevMenuButtons()
 	RefreshRepeatLastDevCommandPrompts()
 }
 
-void function SetDevMenu_MP()
-{
-	if ( file.initializingCodeDevMenu )
-	{
-		SetupDefaultDevCommandsMP()
-		return
-	}
-	PushPageHistory()
-	file.currentPage.devMenuFunc = SetupDefaultDevCommandsMP
-	UpdateDevMenuButtons()
-}
-
 void function ChangeToThisMenu( void functionref() menuFunc )
 {
 	if ( file.initializingCodeDevMenu )
@@ -303,80 +292,10 @@ void function ChangeToThisMenu_WithOpParm( void functionref( var ) menuFuncWithO
 	UpdateDevMenuButtons()
 }
 
-void function SetDevMenu_LevelCommands( var _ )
-{
-	ChangeToThisMenu( SetupLevelDevCommands )
-}
-void function SetupLevelDevCommands()
-{
-	string activeLevel = GetActiveLevel()
-	if ( activeLevel == "" )
-		return
-
-	switch ( activeLevel )
-	{
-		case "model_viewer":
-			SetupDevCommand( "Toggle Rebreather Masks", "script ToggleRebreatherMasks()" )
-			break
-	}
-}
-void function SetDevMenu_Abilities( var _ )
-{
-	thread ChangeToThisMenu( SetupAbilities )
-}
-void function SetDevMenu_CustomAbilities( var _ )
-{
-	thread ChangeToThisMenu( SetupCustomAbilities )
-}
-void function SetDevMenu_Weapons( var _ )
-{
-	thread ChangeToThisMenu( SetupRetailWeapons )
-}
-void function SetDevMenu_R2Weapons( var _ )
-{
-	thread ChangeToThisMenu( SetupTitanfallWeapons )
-}
-void function SetDevMenu_Throwables( var _ )
-{
-	thread ChangeToThisMenu( SetupThrowables )
-}
-void function SetDevMenu_SurvivalCharacter( var _ )
-{
-	thread ChangeToThisMenu( SetupChangeSurvivalCharacterClass )
-}
-void function SetDevMenu_AISpawnFriendly( var _ )
-{
-	thread ChangeToThisMenu( SetupFriendlyNPC )
-}
-void function SetDevMenu_AISpawnEnemy( var _ )
-{
-	thread ChangeToThisMenu( SetupEnemyNPC )
-}
-
 string function GetCharacterNameFromDEV_name( string DEV_name )
 {
 	string prefix = "character_"
 	return split( DEV_name.slice( prefix.len() ), " " )[ 0 ]
-}
-
-void function SetDevMenu_OverrideSpawnSurvivalCharacter( var _ )
-{
-	thread ChangeToThisMenu( SetupOverrideSpawnSurvivalCharacter )
-}
-
-void function SetDevMenu_Survival( var _ )
-{
-	thread ChangeToThisMenu( SetupSurvival )
-}
-
-void function SetDevMenu_SurvivalLoot( var categories )
-{
-	thread ChangeToThisMenu_WithOpParm( SetupSurvivalLoot, categories )
-}
-
-void function SetDevMenu_SurvivalIncapShieldBots( var _ )
-{
-	thread ChangeToThisMenu( SetupSurvivalIncapShieldBot )
 }
 
 void function ChangeToThisMenu_PrecacheWeapons( void functionref() menuFunc )
@@ -435,85 +354,6 @@ void function PrecacheWeaponsIfNecessary()
 void function UpdatePrecachedSPWeapons()
 {
 	file.precachedWeapons = true
-}
-
-void function SetDevMenu_RespawnPlayers( var _ )
-{
-	ChangeToThisMenu( SetupRespawnPlayersDevMenu )
-}
-
-void function SetupRespawnPlayersDevMenu()
-{
-	SetupDevCommand( "Respawn me", "respawn" )
-	SetupDevCommand( "Respawn all players", "respawn all" )
-	SetupDevCommand( "Respawn all dead players", "respawn alldead" )
-	SetupDevCommand( "Respawn random player", "respawn random" )
-	SetupDevCommand( "Respawn random dead player", "respawn randomdead" )
-	SetupDevCommand( "Respawn bots", "respawn bots" )
-	SetupDevCommand( "Respawn dead bots", "respawn deadbots" )
-	SetupDevCommand( "Respawn my teammates", "respawn allies" )
-	SetupDevCommand( "Respawn my enemies", "respawn enemies" )
-}
-
-void function SetDevMenu_RespawnOverride( var _ )
-{
-	ChangeToThisMenu( SetupRespawnOverrideDevMenu )
-}
-
-void function SetupRespawnOverrideDevMenu()
-{
-	SetupDevCommand( "Use gamemode behaviour", "set_respawn_override off" )
-	SetupDevCommand( "Override: Allow all respawning", "set_respawn_override allow" )
-	SetupDevCommand( "Override: Deny all respawning", "set_respawn_override deny" )
-	SetupDevCommand( "Override: Allow bot respawning", "set_respawn_override allowbots" )
-}
-
-void function SetDevMenu_Prototypes( var _ )
-{
-	thread ChangeToThisMenu( SetupPrototypesDevMenu )
-}
-
-void function SetupPrototypesDevMenu()
-{
-	SetupDevCommand( "Toggle Akimbo Weapon", "script DEV_ToggleAkimboWeapon(gp()[0])" )
-	//SetupDevCommand( "Toggle Akimbo With Holstered Weapon", "script DEV_ToggleAkimboWeaponAlt(gp()[0])" )
-	SetupDevCommand( "Cubemap Viewer", "give weapon_cubemap" )
-	SetupDevCommand( "Toggle Shadow Form", "ShadowForm" )
-	SetupDevCommand( "Teleport to Skybox Camera", "script thread ToggleSkyboxView()" )
-	SetupDevCommand( "Spawn Deathbox With Random Loots", "script DEV_SpawnDeathBoxWithRandomLoot(gp()[0])" )
-	SetupDevMenu( "Loot Marvin Debug (Olympus Only)", SetDevMenu_LootMarvin )
-	SetupDevMenu( "Vault System Debug", SetDevMenu_VaultDebug )
-	SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
-	//SetupDevMenu( "Incap Shield Debugging", SetDevMenu_SurvivalIncapShieldBots )
-}
-
-void function SetDevMenu_LootMarvin( var _ )
-{
-	thread ChangeToThisMenu( SetDevMenu_LootMarvinPanel )
-}
-
-void function SetDevMenu_LootMarvinPanel()
-{
-	SetupDevCommand( "Debug Draw Marvin Locations", "script SeeMarvinSpawnLocations()" )
-	SetupDevCommand( "Teleport to Random Marvin", "script TeleportToRandomMarvinLocations()" )
-	SetupDevCommand( "Ping Nearest Marvin", "script AttemptPingNearestValidMarvinForPlayer(gp()[0])" )
-	SetupDevCommand( "Create Loot Marvin At Crosshair", "script CreateMarvin_Loot()" )
-	SetupDevCommand( "Create Loot Marvin With Detachable Arm At Crosshair", "script CreateMarvin_Loot( true )" )
-	SetupDevCommand( "Create Story Marvin At Crosshair", "script CreateMarvin_Story()" )
-}
-
-void function SetDevMenu_VaultDebug( var _ )
-{
-	thread ChangeToThisMenu( SetDevMenu_VaultDebugPanel )
-}
-
-void function SetDevMenu_VaultDebugPanel()
-{
-	SetupDevCommand( "Debug Draw Vault Loot", "script DEV_ShowVaults()" )
-	SetupDevCommand( "Debug Draw Vault Keys", "script DEV_ShowVaultKeys()" )
-	SetupDevCommand( "Teleport to Available Vault Key", "script DEV_TPToVaultKeys()" )
-	SetupDevCommand( "Equip Every Vault Key", "script DEV_GiveVaultKeys(gp()[0])" )
-	SetupDevCommand( "Debug Draw Vault Panel Infos", "script DEV_ShowVaultPanelInfos()" )
 }
 
 void function RunCodeDevCommandByAlias( string alias )
@@ -698,6 +538,22 @@ bool function AreOnDefaultDevCommandMenu()
 	return false
 }
 
+void function AddLevelDevCommand( string label, string command )
+{
+	string codeDevMenuAlias = DEV_MENU_NAME + "/" + label
+	DevMenu_Alias_DEV( codeDevMenuAlias, command )
+
+	DevCommand cmd
+	cmd.label = label
+	cmd.command = command
+	file.levelSpecificCommands.append( cmd )
+}
+
+void function SetDevMenu_SurvivalCharacter( var _ )
+{
+	thread ChangeToThisMenu( SetupChangeSurvivalCharacterClass )
+}
+
 void function SetupChangeSurvivalCharacterClass()
 {
 	#if UI
@@ -716,6 +572,11 @@ void function SetupChangeSurvivalCharacterClass()
 			} )
 		}
 	#endif
+}
+
+void function SetDevMenu_OverrideSpawnSurvivalCharacter( var _ )
+{
+	thread ChangeToThisMenu( SetupOverrideSpawnSurvivalCharacter )
 }
 
 void function SetupOverrideSpawnSurvivalCharacter()
@@ -738,45 +599,9 @@ void function SetupOverrideSpawnSurvivalCharacter()
 	#endif
 }
 
-void function SetupWeapons()
+void function SetDevMenu_Weapons( var _ )
 {
-	#if UI
-	// Rifles
-	SetupDevCommand( "Rifle: Flatline", "give mp_weapon_vinson" )
-	SetupDevCommand( "Rifle: G7 Scout", "give mp_weapon_g2" )
-	SetupDevCommand( "Rifle: Havoc", "give mp_weapon_energy_ar" )
-	SetupDevCommand( "Rifle: Hemlok", "give mp_weapon_hemlok" )
-	SetupDevCommand( "Rifle: R-301", "give mp_weapon_rspn101" )
-
-	// SMGs
-	SetupDevCommand( "SMG: Alternator", "give mp_weapon_alternator_smg" )
-	SetupDevCommand( "SMG: Prowler", "give mp_weapon_pdw" )
-	SetupDevCommand( "SMG: R-99", "give mp_weapon_r97" )
-	SetupDevCommand( "SMG: Volt SMG", "give mp_weapon_volt_smg" )
-
-	// LMGs
-	SetupDevCommand( "LMG: Devotion", "give mp_weapon_esaw" )
-	SetupDevCommand( "LMG: L-Star", "give mp_weapon_lstar" )
-	SetupDevCommand( "LMG: Spitfire", "give mp_weapon_lmg" )
-
-	// Snipers
-	SetupDevCommand( "Sniper: Charge Rifle", "give mp_weapon_defender" )
-	SetupDevCommand( "Sniper: Kraber", "give mp_weapon_sniper" )
-	SetupDevCommand( "Sniper: Longbow", "give mp_weapon_dmr" )
-	SetupDevCommand( "Sniper: Triple Take", "give mp_weapon_doubletake" )
-	SetupDevCommand( "Sniper: Sentinel", "give mp_weapon_sentinel" )
-
-	// Shotguns
-	SetupDevCommand( "Shotgun: EVA-8 Auto", "give mp_weapon_shotgun" )
-	SetupDevCommand( "Shotgun: Mastiff", "give mp_weapon_mastiff" )
-	SetupDevCommand( "Shotgun: Mozambique", "give mp_weapon_shotgun_pistol" )
-	SetupDevCommand( "Shotgun: Peacekeeper", "give mp_weapon_energy_shotgun" )
-
-	// Pistols
-	SetupDevCommand( "Pistol: P2020", "give mp_weapon_semipistol" )
-	SetupDevCommand( "Pistol: RE-45", "give mp_weapon_autopistol" )
-	SetupDevCommand( "Pistol: Wingman", "give mp_weapon_wingman" )
-	#endif
+	thread ChangeToThisMenu( SetupRetailWeapons )
 }
 
 void function SetupRetailWeapons()
@@ -785,7 +610,6 @@ void function SetupRetailWeapons()
 	// Marksman
 	SetupDevCommand( "Marksman Rifle: G7 Scout", "give mp_weapon_g2" )
 	SetupDevCommand( "Marksman: Triple Take", "give mp_weapon_doubletake" )
-	SetupDevCommand( "Marksman: 30-30 Repeater", "give mp_weapon_3030" )
 	SetupDevCommand( "", "give blank" )
 
 	// LMGs
@@ -835,9 +659,13 @@ void function SetupRetailWeapons()
 	#endif
 }
 
+void function SetDevMenu_R2Weapons( var _ )
+{
+	thread ChangeToThisMenu( SetupTitanfallWeapons )
+}
+
 void function SetupTitanfallWeapons()
 {
-	#if UI
 	SetupDevCommand( "Titanfall 2 Pilot Weapon: EPG", "give mp_weapon_epg" )
 	SetupDevCommand( "Titanfall 2 Pilot Weapon: Sidewinder", "give mp_weapon_smr" )
 	SetupDevCommand( "Titanfall 2 Pilot Weapon: Archer", "give mp_weapon_rocket_launcher" )
@@ -858,49 +686,60 @@ void function SetupTitanfallWeapons()
 	SetupDevCommand( "Dev: Flight Core", "give mp_titanweapon_flightcore_rockets")
 	SetupDevCommand( "Dev: Satchel", "give mp_weapon_satchel")
 	SetupDevCommand( "Dev: Disable Titan POV Hands", "script ResetCharacterSkin(gp()[0])")
-	#endif
+}
+
+void function SetDevMenu_Throwables( var _ )
+{
+	thread ChangeToThisMenu( SetupThrowables )
 }
 
 void function SetupThrowables()
 {
-	#if UI
-	// Grenades
 	SetupDevCommand( "Grenade: Arc Star", "give mp_weapon_grenade_emp" )
 	SetupDevCommand( "Grenade: Frag", "give mp_weapon_frag_grenade" )
 	SetupDevCommand( "Grenade: Thermite", "give mp_weapon_thermite_grenade" )
-	#endif
 }
 
-void function SetupSurvival()
+void function SetDevMenu_SurvivalLoot( var categories )
 {
-	#if UI
-		SetupDevCommand( "Toggle Training Completed", "script GP().SetPersistentVar( \"trainingCompleted\", (GP().GetPersistentVarAsInt( \"trainingCompleted\" ) == 0 ? 1 : 0) )" )
-		SetupDevCommand( "Enable Survival Dev Mode", "playlist survival_dev" )
-		SetupDevCommand( "Disable Match Ending", "mp_enablematchending 0" )
-		SetupDevCommand( "Enable Match Ending", "mp_enablematchending 1" )
-		SetupDevCommand( "Drop Care Package R1", "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 0, null )" )
-		SetupDevCommand( "Drop Care Package R2", "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 1, null )" )
-		SetupDevCommand( "Drop Care Package R3", "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 2, null )" )
-		SetupDevCommand( "Force Circle Movement", "script thread FlagWait( \"DeathCircleActive\" );script svGlobal.levelEnt.Signal( \"DeathField_ShrinkNow\" );script FlagClear( \"DeathFieldPaused\" )" )
-		SetupDevCommand( "Pause Circle Movement", "script FlagSet( \"DeathFieldPaused\" )" )
-		SetupDevCommand( "Unpause Circle Movement", "script FlagClear( \"DeathFieldPaused\" )" )
-		//SetupDevCommand( "Gladiator Intro Sequence", "script thread DEV_StartGladiatorIntroSequence()" )
-		SetupDevCommand( "Bleedout Debug Mode", "script FlagSet( \"BleedoutDebug\" )" )
-		SetupDevCommand( "Disable Loot Drops on Death", "script FlagSet( \"DisableLootDrops\" )" )
-		SetupDevCommand( "Drop My Death Box", "script thread SURVIVAL_Death_DropLoot_Internal( gp()[0], null, 100, true )" )
-	#endif
+	thread ChangeToThisMenu_WithOpParm( SetupSurvivalLoot, categories )
 }
 
 void function SetupSurvivalLoot( var categories )
 {
-	#if UI
-		RunClientScript( "SetupSurvivalLoot", categories )
-	#endif
+	RunClientScript( "SetupSurvivalLoot", categories )
+}
+
+void function SetDevMenu_Survival( var _ )
+{
+	thread ChangeToThisMenu( SetupSurvival )
+}
+
+void function SetupSurvival()
+{
+	SetupDevCommand( "Toggle Training Completed", "script GP().SetPersistentVar( \"trainingCompleted\", (GP().GetPersistentVarAsInt( \"trainingCompleted\" ) == 0 ? 1 : 0) )" )
+	SetupDevCommand( "Enable Survival Dev Mode", "playlist survival_dev" )
+	SetupDevCommand( "Disable Match Ending", "mp_enablematchending 0" )
+	SetupDevCommand( "Enable Match Ending", "mp_enablematchending 1" )
+	SetupDevCommand( "Drop Care Package R1", "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 0, null )" )
+	SetupDevCommand( "Drop Care Package R2", "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 1, null )" )
+	SetupDevCommand( "Drop Care Package R3", "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 2, null )" )
+	SetupDevCommand( "Force Circle Movement", "script thread FlagWait( \"DeathCircleActive\" );script svGlobal.levelEnt.Signal( \"DeathField_ShrinkNow\" );script FlagClear( \"DeathFieldPaused\" )" )
+	SetupDevCommand( "Pause Circle Movement", "script FlagSet( \"DeathFieldPaused\" )" )
+	SetupDevCommand( "Unpause Circle Movement", "script FlagClear( \"DeathFieldPaused\" )" )
+	//SetupDevCommand( "Gladiator Intro Sequence", "script thread DEV_StartGladiatorIntroSequence()" )
+	SetupDevCommand( "Bleedout Debug Mode", "script FlagSet( \"BleedoutDebug\" )" )
+	SetupDevCommand( "Disable Loot Drops on Death", "script FlagSet( \"DisableLootDrops\" )" )
+	SetupDevCommand( "Drop My Death Box", "script thread SURVIVAL_Death_DropLoot_Internal( gp()[0], null, 100, true )" )
+}
+
+void function SetDevMenu_Abilities( var _ )
+{
+	thread ChangeToThisMenu( SetupAbilities )
 }
 
 void function SetupAbilities()
 {
-	#if UI
 	SetupDevCommand( "Bangalore Tactical", "give mp_weapon_grenade_bangalore" )
 	SetupDevCommand( "Bangalore Ultimate", "give mp_weapon_grenade_creeping_bombardment" )
 	SetupDevCommand( "Bloodhound Tactical", "give mp_ability_area_sonar_scan" )
@@ -925,12 +764,15 @@ void function SetupAbilities()
 	SetupDevCommand( "Wraith Ultimate", "give mp_weapon_phase_tunnel" )
 	SetupDevCommand( "Revenant Tactical", "give mp_ability_silence" )
 	SetupDevCommand( "Revenant Ultimate", "give mp_ability_revenant_death_totem" )
-	#endif
+}
+
+void function SetDevMenu_CustomAbilities( var _ )
+{
+	thread ChangeToThisMenu( SetupCustomAbilities )
 }
 
 void function SetupCustomAbilities()
 {
-	#if UI
 	SetupDevCommand( "Tf2: Pulse Blade", "give mp_weapon_grenade_sonar" )
 	SetupDevCommand( "Tf2: Amped Wall", "give mp_weapon_deployable_cover" )
 	SetupDevCommand( "Tf2: Electric Smoke", "give mp_weapon_grenade_electric_smoke" )
@@ -960,29 +802,33 @@ void function SetupCustomAbilities()
 	SetupDevCommand( "Dev: Grenade Barrier", "give mp_weapon_grenade_barrier" )
 
 	SetupDevCommand( "Dev: Cover Wall", "give mp_weapon_cover_wall_proto" )
-
 	SetupDevCommand( "Dev: Split Timeline", "give mp_ability_split_timeline" )
 	SetupDevCommand( "Dev: Sonic Shout", "give mp_ability_sonic_shout" )
-
 	SetupDevCommand( "Dev: Haunt", "give mp_ability_haunt" )
 	SetupDevCommand( "Dev: Dodge Roll", "give mp_ability_dodge_roll" )
-	#endif
+}
+
+void function SetDevMenu_SurvivalIncapShieldBots( var _ )
+{
+	thread ChangeToThisMenu( SetupSurvivalIncapShieldBot )
 }
 
 void function SetupSurvivalIncapShieldBot()
 {
-	#if UI
 	SetupDevCommand( "Spawn Bot with Lv 1 Incap Shield", "script Dev_SpawnBotWithIncapShieldToView( 1 )" )
 	SetupDevCommand( "Spawn Bot with Lv 2 Incap Shield", "script Dev_SpawnBotWithIncapShieldToView( 2 )" )
 	SetupDevCommand( "Spawn Bot with Lv 3 Incap Shield", "script Dev_SpawnBotWithIncapShieldToView( 3 )" )
 	SetupDevCommand( "Spawn Bot with Lv 4 Incap Shield", "script Dev_SpawnBotWithIncapShieldToView( 4 )" )
 	SetupDevCommand( "Spawn Bot with a Random Incap Shield", "script Dev_SpawnBotWithIncapShieldToView( -1 )" )
-	#endif
+}
+
+void function SetDevMenu_AISpawnFriendly( var _ )
+{
+	thread ChangeToThisMenu( SetupFriendlyNPC )
 }
 
 void function SetupFriendlyNPC()
 {
-	#if UI
 	//SetupDevCommand( "Friendly NPC: Stalker", "script DEV_SpawnStalkerAtCrosshair(gp()[0].GetTeam())" )
 	SetupDevCommand( "Friendly NPC: Gunship", "script DEV_SpawnGunshipAtCrosshair(gp()[0].GetTeam())" )
 	SetupDevCommand( "Friendly NPC: Dummie",  "script DEV_SpawnDummyAtCrosshair(gp()[0].GetTeam())" )
@@ -995,12 +841,15 @@ void function SetupFriendlyNPC()
 	SetupDevCommand( "Friendly NPC: Spider", "script DEV_SpawnSpiderAtCrosshair(gp()[0].GetTeam())" )
 	SetupDevCommand( "Friendly NPC: Infected", "script DEV_SpawnInfectedSoldierAtCrosshair(gp()[0].GetTeam())" )
 	SetupDevCommand( "Friendly NPC: Tick", "script DEV_SpawnExplosiveTickAtCrosshair(gp()[0].GetTeam())" )
-	#endif
+}
+
+void function SetDevMenu_AISpawnEnemy( var _ )
+{
+	thread ChangeToThisMenu( SetupEnemyNPC )
 }
 
 void function SetupEnemyNPC()
 {
-	#if UI
 	//SetupDevCommand( "Enemy NPC: Stalker", "script DEV_SpawnStalkerAtCrosshair()" )
 	SetupDevCommand( "Enemy NPC: Gunship", "script DEV_SpawnGunshipAtCrosshair()" )
 	SetupDevCommand( "Enemy NPC: Dummie", "script DEV_SpawnDummyAtCrosshair()" )
@@ -1013,5 +862,102 @@ void function SetupEnemyNPC()
 	SetupDevCommand( "Enemy NPC: Spider", "script DEV_SpawnSpiderAtCrosshair()" )
 	SetupDevCommand( "Enemy NPC: Infected", "script DEV_SpawnInfectedSoldierAtCrosshair()" )
 	SetupDevCommand( "Enemy NPC: Tick", "script DEV_SpawnExplosiveTickAtCrosshair()" )
-	#endif
+}
+
+void function SetDevMenu_RespawnPlayers( var _ )
+{
+	ChangeToThisMenu( SetupRespawnPlayersDevMenu )
+}
+
+void function SetupRespawnPlayersDevMenu()
+{
+	SetupDevCommand( "Respawn me", "respawn" )
+	SetupDevCommand( "Respawn all players", "respawn all" )
+	SetupDevCommand( "Respawn all dead players", "respawn alldead" )
+	SetupDevCommand( "Respawn random player", "respawn random" )
+	SetupDevCommand( "Respawn random dead player", "respawn randomdead" )
+	SetupDevCommand( "Respawn bots", "respawn bots" )
+	SetupDevCommand( "Respawn dead bots", "respawn deadbots" )
+	SetupDevCommand( "Respawn my teammates", "respawn allies" )
+	SetupDevCommand( "Respawn my enemies", "respawn enemies" )
+}
+
+void function SetDevMenu_RespawnOverride( var _ )
+{
+	ChangeToThisMenu( SetupRespawnOverrideDevMenu )
+}
+
+void function SetupRespawnOverrideDevMenu()
+{
+	SetupDevCommand( "Use gamemode behaviour", "set_respawn_override off" )
+	SetupDevCommand( "Override: Allow all respawning", "set_respawn_override allow" )
+	SetupDevCommand( "Override: Deny all respawning", "set_respawn_override deny" )
+	SetupDevCommand( "Override: Allow bot respawning", "set_respawn_override allowbots" )
+}
+
+void function SetDevMenu_Prototypes( var _ )
+{
+	thread ChangeToThisMenu( SetupPrototypesDevMenu )
+}
+
+void function SetupPrototypesDevMenu()
+{
+	SetupDevCommand( "Toggle Akimbo Weapon", "script DEV_ToggleAkimboWeapon(gp()[0])" )
+	//SetupDevCommand( "Toggle Akimbo With Holstered Weapon", "script DEV_ToggleAkimboWeaponAlt(gp()[0])" )
+	SetupDevCommand( "Cubemap Viewer", "give weapon_cubemap" )
+	SetupDevCommand( "Toggle Shadow Form", "ShadowForm" )
+	SetupDevCommand( "Teleport to Skybox Camera", "script thread ToggleSkyboxView()" )
+	SetupDevCommand( "Spawn Deathbox With Random Loots", "script DEV_SpawnDeathBoxWithRandomLoot(gp()[0])" )
+	SetupDevMenu( "Loot Marvin Debug (Olympus Only)", SetDevMenu_LootMarvin )
+	SetupDevMenu( "Vault System Debug", SetDevMenu_VaultDebug )
+	SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
+	//SetupDevMenu( "Incap Shield Debugging", SetDevMenu_SurvivalIncapShieldBots )
+}
+
+void function SetDevMenu_LootMarvin( var _ )
+{
+	thread ChangeToThisMenu( SetDevMenu_LootMarvinPanel )
+}
+
+void function SetDevMenu_LootMarvinPanel()
+{
+	SetupDevCommand( "Debug Draw Marvin Locations", "script SeeMarvinSpawnLocations()" )
+	SetupDevCommand( "Teleport to Random Marvin", "script TeleportToRandomMarvinLocations()" )
+	SetupDevCommand( "Ping Nearest Marvin", "script AttemptPingNearestValidMarvinForPlayer(gp()[0])" )
+	SetupDevCommand( "Create Loot Marvin At Crosshair", "script CreateMarvin_Loot()" )
+	SetupDevCommand( "Create Loot Marvin With Detachable Arm At Crosshair", "script CreateMarvin_Loot( true )" )
+	SetupDevCommand( "Create Story Marvin At Crosshair", "script CreateMarvin_Story()" )
+}
+
+void function SetDevMenu_VaultDebug( var _ )
+{
+	thread ChangeToThisMenu( SetDevMenu_VaultDebugPanel )
+}
+
+void function SetDevMenu_VaultDebugPanel()
+{
+	SetupDevCommand( "Debug Draw Vault Loot", "script DEV_ShowVaults()" )
+	SetupDevCommand( "Debug Draw Vault Keys", "script DEV_ShowVaultKeys()" )
+	SetupDevCommand( "Teleport to Available Vault Key", "script DEV_TPToVaultKeys()" )
+	SetupDevCommand( "Equip Every Vault Key", "script DEV_GiveVaultKeys(gp()[0])" )
+	SetupDevCommand( "Debug Draw Vault Panel Infos", "script DEV_ShowVaultPanelInfos()" )
+}
+
+void function SetDevMenu_LevelCommands( var _ )
+{
+	ChangeToThisMenu( SetupLevelDevCommands )
+}
+
+void function SetupLevelDevCommands()
+{
+	string activeLevel = GetActiveLevel()
+	if ( activeLevel == "" )
+		return
+
+	switch ( activeLevel )
+	{
+		case "model_viewer":
+			SetupDevCommand( "Toggle Rebreather Masks", "script ToggleRebreatherMasks()" )
+			break
+	}
 }
