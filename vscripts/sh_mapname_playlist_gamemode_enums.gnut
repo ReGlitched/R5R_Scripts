@@ -1,6 +1,3 @@
-//Todo: Make custom playlists synced
-
-//script init:
 global function PlayLists_Mapnames_Gamemodes_Init
 
 global function MapName
@@ -45,12 +42,6 @@ global function Flowstate_PlayerDoesRespawn
 global function Flowstate_MapHasTrain
 global function Flowstate_ModeDisablesRagdolls
 
-////////////////////////////////////////////////////////////////////////////////////mkos//
-//																						//
-// 								MAPNAME / PLAYLIST INIT									//
-//																						//
-//////////////////////////////////////////////////////////////////////////////////////////
-
 global enum eMaps
 {
 	mp_rr_box, //0
@@ -83,70 +74,26 @@ global enum eMaps
 	mp_rr_arena_empty, //25
 	mp_rr_salham, //26
 	mp_lobby, //27
-	mp_rr_olympus_mu1,
-	mp_rr_eden,
+	mp_rr_olympus_mu1, //28
 	
-	
-	_MAP_COUNT //LAST
+	_MAP_COUNT
 }
 
 global enum ePlaylists
 {
-	fs_1v1, //0
-	fs_dm, //1
-	fs_tdm, //2
-	fs_prophunt, //3
-	fs_duckhunt, //4
-	survival_solos, //5
-	survival_duos, //6
-	survival_trios, //7
-	fs_surf, //8
-	fs_movementgym, //9
-	fs_infected, //10
-	survival, //11
-	survival_dev, //12
-	fs_lgduels_1v1, //14
-	fs_scenarios, //15
-	fs_haloMod_oddball, //16
-	fs_dm_fast_instagib, //17
-	fs_snd, //18
-	SURVIVAL, //19
-	fs_dm_oddball, //20
-	fs_fallingforever, //21
-	survival_firingrange, //22
-	fs_haloMod_ctf, //23
-	fs_haloMod, //24
-	fs_aimtrainer, //25
-	menufall, //26
-	flowstate_pkknockback, //27
-	fs_movementrecorder, //28
-	dev_default, //29
-	fs_ltm_mortalevoshields, //30
-	fs_ltm_armedanddangerous, //31
-	fs_doormovementpractice, //32
-	fs_grapplemovementpractice, //33
-	fs_mantlejumppractice, //34
-	fs_firstmovementmappractice, //35
-	fs_gymmovementmappractice, //36
-	survival_training, //37
-	fs_apexkart, //38
-	winterexpress, //39
-	fs_vamp_1v1, //40
-	fs_1v1_headshots_only, //41
-	fs_rankupmapmovementpractice, //42
-	fs_ithurtsmovementmappractice, //43
-	fs_9k, //44
-	fs_4d, //45
-	fs_realistic_ttv, //45
-	fs_1v1_coaching, //46
-	fs_haloMod_survival, //47
-	fs_strafeitmovementmappractice, //48
-	fs_spieslegends, //49,
-	fs_knockbackknockout, //50
-	fs_onlyup, //51
-	fs_nextbots, //52
+	survival_solos, //0
+	survival_duos, //1
+	survival_trios, //2
+	survival, //3
+	survival_dev, //4
+	SURVIVAL, //5
+	survival_firingrange, //6
+	menufall, //7
+	dev_default, //8
+	survival_training, //9
+	winterexpress, //10
 	
-	_PLAYLISTS_COUNT //LAST
+	_PLAYLISTS_COUNT
 }
 
 global enum eGamemodes
@@ -155,9 +102,9 @@ global enum eGamemodes
 	TEAM_DEATHMATCH, //1
 	SURVIVAL, //2
 	FREELANCE, //3
-	WINTEREXPRESS, //14	
+	WINTEREXPRESS, //4	
 	
-	_GAMEMODES_COUNT //LAST
+	_GAMEMODES_COUNT
 }
 
 struct

@@ -3792,9 +3792,7 @@ playlists
 				dodge_dash_enabled								0
 
 				custom_loot               						0
-				enable_motd										0
-				flowstate_mod_active							0
-				
+				enable_motd										0	
 			}
 			gamemodes { survival { maps {
 				mp_rr_desertlands_64k_x_64k						1
