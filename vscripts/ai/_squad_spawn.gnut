@@ -1,0 +1,140 @@
+
+
+
+global function GetNPCBaseClassFromSpawnFunc
+global function CreateZipLineSquadDropTable
+
+string function GetNPCBaseClassFromSpawnFunc( entity functionref( int, vector, vector ) spawnFunc )
+{
+	entity npc = spawnFunc( TEAM_IMC, Vector(0,0,0), Vector(0,0,0) )
+	string baseClass = npc.GetClassName()
+	npc.Destroy()
+	return baseClass
+}
+
+void function DropOffAISide_NPCThink( entity npc, int index, entity dropship, string attach )
+{
+	npc.EndSignal( "OnDeath" )
+
+	npc.SetParent( dropship, attach )
+	npc.SetEfficientMode( true )
+
+	array<string> deployAnims = DropOffAISide_GetDeployAnims()
+	array<float> seekTimes = DropOffAISide_GetSeekTimes()
+
+	thread PlayAnimTeleport( npc, deployAnims[ index ], dropship, attach )
+	npc.Anim_SetInitialTime( seekTimes[ index ] )
+	WaittillAnimDone( npc )
+
+	npc.SetEfficientMode( false )
+
+	array<string> disperseAnims = DropOffAISide_GetDisperseAnims()
+	vector origin = HackGetDeltaToRef( npc.GetOrigin(), npc.GetAngles(), npc, disperseAnims[ index ] ) + Vector( 0,0,2 )
+	waitthread PlayAnimGravity( npc, disperseAnims[ index ], origin, npc.GetAngles() )
+}
+
+void function DropOffAISide_WarpOutShip( entity dropship, vector origin, vector angles )
+{
+	wait 1.5
+	dropship.EndSignal( "OnDeath" )
+
+	string anim = "cd_dropship_rescue_side_end"
+	thread PlayAnim( dropship, anim, origin, angles )
+
+	wait dropship.GetSequenceDuration( anim ) - 0.2
+
+	dropship.Hide()
+	thread WarpoutEffect( dropship )
+}
+
+float function GetInstantSpawnRadius( entity npc )
+{
+	float radius 	= 64
+
+	if ( npc )
+	{
+		switch ( npc.GetClassName() )
+		{
+			case "npc_gunship":
+			case "npc_dropship":
+				radius = 512
+				break
+
+			case "npc_titan":
+				radius = 256
+				break
+
+			case "npc_super_spectre":
+			case "npc_prowler":
+				radius = 128
+				break
+
+			default:
+				radius = 64
+				break
+		}
+	}
+
+	return radius
+}
+
+array<string> function DropOffAISide_GetIdleAnims()
+{
+	array<string> anims = [
+	"pt_ds_side_intro_gen_idle_A",
+	"pt_ds_side_intro_gen_idle_B",
+	"pt_ds_side_intro_gen_idle_C",
+	"pt_ds_side_intro_gen_idle_D" ]
+
+	return anims
+}
+
+array<string> function DropOffAISide_GetDeployAnims()
+{
+	array<string> anims = [
+	"pt_generic_side_jumpLand_A",
+	"pt_generic_side_jumpLand_B",
+	"pt_generic_side_jumpLand_C",
+	"pt_generic_side_jumpLand_D" ]
+
+	return anims
+}
+
+array<string> function DropOffAISide_GetDisperseAnims()
+{
+	array<string> anims = [
+	"React_signal_thatway",
+	"React_spot_radio2",	
+	"stand_2_run_45R",	
+	"stand_2_run_45L" ]	
+
+	return anims
+}
+
+array<float> function DropOffAISide_GetSeekTimes()
+{
+	array<float> anims = [
+	9.75,
+	10.0,
+	10.5,
+	11.25 ]
+
+	return anims
+}
+
+CallinData function CreateZipLineSquadDropTable( int team, int count, vector origin, vector angles, string squadName = "" )
+{
+	if ( squadName == "" )
+		squadName = MakeSquadName( team, UniqueString( "ZiplineTable" ) )
+
+	CallinData drop
+	drop.origin 		= origin
+	drop.yaw 			= angles.y
+	drop.dist 			= 768
+	drop.team 			= team
+	drop.squadname 		= squadName
+	SetDropTableSpawnFuncs( drop, CreateSoldier, count )
+	SetCallinStyle( drop, eDropStyle.ZIPLINE_NPC )
+
+	return drop
+}

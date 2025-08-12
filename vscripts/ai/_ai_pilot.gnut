@@ -1,0 +1,6 @@
+global function AiPilot_Init
+
+void function AiPilot_Init()
+{
+	
+}

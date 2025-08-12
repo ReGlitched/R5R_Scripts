@@ -1,0 +1,6 @@
+global function Goliath_Init
+
+void function Goliath_Init()
+{
+
+}
