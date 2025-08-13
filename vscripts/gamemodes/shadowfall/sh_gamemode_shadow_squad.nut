@@ -50,7 +50,7 @@ global enum eShadowSquadMessage
 	YOU_LOSE_ALL_LEGENDS_KILLED,
 	YOU_LOSE_NO_ONE_EVACED,
 	END_TIMER_EXPIRED,
-	//custom
+
 	LEGENDS_WIN_INFECTION,
 	LEGENDS_WIN_INFECTION2,
 	INFECTION_HAS_STARTED,
@@ -362,30 +362,9 @@ void function ServerCallback_MoreNOCAudio( int index )
 		dialogueChoices.append( "diag_ap_nocNotify_shadowSquadWin_03_3p" )
 		thread EmitSoundOnEntity( clientPlayer, dialogueChoices.getrandom())
 		break	
-	
-	// 4390,diag_ap_nocNotify_revengeKill_01_01_3p
-// 4391,diag_ap_nocNotify_revengeKill_01_02_3p
-// 4392,diag_ap_nocNotify_revengeKill_01_03_3p
-// 4393,diag_ap_nocNotify_revengeKill_01_04_3p
-// 4394,diag_ap_nocNotify_revengeKill_01_05_3p
-// 4395,diag_ap_nocNotify_shadowSquadGrow_01_01_3p
-// 4396,diag_ap_nocNotify_shadowSquadGrow_01_02_3p
-// 4397,diag_ap_nocNotify_shadowSquadGrow_01_03_3p
-// 4398,diag_ap_nocNotify_shadowSquadGrow_02_01_3p
-// 4399,diag_ap_nocNotify_shadowSquadGrow_02_02_3p
-// 4400,diag_ap_nocNotify_shadowSquadGrow_03_01_3p
-// 4401,diag_ap_nocNotify_shadowSquadGrow_03_02_3p
-// 4402,diag_ap_nocNotify_shadowSquadGrow_03_03_3p
-// 4403,diag_ap_nocNotify_shadowSquadSpawns_01_01_3p
-// 4404,diag_ap_nocNotify_shadowSquadSpawns_01_02_3p
-// 4405,diag_ap_nocNotify_shadowSquadSpawns_02_01_3p
-// 4406,diag_ap_nocNotify_shadowSquadSpawns_02_02_3p
-// 4407,diag_ap_nocNotify_shadowSquadSpawns_03_01_3p
-// 4408,diag_ap_nocNotify_shadowSquadSpawns_03_02_3p
-// 4409,diag_ap_nocNotify_shadowSquadSpawns_03_03_3p
 	}
 }
-#endif //
+#endif
 
 void function EmitSoundOnEntityDelayed( entity player, string alias, float delay )
 {
@@ -429,14 +408,14 @@ void function SkydiveRespawnCleanup( entity player )
 void function ShadowSquadThreatVision( entity player )
 {
 }
-#endif //
+#endif
 
 #if CLIENT
 void function ServerCallback_ShadowClientEffectsEnable( entity player, bool enableFx )
 {
 	thread ShadowClientEffectsEnable( player, enableFx )
 }
-#endif //
+#endif
 
 void function GivePlayerShadowSkin(entity player)
 {
@@ -519,23 +498,21 @@ void function StartShadowFx( entity player )
 			eyeFX = StartParticleEffectOnEntity_ReturnEntity( player, PrecacheParticleSystem( $"P_BShadow_eye" ), FX_PATTACH_POINT_FOLLOW, player.LookupAttachment( attachName ) )
 			player.p.shadowAttachedEntities.append(eyeFX)
 			eyeFX.SetOwner( player )
-			eyeFX.kv.VisibilityFlags = (ENTITY_VISIBLE_TO_FRIENDLY | ENTITY_VISIBLE_TO_ENEMY) // Don't show the effects to owner
+			eyeFX.kv.VisibilityFlags = (ENTITY_VISIBLE_TO_FRIENDLY | ENTITY_VISIBLE_TO_ENEMY)
 		}
 	}
 
 	bodyFX = StartParticleEffectOnEntity_ReturnEntity( player, PrecacheParticleSystem( $"P_Bshadow_body" ), FX_PATTACH_POINT_FOLLOW, player.LookupAttachment( "CHESTFOCUS" ) )
 	player.p.shadowAttachedEntities.append(bodyFX)
 	bodyFX.SetOwner( player )
-	bodyFX.kv.VisibilityFlags = (ENTITY_VISIBLE_TO_FRIENDLY | ENTITY_VISIBLE_TO_ENEMY) // Don't show the effects to owner
-	
-	//Find a way to disable ragdolls and death anims on shadows
+	bodyFX.kv.VisibilityFlags = (ENTITY_VISIBLE_TO_FRIENDLY | ENTITY_VISIBLE_TO_ENEMY)
 }
 
 void function ShadowKilled( entity victim )
 {
 	StartParticleEffectOnEntity_ReturnEntity( victim, PrecacheParticleSystem( $"P_Bshadow_death" ), FX_PATTACH_POINT_FOLLOW, victim.LookupAttachment( "CHESTFOCUS" ) )
 }
-#endif //
+#endif
 
 #if CLIENT
 void function ShadowClientEffectsEnable( entity player, bool enableFx, bool isVictorySequence = false)
@@ -566,14 +543,12 @@ void function ShadowClientEffectsEnable( entity player, bool enableFx, bool isVi
 			vector controlPoint = <1,1,1>
 			EffectSetControlPointVector( fxHandle, 1, controlPoint )
 
-			//
 			if ( !( playerTeam in file.playerClientFxHandles) )
 				file.playerClientFxHandles[ playerTeam ] <- []
 			file.playerClientFxHandles[playerTeam].append( fxHandle )
 		}
 		else
 		{
-			//
 			entity clientAG = CreateClientSideAmbientGeneric( player.GetOrigin() + <0,0,16>, "ShadowLegend_Shadow_Loop_3P", 0 )
 			SetTeam( clientAG, player.GetTeam() )
 			clientAG.SetSegmentEndpoints( player.GetOrigin() + <0,0,16>, playerOrigin + <0, 0, 72> )
@@ -659,7 +634,7 @@ void function ServerCallback_ModeShadowSquad_RestorePlayerHealthFx( bool useShie
 	EffectSetControlPointVector( fxHandle, 1, fxColor )
 	thread DelayedDestroyFx( fxHandle, 1.0 )
 }
-#endif //
+#endif
 
 #if CLIENT
 void function DelayedDestroyFx( int fxHandle, float delay )
@@ -669,7 +644,7 @@ void function DelayedDestroyFx( int fxHandle, float delay )
 	if ( EffectDoesExist( fxHandle ) )
 		EffectStop( fxHandle, true, false )
 }
-#endif //
+#endif
 
 bool function IsPlayerShadowSquad( entity player )
 {
@@ -720,7 +695,7 @@ void function OnVictoryCharacterModelSpawned( entity characterModel, ItemFlavor 
 	int FX_EYE_L = StartParticleEffectOnEntity( characterModel, GetParticleSystemIndex( FX_SHADOW_FORM_EYEGLOW ), FX_PATTACH_POINT_FOLLOW, characterModel.LookupAttachment( "EYE_L" ) )
 	int FX_EYE_R = StartParticleEffectOnEntity( characterModel, GetParticleSystemIndex( FX_SHADOW_FORM_EYEGLOW ), FX_PATTACH_POINT_FOLLOW, characterModel.LookupAttachment( "EYE_R" ) )
 }
-#endif //
+#endif
 
 
 #if CLIENT
@@ -745,22 +720,16 @@ void function OnPlayerLifeStateChanged( entity player, int oldState, int newStat
 	if ( newState != LIFE_ALIVE )
 		return
 
-	//
-	//
-	//
 	UpdatePlayerHUD( player )
 
 	if ( IsPlayerShadowSquad( player ) )
 	{
-		//
-		//
-		//
 		SetCustomPlayerInfoCharacterIcon( player, $"rui/gamemodes/shadow_squad/generic_shadow_character_sdk" )
 		SetCustomPlayerInfoTreatment( player, $"rui/gamemodes/shadow_squad/player_info_custom_treatment_sdk" )
 		SetCustomPlayerInfoColor( player, <245, 81, 35 > )
 	}
 }
-#endif //
+#endif
 
 #if CLIENT
 void function UpdatePlayerHUD( entity player )
@@ -828,7 +797,6 @@ void function UpdatePlayerHUD( entity player )
 	RuiSetGameTime( file.countdownRui, "endTime", countdownTimerEnd )
 	RuiSetColorAlpha( file.countdownRui, "timerColor", SrgbToLinear( <255,233,0> / 255.0 ), 1.0 )
 }
-
 #endif
 
 bool function IsShadowVictory()
@@ -1056,7 +1024,6 @@ void function ServerCallback_ModeShadowSquad_AnnouncementSplash( int messageInde
 }
 #endif
 
-
 #if CLIENT
 void function AnnouncementMessageSweepShadowSquad( entity player, string messageText, string subText, vector titleColor, string soundAlias, float duration, asset icon = $"", asset leftIcon = $"", asset rightIcon = $"" )
 {
@@ -1074,4 +1041,4 @@ void function AnnouncementMessageSweepShadowSquad( entity player, string message
 	Announcement_SetRightIcon( announcement, rightIcon )
 	AnnouncementFromClass( player, announcement )
 }
-#endif //
+#endif

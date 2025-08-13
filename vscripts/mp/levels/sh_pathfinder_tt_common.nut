@@ -17,9 +17,6 @@ global function SCB_PathTT_PlayRingAnnouncerDialogue
 global function DEV_CheckIsPlayerInRing
 #endif
 
-////////////////////////////////////
-// TV SCREENS
-////////////////////////////////////
 enum ePathTTRingTVStates
 {
 	NO_PLAYERS = 0,
@@ -190,7 +187,6 @@ void function InitPathTTBoxingRingEntities()
 	array<entity> enterTrigArr = GetEntArrayByScriptName( "path_tt_ring_trig" )
 	if ( enterTrigArr.len() == 1 )
 	{
-		// There's a trigger_multiple_clientside with the same name
 		#if SERVER
 			if ( IsValid( enterTrigArr[ 0 ] ) )
 			{
@@ -266,13 +262,11 @@ void function InitPathTTBoxingRingEntities()
 		{
 			bool isCenterTarget = target.HasKey( "isCenterRingEmitTarget" ) && ( target.GetValueForKey( "isCenterRingEmitTarget" ) == "1" )
 
-			// Passives - these are always on
 			if ( isCenterTarget )
 			{
 				file.centerRingSoundOrigin = target.GetOrigin()
 				entity ambGenericPassive = PathTT_CreateAmbientGeneric( target.GetOrigin(), "survival_crowd_active_atmo_lp_01", true )
 			}
-			// Active - only on when someone's in the ring
 			else
 			{
 				array<entity> ambGenericActives = [ PathTT_CreateAmbientGeneric( target.GetOrigin(), "survival_crowd_active_atmo_lp_02", false ),
@@ -282,7 +276,6 @@ void function InitPathTTBoxingRingEntities()
 				file.boxingRingCrowdAmbients_active.extend( ambGenericActives )
 			}
 
-			// Emitters for crowd cheers
 			file.boxingRingCrowd_cheerTargets.append( target )
 		}
 
@@ -389,9 +382,6 @@ const array<string> RING_ANNOUNCER_LINES_EXT  = [
 	"bc_OlyPathTTRing_chain_kill_ext"
 ]
 
-// NOTE!!
-// Order must match RING_ANNOUNCER_LINES
-// Order also defines priority. Higher ## = higher pri
 enum eRingAnnouncerLines
 {
 	recalibrating,
@@ -405,8 +395,8 @@ enum eRingAnnouncerLines
 
 	_count
 }
-#if CLIENT
 
+#if CLIENT
 void function SCB_PathTT_SetMessageIdxToCustomSpeakerIdx( int customQueueIdx )
 {
 	file.customQueueIdx = customQueueIdx
@@ -430,7 +420,6 @@ void function SCB_PathTT_PlayRingAnnouncerDialogue( int lineId )
 	thread PlayClientDialogue_Internal( GetAnyAliasIdForName( lineToPlay ), dialogueFlags, GetEntArrayByScriptName( "path_tt_announcer_speaker" ), <0,0,0>, file.customQueueIdx )
 }
 #endif
-
 
 #if CLIENT
 void function ClInitPathTTRingTVEntities()
@@ -553,7 +542,7 @@ void function PathTT_SetRingTVState( int newState )
 	file.ringTVState = newState
 	FlagSet( FLAG_UPDATE_RING_TVS )
 }
-#endif // SERVER
+#endif
 
 #if SERVER
 void function PathTT_SpawnLootRollers()
@@ -577,7 +566,6 @@ void function PathTT_OnEnterPathTTRingTrigger( entity trigger, entity ent )
 		return
 	}
 
-	// Getting revived gets registered as a leave callback.
 	if ( Bleedout_IsPlayerGettingFirstAid( ent ) || Bleedout_IsPlayerSelfReviving( ent ) )
 	{
 		return
@@ -617,8 +605,6 @@ void function PathTT_OnEnterPathTTRingTrigger( entity trigger, entity ent )
 		file.lastBellDingTime = Time()
 	}
 
-	// Determine whether the entering player is on a team that *isn't* in the ring.
-	// Heads up: This is done BEFORE the player data is added. PathTT_GetNumTeamsInBoxingRing will NOT count the new entering player.
 	array<int> teamsInRing = PathTT_GetNumTeamsInBoxingRing()
 	int newPlayerTeam      = ent.GetTeam()
 	int prevNumTeamsInRing = teamsInRing.len()
@@ -641,7 +627,7 @@ void function PathTT_OnEnterPathTTRingTrigger( entity trigger, entity ent )
 	file.allRingPlayerData.append( newPlayerData )
 
 	PathTT_SetRingTVState( PathTT_GetRingTVStateFromPlayersInRing() )
-	// TODO: Handle self-res
+	//TODO: Handle self-res
 	PathTT_PlayerPassThroughRingShieldCeremony( ent )
 }
 
@@ -683,7 +669,6 @@ void function DEV_TestRapidRingEntryAndDeath()
 		numInitSwappedBots++
 	}
 
-	// Swap bots in and out, kill bots
 	while( numBotsRemaining > 0 )
 	{
 		float elapsedMFDTime = Time() - lastMarkedForDeathTime
@@ -692,7 +677,6 @@ void function DEV_TestRapidRingEntryAndDeath()
 
 		if ( elapsedSwapTime > SWAP_IN_OUT_INTERVAL )
 		{
-			// Don't move a bot out if there's just one left
 			if ( numBotsRemaining > 1 && numBotsInRing > 0 )
 			{
 				entity outBot = botsInRing.getrandom()
@@ -739,7 +723,6 @@ void function DEV_FinishOffBotToKill( entity botToKill )
 
 #if CLIENT
 // TODO: HANDLE RESPAWNING
-// Plays the exit trigger sound at the correct time. Sounds really off if it just comes from the server
 void function Cl_PathTT_MonitorIsPlayerInBoxingRing( entity trigger )
 {
 	entity player = GetLocalViewPlayer()
@@ -791,7 +774,6 @@ void function PathTT_OnExitPathTTRingTrigger( entity trigger, entity ent )
 		return
 	}
 
-	// Getting revived gets registered as a leave callback.
 	if ( Bleedout_IsPlayerGettingFirstAid( ent ) || Bleedout_IsPlayerSelfReviving( ent ) )
 	{
 		return
@@ -805,12 +787,10 @@ void function PathTT_OnExitPathTTRingTrigger( entity trigger, entity ent )
 
 	if ( IsValid( ent ) && ent.IsPlayer() )
 	{
-		// Even if player is dead, undo status effects, and re-enable weapon types
 		StatusEffect_Stop( ent, playerData.immunityStatusEffectHandle )
 		StatusEffect_Stop( ent, playerData.boxingStatusEffectHandle )
 		if ( IsAlive( ent ) )
 		{
-			// Only return weapons to player if they're alive. If they're dead, the respawn sequence will handle weapons.
 			thread ReturnOriginalMeleeWeaponsToPlayer( playerData )
 			if ( prevNumTeamsInRing > file.numTeamsInRing && prevNumTeamsInRing > 1 )
 			{
@@ -827,7 +807,6 @@ void function PathTT_OnExitPathTTRingTrigger( entity trigger, entity ent )
 
 	file.numPlayersInRing--
 
-	// Don't play if player DCs or dies inside trigger
 	if ( !trigger.ContainsPoint( ent.GetOrigin() ) )
 		PathTT_PlayerPassThroughRingShieldCeremony( ent )
 
@@ -877,7 +856,6 @@ array<int> function PathTT_GetNumTeamsInBoxingRing()
 	array<int> teams
 	foreach( BoxingRingPlayerData playerData in file.allRingPlayerData )
 	{
-		// Defensive fix. This should get cleaned up next time this is called. Bug is R5DEV-207385
 		if ( !IsValid( playerData.player ) )
 			continue
 
@@ -891,7 +869,6 @@ array<int> function PathTT_GetNumTeamsInBoxingRing()
 	return teams
 }
 #endif
-
 
 void function PathTT_PlayerPassThroughRingShieldCeremony( entity player )
 {
@@ -968,7 +945,6 @@ string function PathTT_GetCrowdCheerToPlay()
 {
 	array<int> teamsInRing = PathTT_GetNumTeamsInBoxingRing()
 
-	// Short cheer if other teams are there, long cheer if that was the last one
 	if ( teamsInRing.len() > 1 )
 		return "survival_crowd_cheering_01"
 	else
@@ -991,7 +967,6 @@ void function GivePathTTMeleeWeaponsToPlayer( BoxingRingPlayerData playerData )
 	entity player = playerData.player
 	player.Signal( "GivePathTTMeleeWeaponsToPlayer" )
 
-	// Don't take path melee gloves
 	entity meleeWeapon = player.GetNormalWeapon( WEAPON_INVENTORY_SLOT_PRIMARY_2 )
 	string meleeSkinName
 
@@ -1023,10 +998,6 @@ void function GivePathTTMeleeWeaponsToPlayer( BoxingRingPlayerData playerData )
 	player.GiveWeapon( "mp_weapon_melee_boxing_ring", WEAPON_INVENTORY_SLOT_PRIMARY_2 )
 	player.GiveOffhandWeapon( "melee_boxing_ring", OFFHAND_MELEE )
 
-	// Fix for R5DEV-220501. Somehow this was working without manually setting weapon active.
-	//player.SetActiveWeaponBySlot( eActiveInventorySlot.mainHand, WEAPON_INVENTORY_SLOT_PRIMARY_2 )
-	// R5DEV-572581.  Putting call to make weapon active in thread.
-	// This will allow time for active slot to become re-enabled if player grapples into ring.
 	thread SetMeleeWeaponToActiveSlot_Thread( player )
 	playerData.meleeWeapons = [ meleeSkinName, offhandWepName ]
 }
@@ -1138,7 +1109,6 @@ void function ReturnOriginalMeleeWeaponsToPlayer( BoxingRingPlayerData playerDat
 // TODO: Playing incorrect kill line when downed
 void function PathTT_OnPlayerKilled( entity victim, entity attacker, var damageInfo )
 {
-	// Only react + play applause if they're the last in their squad
 	if ( Bleedout_AnyOtherSquadmatesAliveAndNotBleedingOut( victim ) )
 		return
 
@@ -1210,7 +1180,6 @@ void function PathTT_PlayerBleedoutStateChanged( entity player, int newState )
 	if ( newState != BS_BLEEDING_OUT )
 		return
 
-	// Handle edge case for returning weapons to players who were downed, then left ring
 	BoxingRingPlayerData ornull playerDataOrNull = PathTT_GetBoxingRingPlayerData( player )
 	if ( playerDataOrNull == null )
 		return
@@ -1221,7 +1190,6 @@ void function PathTT_PlayerBleedoutStateChanged( entity player, int newState )
 		thread PlayBoxingRingKnockdownCommentary( attacker )
 	}
 
-	// Audio / jumbo tron reacts when someone goes down in the ring
 	if ( PathTT_CanPlayCrowdStinger() )
 		PathTT_PlayRingAudio( PathTT_GetCrowdCheerToPlay() )
 
@@ -1241,7 +1209,6 @@ void function PlayBoxingRingKnockdownCommentary( entity killer )
 	if ( !ShouldPlayBoxingRingKnockdownCommentary( killer ) )
 		return
 
-	// Cutting this line on request from writing
 	//PlayBattleChatterLineToSpeakerAndTeam( killer, "bc_eventBoxingKill" )
 }
 #endif
@@ -1260,17 +1227,15 @@ bool function ShouldPlayBoxingRingKnockdownCommentary( entity killer )
 
 	return true
 }
-#endif //#if SERVER
+#endif
 
 #if SERVER
-// Announcer callouts for killstreak or flawless kill
 const float DAMAGE_DONE_FOR_FLAWLESS_KILL = 70.0
 void function PathTT_OnPlayerBleedoutStarted( entity player, entity attacker, var damageInfo )
 {
 	PathTT_Announcer_ProcessKnockedOrKilledPlayer( player, attacker, damageInfo )
 }
 #endif
-
 
 #if SERVER
 void function PathTT_Announcer_ProcessKnockedOrKilledPlayer( entity victim, entity attacker, var damageInfo )
@@ -1393,7 +1358,6 @@ void function Boxing_WeaponStatusCheck( entity player, var rui, int slot )
 }
 #endif
 
-//CHECK IF THE TT EXISTS IN THE MAP
 bool function IsPathTTEnabled()
 {
 	if ( MapName() == eMaps.mp_rr_olympus_tt || MapName() == eMaps.mp_rr_olympus_mu1 )

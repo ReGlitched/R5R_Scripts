@@ -5,7 +5,6 @@ global function GetLeviathans
 global function GetZone6Leviathan
 global function GetZone9Leviathan
 
-// Called by MU1 and MU2
 global function InitWraithAudioLog
 global function InitOctaneTownTakeover
 global function PlaceOctaneTownTakeoverLoot
@@ -21,23 +20,23 @@ global function DEV_LeviathanAllowRoar
 
 global function TeleportPlayerZeroIntoLeviathanFoot
 global function RecreateLeviathanDeathTriggers
-#endif // DEVELOPER
-#endif // SERVER
+#endif
+#endif
 
 #if SERVER
 const asset FX_LEVIATHAN_CLOUD = $"P_cloud_leviathan_01"
-const LEVIATHAN_MAX_HEALTH = 1000 //Could be any positive number really, we never set health to 0, and we don't decrement it based on what hit the leviathan
+const LEVIATHAN_MAX_HEALTH = 1000
 
-const float MAX_LANDING_Z = 8900.0 // height below which players can no longer interact with upper leviathan bone followers
+const float MAX_LANDING_Z = 8900.0
 
 const float LEVIATHAN_LARGEST_LOOK_AT_PITCH_ADJUSTMENT = 35.0
 const float LEVIATHAN_SMALLEST_LOOK_AT_PITCH_ADJUSTMENT = -30.0
 const float LEVIATHAN_LARGEST_LOOK_AT_YAW_ADJUSTMENT = 80.0
 const float LEVIATHAN_SMALLEST_LOOK_AT_YAW_ADJUSTMENT = -80.0
 
-const float LEVIATHAN_UPPER_AREA_Z = 6000.0 // about where the tip of the tail is when idle
+const float LEVIATHAN_UPPER_AREA_Z = 6000.0
 
-const float LEVIATHAN_DAMAGE_DECAY_RATE = 10; // damage per second to stop caring about
+const float LEVIATHAN_DAMAGE_DECAY_RATE = 10;
 
 const float LEVIATHAN_LOOK_DAMAGE_THRESHOLD = 300
 const float LEVIATHAN_SHAKE_DAMAGE_THRESHOLD = 200
@@ -49,20 +48,16 @@ const float LEVIATHAN_SUPER_ANGRY_DAMAGE_INCREASE_MIN = 200
 const float LEVIATHAN_SUPER_ANGRY_DAMAGE_INCREASE_MAX = 400
 
 const float LEVIATHAN_STOMP_DAMAGE_AMOUNT_MIN = 50
-const float LEVIATHAN_STOMP_DAMAGE_AMOUNT_MAX = 1200 // very high so it's rare
-const float LEVIATHAN_STOMP_DAMAGE_INCREASE_MIN = 500 // very high so it's really hard to make it happen more than once
+const float LEVIATHAN_STOMP_DAMAGE_AMOUNT_MAX = 1200
+const float LEVIATHAN_STOMP_DAMAGE_INCREASE_MIN = 500
 const float LEVIATHAN_STOMP_DAMAGE_INCREASE_MAX = 2000
 
 const int LEVIATHAN_ULT_ADJUSTMENT_RADIUS = 9000
 
-// Wraith audiolog
 const float WRAITH_TT_AUDIO_LOG_DEBOUNCE = 5.0
 const float WRAITH_TT_AUDIO_LOG_LENGTH = 36
 
-// Relay rock fix
 const asset RELAY_ROCK_FIX_MODEL = $"mdl/rocks/rock_white_chalk_modular_wallrun_02.rmdl"
-
-// Octane fire ring
 const asset FX_OCTANE_TT_GUN_BG = $"chamber_dark_background"
 
 enum LeviathanState
@@ -82,7 +77,7 @@ struct LeviathanDamageInfo
 	vector frompos
 	entity attacker
 	float lastTime
-	float damage // accumulates
+	float damage
 }
 
 struct LeviathanDataStruct
@@ -110,6 +105,7 @@ struct LeviathanDataStruct
 	float nextShakeTime
 	float nextLookTime
 }
+
 struct LeviathanStompDataStruct
 {
 	float cylinderAboveHeight
@@ -120,7 +116,7 @@ struct LeviathanStompDataStruct
 }
 
 struct{
-	array<entity>                      leviathans //Fine for now, want to be able to differentiate between the 2 eventually.
+	array<entity>                      leviathans 
 	entity                             leviathan_zone_6
 	entity                             leviathan_zone_9
 	table<entity, LeviathanDataStruct> leviathanToDataStructTable
@@ -134,7 +130,6 @@ struct{
 	bool randomLeviathanRoarNextLook
 } file
 
-// Use for MU1/direct MU1 spinoffs (like night map)
 void function Canyonlands_MU1_CommonMapInit()
 {
 	Canyonlands_MapInit_Common()
@@ -154,7 +149,7 @@ void function Canyonlands_MU1_CommonMapInit()
 void function MU1_EntitiesDidLoad()
 {
 	PrecacheModel( $"mdl/props/tree_green_forest_01_kingscanyon/tree_green_forest_01_kingscanyon.rmdl" )
-	//Hack to prevent crash when leviathans don't exist (for MU1_NIGHT)
+	//HACK: to prevent crash when leviathans don't exist (for MU1_NIGHT)
 	array<entity> leviathan1 = GetEntArrayByScriptName("leviathan_zone_6")
 	array<entity> leviathan2 = GetEntArrayByScriptName("leviathan_zone_9")
 
@@ -167,7 +162,6 @@ void function MU1_EntitiesDidLoad()
 	thread InitWraithAudioLog()
 	thread PlaceOctaneTownTakeoverLoot()
 }
-
 
 void function InitOctaneTownTakeover()
 {
@@ -189,7 +183,6 @@ void function InitWraithAudioLog()
 	audioLogTarget.SetUsePrompts( "#WRAITH_LOG_USE", "#WRAITH_LOG_USE_PC" )
 	AddCallback_OnUseEntity( audioLogTarget, WraithTTAudioLog_OnUse )
 }
-
 
 void function WraithTTAudioLog_OnUse( entity log, entity player, int useInputFlags )
 {
@@ -231,14 +224,12 @@ void function PlaceOctaneTownTakeoverLoot()
 	spawnedItem.AddUsableValue( USABLE_USE_DISTANCE_OVERRIDE )
 	spawnedItem.SetUsableDistanceOverride( 300.0 )
 
-	//FACING DIRECTION
 	spawnedItem.SetAngles( < 0, 90, 0 > )
 
 	vector boundingSize = spawnedItem.GetBoundingMaxs() - spawnedItem.GetBoundingMins()
 	float originOffset  = boundingSize.z * 0.8
 	if ( boundingSize.x > boundingSize.z )
 	{
-		//FLAT VS STANDING DIRECTION
 		vector angles = spawnedItem.GetAngles()
 		spawnedItem.SetAngles( < angles.x + 90, angles.y, angles.z > )
 		originOffset = boundingSize.x * 0.5
@@ -251,7 +242,6 @@ void function PlaceOctaneTownTakeoverLoot()
 	StartParticleEffectOnEntityWithPos( spawnedItem, bgFxId, FX_PATTACH_ABSORIGIN_FOLLOW, -1, < -45, 0, 0 >, < 0, 0, 0 > )
 }
 
-
 void function CreateOctaneTTRingOfFireStatsTrigger()
 {
 #if false
@@ -259,7 +249,7 @@ void function CreateOctaneTTRingOfFireStatsTrigger()
 	if ( itemSpawn.len() != 1 )
 		return
 	entity target        = itemSpawn[0]
-	vector ringOfFirePos = target.GetOrigin() // (dw): Using this to locate where the ring of fire is
+	vector ringOfFirePos = target.GetOrigin()
 
 	entity trigger = CreateEntity( "trigger_cylinder" )
 	trigger.SetRadius( 100.0 )
@@ -270,17 +260,16 @@ void function CreateOctaneTTRingOfFireStatsTrigger()
 	trigger.kv.triggerFilterNonCharacter = "0"
 	DispatchSpawn( trigger )
 
-	// (dw): Using leave instead of enter to handle the player grabbing armor while flying through the ring.
 	trigger.SetLeaveCallback( void function( entity trigger, entity ent ) {
 		if ( !IsValid( ent ) || !ent.IsPlayer() )
 			return
 
 		if ( !IsAlive( ent ) )
-			return // (dw): To handle if the player is killed while in the ring of fire (quite easy to do if you stand on the flaming bottom part).
+			return 
 
 		StatsHook_PlayerUsedMapFeature( ent, "octanett_ringoffire" )
 	} )
-#endif // #if false
+#endif
 }
 
 void function LeviathansInit()
@@ -292,7 +281,6 @@ void function LeviathansInit()
 	RegisterSignal( "LeviathanLook"  )
 	RegisterSignal( "LeviathanTookDamage" )
 
-	// setting targetname so that we can use AddTargetNameCreateCallback(...) on the client
 	SetTargetName( file.leviathan_zone_6, "leviathan_zone_6" )
 	SetTargetName( file.leviathan_zone_9, "leviathan_zone_9" )
 
@@ -381,9 +369,6 @@ void function LeviathansInit()
 	zone9LeftFrontFootStompDataStructSupplemental5.cylinderBelowHeight = 0
 	zone9LeftFrontFootStompDataStructSupplemental5.offset = < -350, -110, 0>
 
-
-
-
 	if ( IsValid( file.leviathan_zone_6 ) )
 	{
 		file.leviathans.append( file.leviathan_zone_6 )
@@ -405,7 +390,6 @@ void function LeviathansInit()
 		file.zone6Leviathan_AttachmentToStompDataStructTable[ "FX_L_FOOT_A"  ] <- zone6LeftFrontFootStompDataStruct
 		file.zone6Leviathan_AttachmentToStompDataStructTable[ "FX_R_FOOT_A"  ] <- zone6RightFrontFootStompDataStruct
 
-		//Init death triggers in feet for zone 6 leviathan
 		entity frontleftFootTrigger = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootStompDataStruct )
 		entity frontleftFootSupplementalTrigger = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootSupplemental )
 		entity frontleftFootSupplementalTrigger2 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootSupplemental2 )
@@ -414,8 +398,6 @@ void function LeviathansInit()
 		entity frontleftFootSupplementalTrigger5 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootSupplemental5 )
 
 		entity frontrightFootTrigger = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_R_FOOT_A" , zone6RightFrontFootStompDataStruct )
-
-		//Setup safespots for deathboxes when players are crushed by leviathan's feet
 
 		Point zone6_FrontLeft_SafeDeathBoxSpot1
 		zone6_FrontLeft_SafeDeathBoxSpot1.origin = <6585.564941, -2842.639893, 2080.845947>
@@ -482,8 +464,6 @@ void function LeviathansInit()
 		entity frontleftFootTriggerSupplemental4 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_9, "FX_L_FOOT_A", zone9LeftFrontFootStompDataStructSupplemental4  )
 		entity frontleftFootTriggerSupplemental5 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_9, "FX_L_FOOT_A", zone9LeftFrontFootStompDataStructSupplemental5  )
 
-		//Setup safespots for deathboxes when players are crushed by leviathan's feet
-
 		Point zone9_FrontLeft_SafeDeathBoxSpot1
 		zone9_FrontLeft_SafeDeathBoxSpot1.origin = < 315.885712, 16635.968750, 2432.052979 >
 		zone9_FrontLeft_SafeDeathBoxSpot1.angles = < 11.835224, 149.467743, 0>
@@ -524,12 +504,11 @@ void function LeviathansInit()
 	if ( file.randomLeviathanRoarThisGame )
 	{
 		if ( RandomInt( 6 ) == 0 )
-			file.randomLeviathanRoarNextLook = true // just roar at the first thing it sees!
+			file.randomLeviathanRoarNextLook = true
 		else
 			thread Leviathan_RandomRoarThread()
 	}
 
-	// create NoSpawnArea around feet now that they are initialized
 	foreach( trig in file.leviathansDeathTriggers )
 	{
 		float radius = trig.GetRadius()
@@ -538,12 +517,11 @@ void function LeviathansInit()
 	}
 }
 
-
 void function InitIndividualLeviathan( entity leviathan )
 {
 	leviathan.SetMaxHealth( LEVIATHAN_MAX_HEALTH )
 	leviathan.SetHealth( LEVIATHAN_MAX_HEALTH )
-	SetLeviathanMover( leviathan, true ) //DisableSkydiveEndOnEntity( leviathan, true )
+	SetLeviathanMover( leviathan, true ) 
 
 	Assert( leviathan in file.leviathanToDataStructTable )
 	LeviathanDataStruct leviathanData = file.leviathanToDataStructTable[ leviathan ]
@@ -553,8 +531,8 @@ void function InitIndividualLeviathan( entity leviathan )
 	leviathan.SetCycle( RandomFloat( 1.0 ) )
 	AddAnimEvent( leviathan, "leviathan_foot_stomp_FL", AnimEvent_LeviathanFLFootStomp )
 	AddAnimEvent( leviathan, "leviathan_foot_stomp_FR", AnimEvent_LeviathanFRFootStomp )
-	//AddAnimEvent( leviathan, "leviathan_foot_stomp_BL", AnimEvent_LeviathanBLFootStomp ) //No Back leg stomp anims
-	//AddAnimEvent( leviathan, "leviathan_foot_stomp_BR", AnimEvent_LeviathanBRFootStomp ) //No Back leg stomp anims
+	//AddAnimEvent( leviathan, "leviathan_foot_stomp_BL", AnimEvent_LeviathanBLFootStomp )
+	//AddAnimEvent( leviathan, "leviathan_foot_stomp_BR", AnimEvent_LeviathanBRFootStomp )
 	AddAnimEvent( leviathan, "leviathan_foot_stomp_shake_FL", AnimEvent_LeviathanFLFootStompShake )
 	AddAnimEvent( leviathan, "leviathan_foot_stomp_shake_FR", AnimEvent_LeviathanFRFootStompShake )
 	leviathan.SetCanBeMeleed( false )
@@ -575,11 +553,9 @@ void function InitIndividualLeviathan( entity leviathan )
 	leviathan.SetDamageNotifications( true )
 	AddEntityCallback_OnDamaged( leviathan, Leviathan_OnTakeDamage )
 
-	// randomly choose whether we play the "shake" animation when taking damage. Every time we play the animation or look at someone damaging us, we will redecide this.
 	if ( RandomInt( 2 ) == 0 )
 		leviathanData.nextShakeTime = 1.e38
 
-	//Test making phys_bone_followers take damage.
 	array<entity> boneFollowers = leviathan.GetBoneFollowers()
 
 	foreach( boneFollower in boneFollowers )
@@ -591,7 +567,7 @@ void function InitIndividualLeviathan( entity leviathan )
 	thread Leviathan_StompThread( leviathan )
 
 	int radiusForUltAdjustment = GetCurrentPlaylistVarInt( "leviathan_ult_adjustment_radius",  LEVIATHAN_ULT_ADJUSTMENT_RADIUS  )
-	entity trig = CreateEntity( "trigger_cylinder" ) //To make Bangalore/Gibraltar's ult around the leviathans be created at a heigher height.
+	entity trig = CreateEntity( "trigger_cylinder" )
 	trig.SetRadius( radiusForUltAdjustment  )
 	trig.SetAboveHeight( 10000.0 )
 	trig.SetBelowHeight( 10000.0 )
@@ -604,7 +580,7 @@ void function InitIndividualLeviathan( entity leviathan )
 	DispatchSpawn( trig )
 }
 
-entity function CreateDeathTriggersInsideLeviathanFeet( entity leviathan, string attachment, LeviathanStompDataStruct dataStruct ) //To stop people being stuck inside leviathan when they do foot stomps
+entity function CreateDeathTriggersInsideLeviathanFeet( entity leviathan, string attachment, LeviathanStompDataStruct dataStruct ) 
 {
 	vector origin = leviathan.GetAttachmentOrigin( leviathan.LookupAttachment ( attachment ) )
 	entity trig = CreateEntity( "trigger_cylinder" )
@@ -629,12 +605,10 @@ array<entity> function GetLeviathans()
 	return file.leviathans
 }
 
-
 entity function GetZone6Leviathan()
 {
 	return  file.leviathan_zone_6
 }
-
 
 entity function GetZone9Leviathan()
 {
@@ -682,7 +656,6 @@ void function Leviathan_OnTakeDamage( entity leviathan, var damageInfo )
 				{
 					if ( DEBUGDAMAGE )
 						printt( "missed stomp" )
-					// reduce foot damage a lot
 					leviathanData.footDamageInfo.lastTime -= 60
 				}
 			}
@@ -718,7 +691,7 @@ void function Leviathan_OnTakeDamage( entity leviathan, var damageInfo )
 
 	LeviathanDamageInfo ornull nearestDamageInfo = null
 	float bestDistSq = 4000.0 * 4000.0
-	for ( int i = leviathanData.damageInfos.len() - 1; i >= 0; i-- ) // iterate backwards so we can remove as we go
+	for ( int i = leviathanData.damageInfos.len() - 1; i >= 0; i-- )
 	{
 		LeviathanDamageInfo levDamageInfo = leviathanData.damageInfos[i]
 
@@ -772,9 +745,6 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 {
 	leviathan.Signal( "LeviathanTookDamage" )
 
-	// WaitEndFrame() prevents changing animation from within projectile lag compensation.
-	// This works around a bug in which code doesn't detect the animation sequence transition until the next frame's snapshot, causing a visual pop.
-	// It's possible that multiple of these threads could accumulate on one frame here, but that should be harmless.
 	WaitEndFrame()
 
 	if ( !IsValid( attacker ) )
@@ -797,7 +767,6 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 
 	if ( leviathanData.allDamageInfo.damage >= leviathanData.superAngryDamageThreshold && time > leviathanData.nextRoarTime )
 	{
-		// roar
 		if ( DEBUGDAMAGE )
 			DebugDrawText( pos, "roar", true, 1.0 )
 
@@ -824,7 +793,7 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 				if ( Leviathan_CanLookAtEnt( leviathan, lookpos, 1.0, 1.0, DEBUGDAMAGE ) )
 				{
 					leviathanData.looktarget = damageInfo.attacker
-					leviathanData.lookendtime = time + 12.0 // about how long until the roar ends
+					leviathanData.lookendtime = time + 12.0
 					break
 				}
 			}
@@ -846,7 +815,6 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 			leviathanData.nextRoarTime = time + RandomFloatRange( 60.0, 120.0 )
 		}
 
-		// forget all damage
 		leviathanData.allDamageInfo.damage = 0
 		leviathanData.damageInfos.clear()
 
@@ -862,7 +830,6 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 			if ( DEBUGDAMAGE )
 				DebugDrawText( pos, "look", true, 1.0 )
 
-			// look!
 			leviathanData.looktarget = attacker
 			leviathanData.lookendtime = time + RandomFloatRange( 5.0, 15.0 )
 
@@ -872,7 +839,6 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 		leviathanData.nextDamageReactionTime = time + RandomFloatRange( 3.0, 8.0 )
 		leviathanData.nextLookTime = RandomFloatRange( 5, leviathanData.lookendtime + 15.0 )
 
-		// randomly turn shake animation on or off
 		if ( RandomInt( 2 ) == 0 )
 			leviathanData.nextShakeTime = 1.e38
 		else if ( leviathanData.nextShakeTime >= 1.e38 )
@@ -884,7 +850,6 @@ void function LeviathanDamageReaction( entity leviathan, LeviathanDataStruct lev
 		if ( DEBUGDAMAGE )
 			DebugDrawText( pos, "shake", true, 1.0 )
 
-		// shake
 		Leviathan_PlayStateAnimAndWait( leviathan, leviathanData, LeviathanState.SHAKE )
 
 		leviathanData.allDamageInfo.damage -= LEVIATHAN_SHAKE_DAMAGE_REDUCE
@@ -927,7 +892,6 @@ void function PlayCloudsOnLeviathan( entity ent )
 	int fxid     = GetParticleSystemIndex( FX_LEVIATHAN_CLOUD )
 	int attachid = ent.LookupAttachment( "CHEST_FOCUS" )
 
-
 	vector attachOrg = ent.GetAttachmentOrigin( attachid )
 	vector attachAng = ent.GetAttachmentAngles( attachid )
 	vector fx_offset = < 0, 0, -2000 >
@@ -937,16 +901,14 @@ void function PlayCloudsOnLeviathan( entity ent )
 
 vector function GetLeviathanAngDiffForPos( LeviathanDataStruct leviathanData, vector headorg, vector headang, float leviathanyaw, vector pos )
 {
-	const float ExtraPitch = 10 // look down a little more than directly toward the object; looks better
+	const float ExtraPitch = 10
 
 	vector targetdir = leviathanData.looktarget.GetOrigin() - headorg
 	vector targetang = VectorToAngles( targetdir )
-
 	vector angdiff
-	// use angle relative to *actual* head pos so we're not reliant on the pose parameters being super accurate.
-	// this is wrong for animations that move the head wildly, but the acceleration is slow enough that hopefully won't matter much
+
 	angdiff.x = AngleNormalize( targetang.x ) + ExtraPitch - AngleNormalize( headang.x )
-	angdiff.y = AngleNormalize( targetang.y - leviathanyaw ) - AngleNormalize( headang.y - leviathanyaw ) // do yaw relative to overall leviathan so the "seam" is behind them, where they can't look
+	angdiff.y = AngleNormalize( targetang.y - leviathanyaw ) - AngleNormalize( headang.y - leviathanyaw )
 	//targetang = leviathanData.lookang + lookang
 
 	return angdiff
@@ -1012,7 +974,6 @@ void function Leviathan_RandomRoarThread()
 
 bool function ShouldIncreaseRoarFrequency()
 {
-
 	if ( GetCurrentPlaylistVarBool( "leviathan_increase_roar_frequency", false ) == true )
 		return true
 
@@ -1039,11 +1000,10 @@ void function Leviathan_RandomRoar( entity leviathan )
 		leviathanData.roarSide = 0
 		Leviathan_PlayStateAnimAndWait( leviathan, leviathanData, LeviathanState.ROAR )
 
-		// only rarely have both leviathans roar
 		if ( RandomInt( 10 ) > 0 )
 			break
 
-		index = 1 - index // other leviathan
+		index = 1 - index
 		wait RandomFloatRange( 5, 13 )
 	}
 }
@@ -1058,12 +1018,9 @@ void function Leviathan_StartLooking( entity leviathan, LeviathanDataStruct levi
 		leviathan.Anim_Play( leviathanData.stateAnims[LeviathanState.LOOK] )
 		printt( "Leviathan tried to play look anim" )
 
-		// non-look animations have the head pitched down, but the look animation doesn't.
-		// we need to lerp the pitch pose parameter by the inverse of that over the same length of time that the animation lerps.
 		leviathanData.lookPitchLerpOffset += LOOK_PITCH_DIFF 
 	}
 }
-
 
 void function Leviathan_StopLooking( entity leviathan, LeviathanDataStruct leviathanData )
 {
@@ -1077,14 +1034,13 @@ void function Leviathan_StopLooking( entity leviathan, LeviathanDataStruct levia
 	}
 }
 
-
 const float LEVIATHAN_LOOK_ANTICIPATE_TIME = 4.0
 
 void function Leviathan_LookThread( entity leviathan )
 {
 	LeviathanDataStruct leviathanData = file.leviathanToDataStructTable[ leviathan ]
 
-	bool debug = false // (leviathan == GetZone9Leviathan())
+	bool debug = false
 
 	int leviathanMouthAttachmentIndex = file.leviathan_zone_6.LookupAttachment( "FX_MOUTH" )
 	int pitchPoseParamIndex = leviathan.LookupPoseParameterIndex( "aim_pitch"  )
@@ -1097,15 +1053,15 @@ void function Leviathan_LookThread( entity leviathan )
 
 	int mouthAttachmentIndex
 
-	const float normallookaccel = 4 // degrees / s^2
+	const float normallookaccel = 4
 	const float fastlookaccel = 10
 	const float roarlookaccel = 40
 
 	const float normalmaxvel = 20
 	const float roarmaxvel = 80
 
-	const float dt = 0.099 // close to 0.1
-	const float MaxVelFudge = 0.9 // prevents head from moving too fast and overshooting due to inaccurate pose parameter values
+	const float dt = 0.099
+	const float MaxVelFudge = 0.9
 
 	for ( ;; )
 	{
@@ -1116,13 +1072,12 @@ void function Leviathan_LookThread( entity leviathan )
 
 		entity lookTarget
 
-		// decide whether to look at anything at all
 		if ( leviathanData.state != LeviathanState.LOOK )
 		{
 			lookTarget = null
 			lookaccel = fastlookaccel
 
-			// hack: if doing the roar part of the roar animation, look at the guy!
+			//HACK: if doing the roar part of the roar animation, look at target
 			if ( leviathanData.state == LeviathanState.ROAR && leviathan.GetCycle() > 0.13 )
 			{
 				if ( leviathan.GetCycle() < 0.45 )
@@ -1136,7 +1091,6 @@ void function Leviathan_LookThread( entity leviathan )
 			lookTarget = leviathanData.looktarget
 		}
 
-		// decide what point to look at
 		if ( IsValid( lookTarget ) )
 		{
 			if ( debug )
@@ -1156,7 +1110,6 @@ void function Leviathan_LookThread( entity leviathan )
 			vector futureLookPos = lookPos + leviathanData.looktarget.GetVelocity() * LEVIATHAN_LOOK_ANTICIPATE_TIME
 			vector futureangdiff = GetLeviathanAngDiffForPos( leviathanData, headorg, headang, leviathanyaw, futureLookPos )
 
-			// if future angle is too far out of field of view, stop looking
 			float yaw = futureangdiff.y + leviathanData.lookang.y
 			if ( (yaw > 120 || yaw < -120) && DotProduct( futureLookPos - center, forward ) < 0 )
 			{
@@ -1180,7 +1133,7 @@ void function Leviathan_LookThread( entity leviathan )
 		if ( leviathanData.state == LeviathanState.ROAR )
 		{
 			float cycle = leviathan.GetCycle()
-			// hack: zone 6 leviathan can't have certain yaws near the end of its roar without the head going through the rock
+			//HACK: zone 6 leviathan can't have certain yaws near the end of its roar without the head going through the rock
 			if ( leviathan == file.leviathan_zone_6 && cycle > 0.2 && cycle < 0.6 )
 			{
 				if ( leviathanData.roarSide == 0 && (leviathanData.lookang.x > 30 || cycle > 0.3) )
@@ -1196,21 +1149,18 @@ void function Leviathan_LookThread( entity leviathan )
 					if ( leviathan.GetCycle() > 0.45 )
 					{
 						angdiff.y = -60 - leviathanData.lookang.y
-						// also pitch down (helps get head around the rock)
 						angdiff.x = 15 - leviathanData.lookang.x
 					}
-					else if ( leviathanData.lookang.y + angdiff.y > -60 ) // keep yaw < -60
+					else if ( leviathanData.lookang.y + angdiff.y > -60 )
 					{
 						angdiff.y = -60 - leviathanData.lookang.y
 					}
 				}
 				else if ( leviathanData.roarSide > 0 )
 				{
-					// keep yaw >= 0
 					if ( leviathanData.lookang.y + angdiff.y < 0 )
 					{
 						angdiff.y = -leviathanData.lookang.y
-						// also don't pitch down (avoids going into rock)
 						if ( angdiff.x > 0 )
 							angdiff.x = 0 - leviathanData.lookang.x
 					}
@@ -1219,14 +1169,10 @@ void function Leviathan_LookThread( entity leviathan )
 
 			if ( cycle < 0.4 )
 			{
-				// while roaring, change pitch slowly, because the roar animation changes it quickly
 				angdiff.x *= 0.25
 			}
 		}
 
-		// we treat pitch and yaw as vectors in 2d space.
-		// find the vector toward the goal, and accelerate in that direction.
-		// decelerate the perpendicular direction.
 		float dist = angdiff.Length()
 		vector dir = Normalize( angdiff )
 		vector perp = <dir.y, -dir.x, 0>
@@ -1267,7 +1213,7 @@ void function Leviathan_LookThread( entity leviathan )
 		else
 			leviathanData.lookvel -= perpvel * perp
 
-		//float framevel = (oldvel + leviathanData.lookvel[i]) * 0.5 // average old and new velocity for this frame
+		//float framevel = (oldvel + leviathanData.lookvel[i]) * 0.5
 		leviathanData.lookang += leviathanData.lookvel * dt
 
 		if ( debug )
@@ -1275,7 +1221,7 @@ void function Leviathan_LookThread( entity leviathan )
 
 		if ( leviathanData.lookPitchLerpOffset )
 		{
-			float maxPitchChange = dt * LOOK_PITCH_DIFF // LOOK_PITCH_DIFF degrees per second because the anim lerp time is 1 second and the angle difference between look and idle is LOOK_PITCH_DIFF
+			float maxPitchChange = dt * LOOK_PITCH_DIFF
 			float pitchChange
 			if ( leviathanData.lookPitchLerpOffset > maxPitchChange )
 				pitchChange = -maxPitchChange
@@ -1298,7 +1244,7 @@ void function Leviathan_LookThread( entity leviathan )
 	}
 }
 
-const float MinLookAtDist = 8000.0 // about the distance from CHEST_FOCUS to head when looking around
+const float MinLookAtDist = 8000.0
 const float MinCareDist = 16000.0
 const float MaxCareDist = 40000.0
 const float cos70 = 0.342
@@ -1315,7 +1261,6 @@ bool function Leviathan_CanLookAtEnt( entity leviathan, vector pos, float careCh
 		return false
 	}
 
-	// can't look at things too close to our torso
 	float distSqr = DistanceSqr( pos, center )
 	if ( distSqr < MinLookAtDist * MinLookAtDist )
 	{
@@ -1344,10 +1289,8 @@ bool function Leviathan_CanLookAtEnt( entity leviathan, vector pos, float careCh
 	}
 
 	vector dir = leviathan.GetForwardVector()
-
 	vector diff = pos - center
 
-	// can't look more than 110 degrees away
 	float dot = DotProduct( diff, dir )
 	if ( dot < 0 )
 	{
@@ -1382,14 +1325,14 @@ void function Leviathan_ConsiderLookAtEnt_Callback( entity ent, float duration, 
 
 		LeviathanDataStruct leviathanData = file.leviathanToDataStructTable[ leviathan ]
 		if ( leviathanData.state == LeviathanState.ROAR )
-			continue // don't change what we're roaring at
+			continue
 
 		leviathanData.looktarget = ent
 		leviathanData.lookendtime = Time() + duration
 
 		if ( file.randomLeviathanRoarThisGame && file.randomLeviathanRoarNextLook )
 		{
-			leviathanData.lookendtime = Time() + 12.0 // about how long until the roar ends
+			leviathanData.lookendtime = Time() + 12.0
 			Leviathan_RandomRoar( leviathan )
 		}
 		else
@@ -1397,7 +1340,6 @@ void function Leviathan_ConsiderLookAtEnt_Callback( entity ent, float duration, 
 			Leviathan_StartLooking( leviathan, leviathanData )
 		}
 
-		// don't want both leviathans looking at the same time
 		wait RandomFloatRange( duration * .1, duration * .2 )
 	}
 }
@@ -1429,8 +1371,6 @@ void function CreateLeviathanStompShake( entity leviathan, string attachment )
 	entity shake = CreateShake( footOrigin, 22, 180, 2.0, 6000 )
 	shake.kv.spawnflags = SF_SHAKE_INAIR
 }
-
-
 
 void function OnLeviathanFootStomp( entity leviathan, string attachment )
 {
@@ -1467,7 +1407,7 @@ void function OnLeviathanFootStomp( entity leviathan, string attachment )
 void function Leviathan_Stomp_TriggerDamage( entity trigger, entity ent )
 {
 	entity leviathan = trigger.GetOwner()
-	if ( ent.GetOwner() ==  leviathan  ) //This is probably a phys_bone_follower of the leviathan!
+	if ( ent.GetOwner() ==  leviathan  )
 		return
 
 	if ( ent.IsPlayer() )
@@ -1475,7 +1415,7 @@ void function Leviathan_Stomp_TriggerDamage( entity trigger, entity ent )
 		if ( !IsAlive( ent  )  )
 			return
 
-		if ( ent.IsPhaseShiftedOrPending() ) //Better to cancel phase shift for players than to let them be inside the leviathan's foot for a while, then die when coming out of phase shift. Also considered but too much work: Leviathans aren't in phase shift land!
+		if ( ent.IsPhaseShiftedOrPending() ) 
 			ent.PhaseShiftCancel()
 
 
@@ -1486,7 +1426,7 @@ void function Leviathan_Stomp_TriggerDamage( entity trigger, entity ent )
 
 	string entScriptName = ent.GetScriptName()
 
-	if ( entScriptName == PHASETUNNEL_BLOCKER_SCRIPTNAME  ) //Phase tunnel, force close the tunnel
+	if ( entScriptName == PHASETUNNEL_BLOCKER_SCRIPTNAME  ) 
 	{
 		entity tunnelEnt = ent.GetOwner()
 
@@ -1500,11 +1440,11 @@ void function Leviathan_Stomp_TriggerDamage( entity trigger, entity ent )
 		}
 	}
 
-	if ( entScriptName == PHASETUNNEL_PRE_BLOCKER_SCRIPTNAME  ) //Pre phase tunnel, try to stop the tunnel from being created
+	if ( entScriptName == PHASETUNNEL_PRE_BLOCKER_SCRIPTNAME  )
 	{
 		entity ownerPlayer = ent.GetOwner()
 		if ( IsValid( ownerPlayer ) && ownerPlayer.IsPlayer() )
-			ownerPlayer.Signal( "PhaseTunnel_CancelPlacement" ) //Try to stop the portal creation process
+			ownerPlayer.Signal( "PhaseTunnel_CancelPlacement" ) 
 	}
 
 	if ( !IsAlive( ent ) )
@@ -1520,8 +1460,8 @@ void function Leviathan_Stomp_TriggerDamage( entity trigger, entity ent )
 	vector entOrigin = ent.GetOrigin()
 	vector triggerOrigin = trigger.GetOrigin()
 
-	if ( entOrigin.z < triggerOrigin.z ) //Pushed the player underneath the world, so hackily pop the ent back up to avoid pushing it through the world
-			ent.SetAbsOrigin( < entOrigin.x, entOrigin.y, triggerOrigin.z > ) //Player can be parented, so set abs origin instead of origin
+	if ( entOrigin.z < triggerOrigin.z )
+			ent.SetAbsOrigin( < entOrigin.x, entOrigin.y, triggerOrigin.z > )
 	}
 
 }
@@ -1530,13 +1470,13 @@ void function CleanupTrigger( entity trigger  )
 {
 	wait 0.2
 
-	trigger.SearchForNewTouchingEntity() //JFS: Just to get entities that we miss.
+	trigger.SearchForNewTouchingEntity()
 
 	if (IsValid( trigger ) )
 		trigger.Destroy()
 }
 
-Point function FindBestSafeSpotForDeathBox( entity player  ) //This is lazy, comparing to all points in a single array instead of having separate arrays for each leviathan foot. Mainly because it's not convenient to get that info at time of leviathan foot stomp
+Point function FindBestSafeSpotForDeathBox( entity player  )
 {
 	vector playerOrigin = player.GetOrigin()
 
@@ -1555,7 +1495,6 @@ Point function FindBestSafeSpotForDeathBox( entity player  ) //This is lazy, com
 	}
 
 	return resultPoint
-
 }
 
 void function Leviathan_Ult_Adjustment_Enter( entity trigger, entity ent )
@@ -1572,7 +1511,7 @@ void function Leviathan_Ult_Adjustment_Leave( entity trigger, entity ent )
 
 void function Leviathan_OptimizeUpperBoneFollowersWhenAllPlayersHaveLanded()
 {
-	if ( IsFallLTM() ) //don't optimize since we will constantly be skydiving back in
+	if ( IsFallLTM() )
 		return
 
 	thread Leviathan_OptimizeUpperBoneFollowersWhenAllPlayersHaveLanded_Thread()
@@ -1580,7 +1519,6 @@ void function Leviathan_OptimizeUpperBoneFollowersWhenAllPlayersHaveLanded()
 
 void function Leviathan_OptimizeUpperBoneFollowersWhenAllPlayersHaveLanded_Thread()
 {
-	// wait for all players to have landed
 	array<entity> players = GetPlayerArray_Alive()
 	int checkCount = 0
 	for ( ;; )
@@ -1602,7 +1540,6 @@ void function Leviathan_OptimizeUpperBoneFollowersWhenAllPlayersHaveLanded_Threa
 			if ( checkCount == 2 )
 				break
 
-			// all players in the original array have landed, but get a new array in case someone connected late
 			players = GetPlayerArray_Alive()
 		}
 		else
@@ -1871,12 +1808,8 @@ void function RecreateLeviathanDeathTriggers()
 	zone9LeftFrontFootStompDataStructSupplemental5.cylinderBelowHeight = 0
 	zone9LeftFrontFootStompDataStructSupplemental5.offset = < -350, -110, 0>
 
-
-
-
 	if ( IsValid( file.leviathan_zone_6 ) )
 	{
-		//Init death triggers in feet for zone 6 leviathan
 		entity frontleftFootTrigger = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootStompDataStruct )
 		entity frontleftFootSupplementalTrigger = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootSupplemental )
 		entity frontleftFootSupplementalTrigger2 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_6, "FX_L_FOOT_A", zone6LeftFrontFootSupplemental2 )
@@ -1895,12 +1828,7 @@ void function RecreateLeviathanDeathTriggers()
 		entity frontleftFootTriggerSupplemental3 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_9, "FX_L_FOOT_A", zone9LeftFrontFootStompDataStructSupplemental3  )
 		entity frontleftFootTriggerSupplemental4 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_9, "FX_L_FOOT_A", zone9LeftFrontFootStompDataStructSupplemental4  )
 		entity frontleftFootTriggerSupplemental5 = CreateDeathTriggersInsideLeviathanFeet( file.leviathan_zone_9, "FX_L_FOOT_A", zone9LeftFrontFootStompDataStructSupplemental5  )
-
 	}
-
-
-
-
 }
-#endif // if DEVELOPER
-#endif // SERVER
+#endif
+#endif

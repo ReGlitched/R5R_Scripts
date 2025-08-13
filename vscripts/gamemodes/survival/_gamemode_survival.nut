@@ -9,8 +9,7 @@ global function JetwashFX
 global function Survival_PlayerRespawnedTeammate
 global function UpdateDeathBoxHighlight
 global function HandleSquadElimination
-// these probably doesn't belong here
-//----------------------------------
+
 global function Survival_GetMapFloorZ
 global function SURVIVAL_GetClosestValidCircleEndLocation
 global function SURVIVAL_CalculateAirdropPositions
@@ -21,8 +20,6 @@ global function Survival_AddCallback_OnAirdropLaunched
 global function Survival_CleanupPlayerPermanents
 global function Survival_SetCallback_Leviathan_ConsiderLookAtEnt
 global function Leviathan_ConsiderLookAtEnt
-
-global entity WORKAROUND_DESERTLANDS_TRAIN = null
 
 global function CreateSurvivalDeathBoxForPlayer
 global function UpdateMatchSummaryPersistentVars
@@ -61,14 +58,14 @@ global function Survival_AddCallback_OnPlayerKillDamage
 global function Survival_AddCallback_OnAttackerSquadWipe
 global function Survival_AddCallback_OnAttackerSoloRatEliminated
 
-//updated. Cafe
+global entity WORKAROUND_DESERTLANDS_TRAIN = null
+
 global const float REALBIG_CIRCLE_GRID_RADIUS = 52500
 const float PLANE_HEIGHT_REALBIG = 17000.0
 const float CLAMP_TO_RING_BUFFER = 400
 const float SURVIVAL_PLANE_DROP_RADIUS_MIN = 22000
 const string KNOCKED_SOUND = "flesh_bulletimpact_downedshot_3p_vs_3p"
 
-//fix debug draws calls
 const bool DEBUG_PLANE_PATH = false
 const bool DEBUG_PLANE_PATH_LIGHTWEIGHT = false
 const bool DEBUG_PLANE_PATH_JUMP = false
@@ -117,7 +114,6 @@ struct
 {
     void functionref( entity, float, float ) leviathanConsiderLookAtEntCallback = null
 
-	//updated
 	vector mapCenter = <0, 0, 0>
 	float planeHeight = 0.0
 	Survival_Plane plane
@@ -125,7 +121,6 @@ struct
 	table<EncodedEHandle, SurvivalPlayerData>        playerData
 	table< entity, float >         playerLastDamageSlowTime
 
-	//Callbacks new
 	array<void functionref(entity, var, int) >    Callbacks_OnPlayerKillDamage
 	array<void functionref(entity, entity) >    Callbacks_OnAttackerSquadWipe
 	array<void functionref(entity, entity) >    Callbacks_OnAttackerSoloRatEliminated
@@ -134,7 +129,7 @@ struct
 void function GamemodeSurvival_Init()
 {
 	if(GetCurrentPlaylistVarBool("enable_global_chat", true))
-		SetConVarBool("sv_forceChatToTeamOnly", false) //thanks rexx
+		SetConVarBool("sv_forceChatToTeamOnly", false)
 	else
 		SetConVarBool("sv_forceChatToTeamOnly", true)
 
@@ -164,7 +159,7 @@ void function GamemodeSurvival_Init()
 
 	AddClientCommandCallback("Flowstate_AssignCustomCharacterFromMenu", ClientCommand_Flowstate_AssignCustomCharacterFromMenu)
 
-	#if DEVELOPER //uncommented dev defines
+	#if DEVELOPER
 		AddClientCommandCallback("forceBleedout", ClientCommand_bleedout)
 		AddClientCommandCallback("lsm_restart", ClientCommand_restartServer)
 		AddClientCommandCallback("playerRequestsSword", ClientCommand_GiveSword)
@@ -174,7 +169,6 @@ void function GamemodeSurvival_Init()
 		AddClientCommandCallback("forceRingMovement", ClientCommand_ForceRingMovement )
 
 		AddClientCommandCallback("destroyEndScreen", ClientCommand_DestroyEndScreen)
-		AddClientCommandCallback("setLegendary", ClientCommand_SetLegendaryWeapon)
 		AddClientCommandCallback("giveGoodLoot", ClientCommand_GiveGoodLootToPlayers)
 		AddClientCommandCallback("enableGodMode", ClientCommand_EnableDemigod)
 		AddClientCommandCallback("disableGodMode", ClientCommand_EnableDemigod)
@@ -280,21 +274,6 @@ bool function ClientCommand_GiveGoodLootToPlayers(entity player, array<string> a
 	return false
 }
 
-bool function ClientCommand_SetLegendaryWeapon(entity player, array<string> args)
-{
-	if ( GetConVarInt( "sv_cheats" ) != 1 || args.len() != 2)
-		return false
-
-	int index2 = -1
-
-	if( args.len() > 1 )
-		index2 = args[1].tointeger()
-
-	//FS_SetLegendarySkinIndex( player, args[0].tointeger(), index2 )
-
-	return true
-}
-
 bool function ClientCommand_GiveSword(entity player, array<string> args)
 {
 	if ( GetConVarInt( "sv_cheats" ) != 1 )
@@ -377,7 +356,6 @@ void function EntitiesDidLoad_Survival()
 	if ( file.planeHeight == 0 )
 		file.planeHeight = PLANE_HEIGHT_REALBIG
 
-	//defaulting to false crashes survival game modes expecting a plane
 	if( GetCurrentPlaylistVarBool( "jump_from_plane_enabled", true ) || GetCurrentPlaylistVarBool( "force_plane_to_spawn_without_players", false ) )
 		thread Survival_RunPlaneLogic_Thread( Survival_GenerateSingleRandomPlanePath, Survival_RunSinglePlanePath_Thread, false )
 	else
@@ -408,7 +386,6 @@ void function Survival_RunPlaneLogic_Thread( array< PlanePathData > functionref(
 	thread runPlanePathFunc( pathData, planeInt )
 }
 
-
 array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQuick, int unusedInt = 0 )
 {
 	printt( "Generating path for survival plane" )
@@ -432,10 +409,9 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 	{
 		float mapAngleRotation = GetCurrentPlaylistVarFloat( "survival_plane_angle_deviation", 0.0 )
 
-		// Get the basic angle of approach
-		int baseAngle            = RandomIntRange( 0, 4 ) //RandomIntRangeForPlanePath( 0, 4 ) // 0, 90, 180, 270
+		int baseAngle            = RandomIntRange( 0, 4 ) 
 		float tightnessFactor    =  GetCurrentPlaylistVarFloat( "survival_plane_start_angle_tightness", 1.5 )
-		float baseAngleDeviation = pow( RandomFloatRange( 0.0, 1.0 ), tightnessFactor ) //RandomFloatRangeForPlanePath( 0.0, 1.0 )
+		float baseAngleDeviation = pow( RandomFloatRange( 0.0, 1.0 ), tightnessFactor )
 		if ( CoinFlip() )
 			baseAngleDeviation = -1 * baseAngleDeviation
 
@@ -443,17 +419,15 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 		float startAngleMax = GetCurrentPlaylistVarFloat( "survival_plane_start_angle_max", 40.0 )
 		angles = AnglesCompose( < 0.0, f_baseAngle, 0.0 >, < 0.0, baseAngleDeviation * startAngleMax, 0.0 > )
 
-		// Generate the starting position
 		vector fwd         = AnglesToForward( angles )
 
-		// Figure out the "center" position - a position near the center of the map we want to go through
 		float maxDeviation = GetCurrentPlaylistVarFloat( "survival_plane_center_deviation_max", 12500 )
 		float centerTightnessScale = GetCurrentPlaylistVarFloat( "survival_plane_center_tightness", 0.4 )
 		float maxDeviationScale    = (1.0 - fabs( baseAngleDeviation ) * centerTightnessScale )
 		maxDeviationScale = clamp( maxDeviationScale, 0.0, 1.0 )
 		maxDeviation      = maxDeviation * maxDeviationScale
 
-		float moveAmount = RandomFloatRange( 0.0, maxDeviation ) //RandomFloatRangeForPlanePath( 0.0, maxDeviation )
+		float moveAmount = RandomFloatRange( 0.0, maxDeviation )
 		vector moveVec = VectorRotate( <moveAmount, 0, 0>, <0, RandomFloatRange( -180, 180 ), 0>)
 		vector startCenter = file.mapCenter
 		float ringRadius = REALBIG_CIRCLE_GRID_RADIUS
@@ -469,7 +443,6 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 
 		startPos  = (fwd * -1 * ringRadius) + <centerPos.x, centerPos.y, file.planeHeight>
 
-		// Calculate the ending position, given we want to go from the starting spot
 		vector startToCenterPosNorm = Normalize( centerPos - startPos )
 		vector startToMapCenter = <startCenter.x, startCenter.y, file.planeHeight> - startPos
 		float dot = DotProduct( startToMapCenter, startToCenterPosNorm )
@@ -479,7 +452,7 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 
 		vector maxs          = fakePlane.GetBoundingMaxs()
 		maxs = <maxs.x, maxs.x, maxs.z>
-		int traceMask = TRACE_MASK_SOLID & ~( CONTENTS_PHYSICSCLIP )	// Removing this clip because we were hitting skybox clouds on Olympus
+		int traceMask = TRACE_MASK_SOLID & ~( CONTENTS_PHYSICSCLIP )
 		TraceResults results = TraceHull( startPos, endPos, -1 * maxs, maxs, fakePlane, traceMask, TRACE_COLLISION_GROUP_NONE )
 		e[ "trace_test" ] = (results.fraction >= 0.99)
 
@@ -494,12 +467,11 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 
 	fakePlane.Destroy()
 
-	float SKYBOX_BUFFER        = 6000 // Todo: eventually we should just do a trace up and down the plane path and find the skybox instead of assuming it's 6000 units from max bounds
+	float SKYBOX_BUFFER        = 6000 //TODO: eventually we should just do a trace up and down the plane path and find the skybox instead of assuming it's 6000 units from max bounds
 
 	vector jumpStart = Survival_GetPlaneJumpPointOverMap( startPos, endPos )
 	vector jumpEnd   = Survival_GetPlaneJumpPointOverMap( endPos, startPos )
 
-	// Clamp the jump boundaries to world bounds, like we do with the path below
 	LineSegment jumpBounds = ClampLineSegmentToWorldBounds2D( jumpStart, jumpEnd, SKYBOX_BUFFER )
 	jumpStart = jumpBounds.start
 	jumpEnd = jumpBounds.end
@@ -520,7 +492,6 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 	vector planeStart = jumpStart + (planeVec * -unitsBeforeJumpAllowed)
 	vector planeEnd   = jumpEnd + (planeVec * unitsToLeaveMap)
 
-	// Clamp the plane start and end path to max world coords
 	if ( PLANE_PATH_DEBUG )
 	{
 		printt( "planeStart:", planeStart )
@@ -543,7 +514,6 @@ array< PlanePathData > function Survival_GenerateSingleRandomPlanePath( bool beQ
 			// DebugDrawLine( clampedPlaneStart - <0, 0, 10000>, clampedPlaneEnd - <0, 0, 10000>, COLOR_GREEN, true, 240.0 )
 	#endif
 
-	// We may need to shorten the waittimes due to line clamping making the line shorter before and after the playable space
 	float actualUnitsBeforeJumpAllowed = Distance( clampedPlaneStart, jumpStart )
 	float jumpDelayFrac                = actualUnitsBeforeJumpAllowed / unitsBeforeJumpAllowed
 	jumpDelay *= jumpDelayFrac
@@ -652,7 +622,7 @@ void function Survival_RunSinglePlanePath_Thread( array< PlanePathData > paths, 
 	FlagClear( "PlaneDoorOpen" )
 	FlagClear( "PlaneAtLaunchPoint" )
 
-	PlanePathData path = paths[0] // This function should only run one plane so just use index 0
+	PlanePathData path = paths[0]
 
 	printt( "Survival_RunSinglePlanePath_Thread", path.startPos )
 
@@ -661,7 +631,7 @@ void function Survival_RunSinglePlanePath_Thread( array< PlanePathData > paths, 
 	pathCenter.kv.fadedist    = -1
 	pathCenter.kv.renderamt   = 255
 	pathCenter.kv.rendercolor = "255 255 255"
-	pathCenter.kv.solid       = 6 // 0 = no collision, 2 = bounding box, 6 = use vPhysics, 8 = hitboxes only
+	pathCenter.kv.solid       = 6 
 	pathCenter.SetOrigin( path.centerPos )
 	pathCenter.SetAngles( path.angles )
 	pathCenter.NotSolid()
@@ -692,7 +662,7 @@ void function Survival_RunSinglePlanePath_Thread( array< PlanePathData > paths, 
 	plane.kv.fadedist    = -1
 	plane.kv.renderamt   = 255
 	plane.kv.rendercolor = "255 255 255"
-	plane.kv.solid       = 6 // 0 = no collision, 2 = bounding box, 6 = use vPhysics, 8 = hitboxes only
+	plane.kv.solid       = 6
 	plane.SetOrigin( path.clampedPlaneStart )
 	plane.SetAngles( path.angles )
 	plane.NotSolid()
@@ -716,7 +686,7 @@ void function Survival_RunSinglePlanePath_Thread( array< PlanePathData > paths, 
 			printt( "plane destroyed" )
 			if ( IsValid( file.plane.baseEnt ) )
 			{
-				KickEveryoneOutOfPlane( file.plane.baseEnt ) // This is defensive, it should never happen because we call the same command when the plane leaves the playable space
+				KickEveryoneOutOfPlane( file.plane.baseEnt )
 				file.plane.baseEnt.MakeInvisible()
 				file.plane.baseEnt.Minimap_Hide( 0, null )
 			}
@@ -955,7 +925,6 @@ void function Sequence_Playing()
 			DecideRespawnPlayer_Retail( player )
 	}
 
-	// Set settings for the drop-in
 	bool shouldSetDropSettings = true
 	if ( Gamemode() == eGamemodes.WINTEREXPRESS || Playlist() == ePlaylists.survival_dev || Playlist() == ePlaylists.dev_default || GetCurrentPlaylistVarBool( "is_practice_map", false ))
 		shouldSetDropSettings = false
@@ -996,7 +965,7 @@ void function Sequence_Playing()
 	}
 	else if ( !GetCurrentPlaylistVarBool( "match_ending_enabled", true ) || GetConVarInt( "mp_enablematchending" ) < 1 )
 	{
-		WaitForever() // match never ending
+		WaitForever()
 	}
 
 	while ( GetGameState() == eGameState.Playing )
@@ -1117,7 +1086,6 @@ void function Sequence_Epilogue()
 	{
 		player.FreezeControlsOnServer()
 
-		// Clear all residue data
 		Remote_CallFunction_NonReplay( player, "ServerCallback_AddWinningSquadData", -1, -1, 0, 0, 0, 0, 0 )
 
 		foreach ( int i, entity champion in GetPlayerArrayOfTeam( GetWinningTeam() ) )
@@ -1127,8 +1095,8 @@ void function Sequence_Epilogue()
 			Remote_CallFunction_NonReplay(
 				player,
 				"ServerCallback_AddWinningSquadData",
-				i, // Champion index
-				champion.GetEncodedEHandle(), // Champion EEH
+				i,
+				champion.GetEncodedEHandle(),
 				gameSummaryData.kills,
 				gameSummaryData.damageDealt,
 				gameSummaryData.survivalTime,
@@ -1194,15 +1162,14 @@ void function HandleSquadElimination( int team )
 	}
 
 	LiveAPI_WriteLogUsingDefinedFields( eLiveAPI_EventTypes.squadEliminated,
-		[ squadData ], [ 3/*players*/ ]
+		[ squadData ], [ 3 ]
 	)
 }
 
-// Fully doomed, no chance to respawn, game over
 void function PlayerFullyDoomed( entity player )
 {
 	player.p.respawnChanceExpiryTime = Time()
-	player.p.squadRank = 0 // Survival_GetCurrentRank( player )
+	player.p.squadRank = 0
 
 	StatsHook_RecordPlacementStats( player )
 }
@@ -1235,7 +1202,6 @@ void function OnPlayerDamaged( entity victim, var damageInfo )
 	TakingFireDialogue( attacker, victim, weapon )
 }
 
-//Centralized start bleedout
 int function CodeCallback_KillDamagePlayerOrNPC( entity ent, var damageInfo, int actualTotalDamage )
 {
 	entity damagedEnt = ent
@@ -1288,11 +1254,10 @@ int function CodeCallback_KillDamagePlayerOrNPC( entity ent, var damageInfo, int
 			damagedEnt.p.playerToTimeThatAssistCreditLastsTable = GetLatestAssistingPlayersFromSameTeam( damagedEnt, attacker )
 			DamageInfo_AddCustomDamageType( damageInfo, DF_KNOCKDOWN )
 
-			// add knockdown to the latest damage history entry, it wasn't added earlier because we no longer know that we are going to be knocked down where the histroy is stored.
 			// Assert( ent.e.recentDamageHistory.len() > 0, "recentDamageHistory didn't have any history when it should" )
 			if( ent.e.recentDamageHistory.len() == 0 )
 			{
-				Warning( "recentDamageHistory didn't have any history when it should. Len: " + ent.e.recentDamageHistory.len() ) //Cafe
+				Warning( "recentDamageHistory didn't have any history when it should. Len: " + ent.e.recentDamageHistory.len() )
 			} else
 				ent.e.recentDamageHistory[0].damageType = ent.e.recentDamageHistory[0].damageType | DF_KNOCKDOWN
 
@@ -1304,12 +1269,11 @@ int function CodeCallback_KillDamagePlayerOrNPC( entity ent, var damageInfo, int
 			Bleedout_StartPlayerBleedout( damagedEnt, attacker, damageInfo )
 			damagedEnt.SetNPCPriorityOverride( 1 )
 
-			//TODO - the follow can cause Callbacks_OnPlayerKillDamage below to be skipped
+			//TODO: the follow can cause Callbacks_OnPlayerKillDamage below to be skipped
 			return damagedEnt.GetMaxHealth()
 		}
 
-		//After this is full team bleedout. Cafe
-		thread Delayed_TryEliminateTeammates( damagedEnt, attacker ) //Now we ensure it will be triggered only one time. Cafe
+		thread Delayed_TryEliminateTeammates( damagedEnt, attacker )
 
 		if( attacker.IsPlayer() )
 		{
@@ -1330,10 +1294,10 @@ bool function ShouldDoBleedout( entity damagedEnt )
 	Warning( "ShouldDoBleedout " + damagedEnt )
 	#endif
 
-	if ( !GetCurrentPlaylistVarBool( "bleedout_enabled", false ) ) //Bleedout system will remain disabled by default. Cafe
+	if ( !GetCurrentPlaylistVarBool( "bleedout_enabled", false ) )
 		return false
 
-	if( GetCurrentPlaylistVarBool( "is_practice_map", false ) ) //Don't enable bleedout logic in practice maps made by the community. Cafe
+	if( GetCurrentPlaylistVarBool( "is_practice_map", false ) )
 		return false
 
 	if ( !IsValid( damagedEnt ) )
@@ -1356,7 +1320,6 @@ bool function ShouldDoBleedout( entity damagedEnt )
 	return false
 
 }
-
 
 void function Delayed_TryEliminateTeammates( entity victim, entity attacker = null )
 {
@@ -1388,10 +1351,10 @@ void function Delayed_TryEliminateTeammates( entity victim, entity attacker = nu
 	wait 0.1
 
 
-	if( !IsValid( attacker ) || !IsValid( victim ) ) //check again since waited frames...
+	if( !IsValid( attacker ) || !IsValid( victim ) )
 		return
 
-	if( attacker.IsPlayer() && bleedingMatesKilled != 0 ) //Squad wipe logic should only be triggered if there are not bleeding teammates
+	if( attacker.IsPlayer() && bleedingMatesKilled != 0 ) 
 	{
 		if( IsPlaylistAllowedForDefaultKillNotifications() )
 		{
@@ -1451,7 +1414,7 @@ void function EnemyDownedDialogue( entity attacker, entity victim )
 	float delay = 2
 	float anotherDelay = 10
 	if( Time() <= anotherDelay )
-		attacker.p.lastDownedEnemyTime -= anotherDelay // rare
+		attacker.p.lastDownedEnemyTime -= anotherDelay
 
 	float time = Time() - attacker.p.lastDownedEnemyTime
 	int currentDownedEnemy = attacker.p.downedEnemy
@@ -1530,17 +1493,14 @@ array<ConsumableInventoryItem> function GetAllDroppableItems( entity player )
 {
 	array<ConsumableInventoryItem> final = []
 
-	// Consumable inventory
 	final.extend( SURVIVAL_GetPlayerInventory( player ) )
 
-	// Weapon related items
 	foreach ( weapon in SURVIVAL_GetPrimaryWeapons( player ) )
 	{
 		LootData data = SURVIVAL_GetLootDataFromWeapon( weapon )
 		if ( data.ref == "" )
 			continue
 
-		// Add the weapon
 		ConsumableInventoryItem item
 
 		item.type = data.index
@@ -1558,7 +1518,6 @@ array<ConsumableInventoryItem> function GetAllDroppableItems( entity player )
 
 			LootData attachmentData = SURVIVAL_Loot_GetLootDataByRef( mod )
 
-			// Add the attachment
 			ConsumableInventoryItem attachmentItem
 
 			attachmentItem.type = attachmentData.index
@@ -1568,7 +1527,6 @@ array<ConsumableInventoryItem> function GetAllDroppableItems( entity player )
 		}
 	}
 
-	// Non-weapon equipment slots
 	foreach ( string ref, EquipmentSlot es in EquipmentSlot_GetAllEquipmentSlots() )
 	{
 		if ( EquipmentSlot_IsMainWeaponSlot( ref ) || EquipmentSlot_IsAttachmentSlot( ref ) )
@@ -1578,7 +1536,6 @@ array<ConsumableInventoryItem> function GetAllDroppableItems( entity player )
 		if ( data.ref == "" )
 			continue
 
-		// Add the equipped loot
 		ConsumableInventoryItem equippedItem
 
 		equippedItem.type = data.index
@@ -1665,9 +1622,6 @@ void function OnPlayerKilled( entity victim, entity attacker, var damageInfo )
 	bool teamEliminated = victimTeam.len() == 0
 	bool canPlayerBeRespawned = PlayerRespawnEnabled() && !teamEliminated
 
-	// PlayerFullyDoomed MUST be called before HandleSquadElimination
-	// HandleSquadElimination accesses player.p.respawnChanceExpiryTime which is set by PlayerFullyDoomed
-	// if it isn't called in this order, the survivalTime will be 0
 	if ( !canPlayerBeRespawned )
 	{
 		PlayerFullyDoomed( victim )
@@ -1676,8 +1630,7 @@ void function OnPlayerKilled( entity victim, entity attacker, var damageInfo )
 	if ( teamEliminated )
 		HandleSquadElimination( victimTeamNum )
 
-	//Disable until I debug it, Idk what this is for rn. Cafe
-	// // Restore weapons for deathbox
+	//TODO: Debug this
 	// if ( victim.p.storedWeapons.len() > 0 )
 		// RetrievePilotWeapons( victim )
 
@@ -1735,7 +1688,7 @@ void function OnClientConnected( entity player )
 		AddPlayerMovementEventCallback( player, ePlayerMovementEvents.LEAVE_GROUND, LSM_OnPlayerLeaveGround )
 	}
 
-	AddEntityCallback_OnPostDamaged( player, OnPlayerDamaged ) //(mk): changed to post damage
+	AddEntityCallback_OnPostDamaged( player, OnPlayerDamaged )
 
 	if ( IsFiringRangeGameMode() )
 	{
@@ -1778,11 +1731,9 @@ void function Survival_OnClientDisconnected( entity player )
 {
 	if ( IsAlive( player ) )
 	{
-		//quitting in combat counts as death
-		entity lastAttacker = GetLastAttacker( player ) //Attacker doesn't work, get last attacker
+		entity lastAttacker = GetLastAttacker( player )
 		if ( !IsValid( lastAttacker ) )
 		{
-			//last attacker didn't work, get latestAssistingPlayerInfo
 			AssistingPlayerStruct attackerInfo = GetLatestAssistingPlayerInfo( player )
 			if ( IsValid( attackerInfo.player ) )
 			{
@@ -1790,7 +1741,6 @@ void function Survival_OnClientDisconnected( entity player )
 			}
 		}
 
-		// bleedout + execution check
 		if ( Bleedout_IsBleedingOut( player ) )
 		{
 			entity attacker    = Bleedout_GetBleedoutAttacker( player )
@@ -1813,9 +1763,8 @@ void function Survival_OnClientDisconnected( entity player )
 					player.Die( attacker, attacker, { damageSourceId = damageSourceID } )
 			}
 		}
-		else if ( IsValid (lastAttacker ) ) //non-bleedout assist check
+		else if ( IsValid (lastAttacker ) )
 		{
-			//quitting while in combat
 			int damageSourceID = GetLastDamageSourceIDForAttacker(player , lastAttacker )
 			player.Die( lastAttacker, lastAttacker, { damageSourceId = damageSourceID } )
 		}
@@ -1984,24 +1933,20 @@ void function SURVIVAL_CalculateAirdropPositions()
     {
         string airdropPlaylistData = GetCurrentPlaylistVarString( "airdrop_data_round_" + i, "" )
 
-        if (airdropPlaylistData.len() == 0) //if no airdrop data for this ring, continue to next
+        if (airdropPlaylistData.len() == 0)
             continue;
 
-        //Split the PlaylistVar that we can parse it
         array<string> dataArr = split(airdropPlaylistData, ":" )
         if(dataArr.len() < 5)
             return;
 
-        //First part of the playlist string is the number of airdrops for this round.
         int numAirdropsForThisRound = dataArr[0].tointeger()
 
-        //Create our AirdropData entry now.
         AirdropData airdropData;
         airdropData.dropCircle = i
         airdropData.dropCount = numAirdropsForThisRound
         airdropData.preWait = dataArr[1].tofloat()
 
-        //Get the deathfield data.
         DeathFieldStageData data = deathFieldData[i]
 
         vector center = data.endPos
@@ -2012,7 +1957,6 @@ void function SURVIVAL_CalculateAirdropPositions()
 
             if(!VerifyAirdropPoint( airdropPoint.origin, airdropPoint.angles.y % 360 ))
             {
-                //force this to loop again if we didn't verify our airdropPoint
                 j--;
             }
             else
@@ -2021,8 +1965,6 @@ void function SURVIVAL_CalculateAirdropPositions()
                 //printt("Added airdrop with origin ", airdropPoint.origin, " to the array")
                 airdropData.originArray.append(airdropPoint.origin)
                 airdropData.anglesArray.append( Vector(airdropPoint.angles.x % 360, airdropPoint.angles.y % 360, airdropPoint.angles.z % 360) )
-
-                //Should impl contents here.
                 airdropData.contents.append([dataArr[2], dataArr[3], dataArr[4]])
             }
         }
@@ -2250,9 +2192,8 @@ void function SetPlayerIntroDropSettings( entity player )
 	//if ( !player.p.survivalLandedOnGround && !player.IsInvulnerable() )
 	//	player.SetInvulnerable()
 	player.ClearInvulnerable()
-	// DisableEntityOutOfBounds( player ) //FIXME. Cafe
+	// DisableEntityOutOfBounds( player ) //TODO: Fix
 
-	// Clear death protection the player had in the staging area. We don't do this when leaving "WaitingForPlayers" state because we don't want players taking damage in PickLoadout state either, which can happen with DOT entities left laying around
 	// if ( player.p.hasStagingAreaDamageProtection )
 	// {
 		// RemoveEntityCallback_OnDamaged( player, StagingAreaPlayerTookDamageCallback )
@@ -2268,7 +2209,6 @@ void function ClearPlayerIntroDropSettings( entity player )
 
 	player.p.hasDropSettings = false
 
-	// Called by whatever script is handling the player deployment into the map. Once that script gets the player to the ground it should call this.
 	player.ClearInvulnerable()
 	player.UnforceStand()
 
@@ -2283,23 +2223,19 @@ void function ClearPlayerIntroDropSettings( entity player )
 
 	if ( player.GetPlayerNetBool( "isJumpmaster" ) )
 	{
-		player.p.wasJumpmaster = true //used for tracking stats at the end of the game
+		player.p.wasJumpmaster = true
 		player.p.wasLastJumpmaster = true
 	}
 	else
 	{
 		player.p.wasLastJumpmaster = false
 	}
-	// remove jumpmaster star from the unitframe
 	player.SetPlayerNetBool( "isJumpmaster", false )
 	GradeFlagsClear( player, eTargetGrade.JUMPMASTER )
 
 	Highlight_SetFriendlyHighlight( player, "sp_friendly_hero" )
 	Highlight_ClearEnemyHighlight( player )
 
-	// Undo stuff we did in SetPlayerIntroDropSettings
-	// R5DEV-363382: strange mismatch between these two. Server_IsOffhandWeaponsDisabled seems to not be set in cases where the player disconnects,
-	//   even though the entity is valid and we can still manipulate it. This may explain the behaviour needing investigation (read comment above DisableOffhandWeapons in _utility.gnut)
 	if ( player.Server_IsOffhandWeaponsDisabled() )
 		DeployAndEnableWeapons( player )
 	// EnableEntityOutOfBounds( player )
@@ -2307,13 +2243,11 @@ void function ClearPlayerIntroDropSettings( entity player )
 	//Remote_CallFunction_NonReplay( player, "ServerCallback_PlayerBootsOnGround" )
 	Remote_CallFunction_ByRef( player, "ServerCallback_PlayerBootsOnGround" )
 
-	// Only modify the player's ultimate and tactical the first time they land on the ground, not again when using balloon towers, etc.
 	if ( !player.p.survivalLandedOnGround )
 	{
 		entity tacticalWeapon = player.GetOffhandWeapon( OFFHAND_TACTICAL )
 		if ( IsValid( tacticalWeapon ) && GetCurrentPlaylistVarBool( "survival_give_tactical_on_first_land", true ))
 		{
-			// Give player their tactical when they land, or all but 1 of their charges if tac has multiple charges
 			tacticalWeapon.RemoveMod( "survival_ammo_regen_paused" )
 			tacticalWeapon.SetWeaponPrimaryClipCountAbsolute( tacticalWeapon.GetWeaponSettingInt( eWeaponVar.ammo_default_total ) )
 			tacticalWeapon.RegenerateAmmoReset()
@@ -2322,7 +2256,6 @@ void function ClearPlayerIntroDropSettings( entity player )
 		entity ultimateWeapon = player.GetOffhandWeapon( OFFHAND_ULTIMATE )
 		if ( IsValid( ultimateWeapon ) && GetCurrentPlaylistVarBool( "survival_reset_ultimate_on_first_land", true ) )
 		{
-			// Restart ultimate cooldown from the beginning when we land on the ground
 			ultimateWeapon.RemoveMod( "survival_ammo_regen_staging" )
 			ultimateWeapon.RemoveMod( "survival_ammo_regen_paused" )
 			ultimateWeapon.SetWeaponPrimaryClipCountAbsolute( 0 )
@@ -2339,7 +2272,6 @@ void function ClearPlayerIntroDropSettings( entity player )
 			// callbackFunc( player )
 	}
 
-	// Allow player to emote
 	// SetPlayerCanGroundEmote( player, true )
 
 	PlayerMatchState_Set( player, ePlayerMatchState.NORMAL )
@@ -2389,9 +2321,6 @@ SurvivalPlayerData function Survival_GetPlayerData( EncodedEHandle playerEncoded
 	return file.playerData[ playerEncodedEHandle ]
 }
 
-//  Mackey suggested we create a passive weapon mod (new!).
-//  To get this to work we needed to move where this gets called, originally in Survival_OnPlayerRespawnedInit
-//  to Survival_PlayerCharacterSetup (so that the passive can get a chance to be removed when we switch characters).
 void function Survival_SetupWeaponMods( entity player )
 {
 	array mods = player.GetExtraWeaponMods()
@@ -2403,7 +2332,7 @@ void function Survival_SetupWeaponMods( entity player )
 	mods.extend( extraMods )
 
 	mods.append( "survival_finite_ordnance" )
-	player.SetExtraWeaponMods( mods ) // gets cleared on death
+	player.SetExtraWeaponMods( mods )
 }
 
 void function Survival_PlayerCharacterSetup( entity player, ItemFlavor character, bool giveDefaultMelee = true )
@@ -2427,104 +2356,112 @@ void function Survival_PlayerCharacterSetup( entity player, ItemFlavor character
 
 	//GiveLoadoutRelatedWeapons( player )
 
+/*
 	// Setup shields ( if player isn't bleeding out ):
-	// if( !Bleedout_IsBleedingOut( player ) )
-	// {
-		// string itemRef = EquipmentSlot_GetLootRefForSlot( player, "armor" )
-		// if ( SURVIVAL_Loot_IsRefValid( itemRef ) )
-		// {
-			// LootData data = SURVIVAL_Loot_GetLootDataByRef( itemRef )
-			// player.SetShieldHealthMax( SURVIVAL_GetCharacterShieldHealthMaxForArmor( player, data ) )
-		// }
-		// else
-		// {
-			// player.SetShieldHealthMax( GetPlayerSettingBaseShield( player ) )
-		// }
-		// player.SetShieldHealth( player.GetShieldHealthMax() )
-	// }
+	if( !Bleedout_IsBleedingOut( player ) )
+	{
+		string itemRef = EquipmentSlot_GetLootRefForSlot( player, "armor" )
+		if ( SURVIVAL_Loot_IsRefValid( itemRef ) )
+		{
+			LootData data = SURVIVAL_Loot_GetLootDataByRef( itemRef )
+			player.SetShieldHealthMax( SURVIVAL_GetCharacterShieldHealthMaxForArmor( player, data ) )
+		}
+		else
+		{
+			player.SetShieldHealthMax( GetPlayerSettingBaseShield( player ) )
+		}
+		player.SetShieldHealth( player.GetShieldHealthMax() )
+	}
+*/
 
+/*
 	// passives
-	// {
-		// foreach ( ItemFlavor passiveAbility in CharacterClass_GetPassiveAbilities( character ) )
-		// {
-			// GivePassive( player, CharacterAbility_GetPassiveIndex( passiveAbility ) )
+	{
+		foreach ( ItemFlavor passiveAbility in CharacterClass_GetPassiveAbilities( character ) )
+		{
+			GivePassive( player, CharacterAbility_GetPassiveIndex( passiveAbility ) )
 
-			// // Attach passive specific weapon mods to a player
+			// Attach passive specific weapon mods to a player
+			string passiveWeaponMod = CharacterAbility_GetPassiveWeaponMod( passiveAbility )
+			if ( passiveWeaponMod != "" )
+			GiveExtraWeaponMod( player, passiveWeaponMod )
+		}
 
-			// string passiveWeaponMod = CharacterAbility_GetPassiveWeaponMod( passiveAbility )
-			// if ( passiveWeaponMod != "" )
-				// GiveExtraWeaponMod( player, passiveWeaponMod )
-		// }
+		float damageScale = CharacterClass_GetDamageScale( character )
+		if ( damageScale < 1.0 ) // TODO: it's a bit backwards that the playlist var drives the passive, but that's how it is for now
+			GivePassive( player, ePassives.PAS_FORTIFIED )
+		else if ( damageScale > 1.0 )
+			GivePassive( player, ePassives.PAS_LOWPROFILE )
+	}
+*/
 
-		// float damageScale = CharacterClass_GetDamageScale( character )
-		// if ( damageScale < 1.0 ) // TODO: it's a bit backwards the the playlist var drives the passive, that that's how it is for now
-			// GivePassive( player, ePassives.PAS_FORTIFIED )
-		// else if ( damageScale > 1.0 )
-			// GivePassive( player, ePassives.PAS_LOWPROFILE )
-	// }
+/*
+	//tactical
+	{
+		ItemFlavor tacticalAbility = CharacterClass_GetTacticalAbility( character )
+		player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname( tacticalAbility ), OFFHAND_TACTICAL, [] )
+		entity tacticalWeapon = player.GetOffhandWeapon( OFFHAND_TACTICAL )
+		tacticalWeapon.SetWeaponPrimaryClipCount( tacticalWeapon.GetWeaponPrimaryClipCountMax() ) // give tactical straight away
+		if ( GetCurrentPlaylistVarBool( "survival_give_tactical_on_first_land", true ) )
+		{
+			if ( !player.p.survivalLandedOnGround )
+				tacticalWeapon.AddMod( "survival_ammo_regen_paused" )
+		}
 
-	// // tactical
-	// {
-		// ItemFlavor tacticalAbility = CharacterClass_GetTacticalAbility( character )
-		// player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname( tacticalAbility ), OFFHAND_TACTICAL, [] )
-		// entity tacticalWeapon = player.GetOffhandWeapon( OFFHAND_TACTICAL )
-		// tacticalWeapon.SetWeaponPrimaryClipCount( tacticalWeapon.GetWeaponPrimaryClipCountMax() ) // give tactical straight away
-		// if ( GetCurrentPlaylistVarBool( "survival_give_tactical_on_first_land", true ) )
-		// {
-			// if ( !player.p.survivalLandedOnGround )
-				// tacticalWeapon.AddMod( "survival_ammo_regen_paused" )
-		// }
+		Remote_CallFunction_Replay( player, "ServerCallback_UpdateHudWeaponData", tacticalWeapon )
+	}
+*/
 
-		// Remote_CallFunction_Replay( player, "ServerCallback_UpdateHudWeaponData", tacticalWeapon )
-	// }
+/*
+	// ultimate
+	{
+		ItemFlavor ultimateAbility = CharacterClass_GetUltimateAbility( character )
+		player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname( ultimateAbility ), OFFHAND_ULTIMATE, [] )
 
-	// // ultimate
-	// {
-		// ItemFlavor ultimateAbility = CharacterClass_GetUltimateAbility( character )
-		// player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname( ultimateAbility ), OFFHAND_ULTIMATE, [] )
+		entity ultimateWeapon = player.GetOffhandWeapon( OFFHAND_ULTIMATE )
 
-		// entity ultimateWeapon = player.GetOffhandWeapon( OFFHAND_ULTIMATE )
+		float fireDuration = ultimateWeapon.GetWeaponSettingFloat( eWeaponVar.fire_duration )
+		player.p.lastPilotOffhandUseTime[ OFFHAND_INVENTORY ] = Time() - fireDuration // track ultimate usage
+		player.p.lastPilotClipFrac[ OFFHAND_INVENTORY ]       = 0.0
 
-		// float fireDuration = ultimateWeapon.GetWeaponSettingFloat( eWeaponVar.fire_duration )
-		// player.p.lastPilotOffhandUseTime[ OFFHAND_INVENTORY ] = Time() - fireDuration // track ultimate usage
-		// player.p.lastPilotClipFrac[ OFFHAND_INVENTORY ]       = 0.0
+		// If we haven't landed and begun the game yet, let the ultimate charge faster (staging)
+		if ( GetGameState() <= eGameState.WaitingForPlayers )
+		{
+			ultimateWeapon.AddMod( "survival_ammo_regen_paused" )
+		}
 
-		// // If we haven't landed and begun the game yet, let the ultimate charge faster (staging)
-		// if ( GetGameState() <= eGameState.WaitingForPlayers )
-		// {
-			// ultimateWeapon.AddMod( "survival_ammo_regen_paused" )
-		// }
+		if ( !player.p.survivalLandedOnGround )
+			ultimateWeapon.AddMod( "survival_ammo_regen_paused" )
+	}
+*/
 
-		// if ( !player.p.survivalLandedOnGround )
-			// ultimateWeapon.AddMod( "survival_ammo_regen_paused" )
-	// }
+/*
+	entity parentEnt = player.GetParent()
+	if ( !IsValid( parentEnt ) && !player.Anim_IsActive() )
+	{
+		array< vector > navmeshPositions = NavMesh_GetClosestPoints( player.GetOrigin(), 32 )
 
-	// // Put the player in a safe spot if they aren't parented to anything
-	// // This is needed because they may be switching to a larget character that now is stuck in geo
-	// entity parentEnt = player.GetParent()
-	// if ( !IsValid( parentEnt ) && !player.Anim_IsActive() )
-	// {
-		// array< vector > navmeshPositions = NavMesh_GetClosestPoints( player.GetOrigin(), 32 )
-
-		// foreach ( vector navmeshPosition in navmeshPositions )
-		// {
-			// if ( PlayerCanTeleportHere( player, navmeshPosition ) )
-			// {
-				// PutPlayerInSafeSpot( player, null, null, navmeshPosition, navmeshPosition )
-				// break
-			// }
-		// }
-	// }
+		foreach ( vector navmeshPosition in navmeshPositions )
+		{
+			if ( PlayerCanTeleportHere( player, navmeshPosition ) )
+			{
+				PutPlayerInSafeSpot( player, null, null, navmeshPosition, navmeshPosition )
+				break
+			}
+		}
+	}
+*/
 
 	// if( giveDefaultMelee )
 		// SURVIVAL_TryGivePlayerDefaultMeleeWeapons( player )
 
 	// Inventory_RefreshAllPlayerEquipment( player )
 
-	// foreach ( func in file.Callbacks_OnPlayerSetupComplete )
-	// {
-		// func( player )
-	// }
+/*	foreach ( func in file.Callbacks_OnPlayerSetupComplete )
+	{
+		func( player )
+	}
+*/
 }
 
 void function Survival_OnPlayerRespawned( entity player )
@@ -2536,13 +2473,13 @@ void function Survival_OnPlayerRespawned( entity player )
 void function SurvivalPlayerRespawnedInit( entity player )
 {
 	if( Gamemode() != eGamemodes.SURVIVAL && Gamemode() != eGamemodes.WINTEREXPRESS )
-		return //keep this away from flowstate gamemodes for now. Cafe
+		return
 
 	// #if DEVELOPER
 	// DumpStack()
 	// #endif
 
-	bool resetPlayerInventoryOnRespawn = true //Survival_ShouldResetInventoryOnRespawn( player )
+	bool resetPlayerInventoryOnRespawn = true
 
 	UpdatePlayerCounts()
 
@@ -2560,7 +2497,7 @@ void function SurvivalPlayerRespawnedInit( entity player )
 		player.GiveOffhandWeapon( CONSUMABLE_WEAPON_NAME, OFFHAND_SLOT_FOR_CONSUMABLES )
 	}
 
-	if ( resetPlayerInventoryOnRespawn && player.p.survivalLandedOnGround ) // Only take ammo on a respawn and not on first drop
+	if ( resetPlayerInventoryOnRespawn && player.p.survivalLandedOnGround )
 		TakeAmmoFromPlayer( player )
 
 	// Ultimates_OnPlayerRespawned( player )
@@ -2571,37 +2508,31 @@ void function SurvivalPlayerRespawnedInit( entity player )
 	player.DisableIdLights()
 	player.DisableAutoReloadNoAmmo()
 
-	// if ( GetGameState() == eGameState.WaitingForPlayers )
-	// {
-		// if( EHIToEncodedEHandle( player ) in file.playerChangeClassData )
-		// {
-			// EncodedEHandle handle = EHIToEncodedEHandle( player )
-			// player.SetOrigin( file.playerChangeClassData[handle].respawnPos )
-			// player.SetAngles( file.playerChangeClassData[handle].respawnAngles )
-			// if ( file.playerChangeClassData[handle].respawnIn3P )
-				// player.SetThirdPersonShoulderModeOn()
-			// else
-				// player.SetThirdPersonShoulderModeOff()
-		// }
+	/* if ( GetGameState() == eGameState.WaitingForPlayers )
+	{
+    	if( EHIToEncodedEHandle( player ) in file.playerChangeClassData )
+    	{
+    	    EncodedEHandle handle = EHIToEncodedEHandle( player )
+    	    player.SetOrigin( file.playerChangeClassData[handle].respawnPos )
+    	    player.SetAngles( file.playerChangeClassData[handle].respawnAngles )
+    	    if ( file.playerChangeClassData[handle].respawnIn3P )
+    	        player.SetThirdPersonShoulderModeOn()
+    	    else
+    	        player.SetThirdPersonShoulderModeOff()
+    	}
 
-		// // thread Survival_SetStagingAreaSettings( player )
-	// }
-	// else
+    	// thread Survival_SetStagingAreaSettings( player )
+	}
+	else */
 	if ( GetGameState() < eGameState.Playing )
 	{
 		Survival_SetPrematchSettings( player )
 	}
 	else if ( !player.p.respawnPodLanded )
 	{
-		// respawnPodLanded will be set during a respawn from a respawn beacon, so we don't want to do anything special there. This only runs if it's not a respawn beacon
-		// This shouldn't be allowed, but it's happening, either in DEV through manual connect or slow loading and server wait for player timeout
-
 		SetPlayerIntroDropSettings( player )
-
 		array<entity> teammates = GetPlayerArrayOfTeam_Alive( player.GetTeam() )
 
-		// If we have no teammates and the plane exists we put the player in the plane
-		// Or, if we have teammates in the plane we also put them in the plane with their team
 		bool putInPlane                  = teammates.len() == 1 && IsValid( Sur_GetPlaneEnt() ) && !Flag( "PlaneAtLaunchPoint" )
 		entity skydiveFollowPlayer
 		bool skydiveFollowPlayerIsLeader = false
@@ -2629,21 +2560,14 @@ void function SurvivalPlayerRespawnedInit( entity player )
 
 		if ( putInPlane )
 		{
-			// Put in plane with teammates, or by themselves if the plane is still flying over
 			Survival_PutPlayerInPlane( player )
 		}
 		else if ( IsValid( skydiveFollowPlayer ) )
 		{
-			// no teammates are still in the plane, follow someone who's skydiving
 			thread PlayerSkyDive( player, <0, 0, 0>, teammates, skydiveFollowPlayer )
 		}
 		else
 		{
-			// The following should be allowed only in dev modes, but those are handled in a different way in r5r, which allows us to completely disable this.
-			// The fixed behavior for this part has been moved to OnClientConnected callback in sh_onboarding, where we do the pertinent checks before respawning the player.
-
-			// Bad
-			// if a player is on the ground already, just spawn them near that player
 			// ClearPlayerIntroDropSettings( player )
 			// if ( IsValid( groundPlayer ) )
 				// player.SetOrigin( groundPlayer.GetOrigin() )
@@ -2684,7 +2608,6 @@ void function Survival_ResetPlayerHighlights()
 {
 	foreach ( player in GetPlayerArray() )
 	{
-		//Remove ALL player highlights
 		Highlight_SetFriendlyHighlight( player, "sp_friendly_hero" )
 
 		//array<entity> teamMemberList = GetPlayerArrayOfTeam_Alive( player.GetTeam() )
@@ -2709,7 +2632,6 @@ void function Survival_ResetPlayerHighlights()
 		Highlight_SetNeutralHighlight( player, "survival" )
 
 		// ClientCommand( player, "force_id_lights_off 1" )
-
 		// Highlight_SetEnemyHighlight( player, "" )
 	}
 }
@@ -2718,7 +2640,6 @@ void function EndThreadOn_PlayerChangedClass( entity player )
 {
 	EndSignal( player, "PlayerChangedClass" )
 }
-
 
 void function SignalThatPlayerChangedClass( entity player )
 {

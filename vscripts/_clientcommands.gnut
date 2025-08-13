@@ -1,9 +1,5 @@
 untyped
 
-//=========================================================
-//	_clientcommands.gnut
-//=========================================================
-
 global function ClientCommands_Init
 
 void function ClientCommands_Init()
@@ -111,7 +107,6 @@ bool function ClientCommand_ToggleHUD( entity player, array<string> args )
 	return true
 }
 
-// Gives a gun infinite reloads
 bool function ClientCommand_infinite_ammo( entity player, array<string> args )
 {
 	if( !IsValid( player ) )
@@ -148,7 +143,6 @@ bool function ClientCommand_finite_ammo( entity player, array<string> args )
 	return true
 }
 
-// Instantly fills a player's abilities
 bool function ClientCommand_recharge( entity player, array<string> args )
 {
 	if( !IsValid( player ) )
@@ -162,7 +156,6 @@ bool function ClientCommand_recharge( entity player, array<string> args )
 	if(IsValid(player.GetOffhandWeapon( OFFHAND_LEFT ))){
 		player.GetOffhandWeapon( OFFHAND_LEFT ).SetWeaponPrimaryClipCount( player.GetOffhandWeapon( OFFHAND_LEFT ).GetWeaponPrimaryClipCountMax() )
 		
-		//Fix for grapple not recharging after grappling server created props
 		player.SetSuitGrapplePower(100)
 	}
 	

@@ -32,22 +32,21 @@ void function UpdateLightingConVars()
 		wait 6
 	}
 }
-//
-//
+
+/*
 ////script_client UpdateBlenderLight(0, TRAINING_BASE + <64.40,330.30,504.12> , <-0.00,0.00,0.00> , <255.00,255.00,255.00> , 20.00 , 2291.84 , 10000.00 , 6.00)
-//entity function UpdateBlenderLight(int index , vector pos, vector ang,vector RGB,float brightness, float radius , float distance, float exponent)
-//{
-//   entity e = MP_LIGHTS[index]
-//   e.SetLightExponent( exponent );e.SetLightRadius(radius)
-//   e.SetOrigin(pos)
-//   e.SetAngles(ang)
-//   e.kv.distance = distance
-//   MP_LIGHTS_exp[index] = exponent
-//   return e
-//}
+entity function UpdateBlenderLight(int index , vector pos, vector ang,vector RGB,float brightness, float radius , float distance, float exponent)
+{
+	entity e = MP_LIGHTS[index]
+	e.SetLightExponent( exponent ); e.SetLightRadius(radius)
+	e.SetOrigin(pos)
+	e.SetAngles(ang)
+	e.kv.distance = distance
+	MP_LIGHTS_exp[index] = exponent
+	return e
+}*/
 
 // script DEV_TeleportPlayers( <30486.3145, 8583.26367, -18713.4609> , <0, 137.236221, 0> )
-
 
 void function CL_EntitiesDidLoad()
 {
@@ -61,7 +60,6 @@ void function CL_EntitiesDidLoad()
 	}
 
 }
-
 
 void function CL_CreateWorldText( vector origin, vector angles, float textScale , string title, string text , int panelID = -1)
 {
@@ -78,8 +76,6 @@ void function CL_CreateWorldText( vector origin, vector angles, float textScale 
 
     Dev_CreateTextInfoPanelWithID( origin.x, origin.y, origin.z, angles.x, angles.y, angles.z, false, textScale , panelID)
 }
-
-
 
 table<int,array<var> > worldRUIs
 array<int> VideoChannels
@@ -125,13 +121,4 @@ void function CL_DestroyWorldImage( int RUIID )
 	worldRUIs[ RUIID ].clear()
 }
 
-
 //CL_CreateWorldImage($"", GetLocalViewPlayer().GetOrigin(), <0,0,0>, 400, 400, -1)
-
-
-
-
-
-
-
-

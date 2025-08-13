@@ -168,7 +168,7 @@ void function CodeDialogue_GrenadeOut( entity guy )
 	if ( NPC_GruntChatterSPEnabled( guy ) )
 	{
 		#if GRUNTCHATTER_ENABLED
-		// TODO: move this info to the weapon data file
+		// TODO: move info to weapon data file
 		if ( guy.kv.grenadeWeaponName == "mp_weapon_frag_drone" )
 			GruntChatter_TryFriendlyEquipmentDeployed( guy, "mp_weapon_frag_drone" )
 		else

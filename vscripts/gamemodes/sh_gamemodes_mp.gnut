@@ -5,12 +5,6 @@ void function GameModes_Init_SV_CL()
 {
 	string gameMode
 
-	////////////////////////////
-	//                        //
-	//        Menufall        //
-	//                        //
-	////////////////////////////
-
 	gameMode = MENUFALL
 	#if SERVER || CLIENT
 		GameMode_AddSharedInit( gameMode, GamemodeSurvivalShared_Init )
@@ -20,12 +14,6 @@ void function GameModes_Init_SV_CL()
 	GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Generic )
 	GameMode_SetEvacEnabled( gameMode, false )
 	#endif
-	
-	////////////////////////////
-	//                        //
-	//        Survival        //
-	//                        //
-	////////////////////////////
 
 	gameMode = SURVIVAL
 	#if SERVER

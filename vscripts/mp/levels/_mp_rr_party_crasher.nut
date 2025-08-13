@@ -25,7 +25,7 @@ void function InitARBarriers()
 {
 	AddSpawnCallback( "func_brush", void function ( entity brush )
 	{
-		brush.Destroy()//TODO: Recover this function once we get correct shaders and arenas -LorryLeKral
+		brush.Destroy()	//TODO: Recover function once we get correct shaders and arenas
 	} )
 }
 #endif
@@ -33,8 +33,7 @@ void function InitARBarriers()
 void function PartyCrasherOnEntitiesDidLoad()
 {
     SpawnMovingLights()
-
-	//Patch_mp_rr_party_crasher() //(mk): spawn LOS flagged props
+	//Patch_mp_rr_party_crasher()
 }
 
 array<entity> function PerfectZipline(vector startPos,vector endPos,bool pathfinder_model)

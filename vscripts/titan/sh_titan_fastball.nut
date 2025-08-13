@@ -1,6 +1,5 @@
 untyped
 
-
 global function TitanFastball_Init
 #if SERVER
 	global function SetCustomFastBallAimModeFunc
@@ -54,7 +53,6 @@ void function TitanFastball_Init()
 		FlagInit( "FastballEnabled" )
 		file.fastBallAimModeFunc = Fastball_PlayerAndTitanEnterAimingMode
 
-		// For leveled placed scripted throws
 		AddTriggerEditorClassFunc( "trigger_fastball", ScriptedFastballTriggerThink )
 
 	#endif
@@ -86,9 +84,6 @@ vector function Fastball_GetThrowStartPos( entity player )
 	return player.EyePosition() + Vector( 0, 0, FASTBALL_VERTICAL_OFFSET_START )
 }
 
-// =================================
-// ========== SERVER ONLY ==========
-// =================================
 #if SERVER
 void function FastballTitanSpawned( entity titan )
 {
@@ -133,7 +128,7 @@ void function FastballTitanThink( entity titan )
 			continue*/
 
 		waitthread file.fastBallAimModeFunc( player, titan )
-		wait 1.5 // extra debounce
+		wait 1.5
 	}
 }
 
@@ -179,11 +174,10 @@ void function Fastball_PlayerAndTitanEnterAimingMode( entity player, entity tita
 				player.ClearParent()
 				player.SetLocalAngles( player.EyeAngles() )
 				player.PlayerCone_Disable()
-				player.SetPetTitanMode( ogTitanMode )  // HACK he forgets about guard mode after anim stops
+				player.SetPetTitanMode( ogTitanMode )  //HACK: he forgets about guard mode after anim stops
 				player.DeployWeapon()
 				player.nv.drawFastballHud = false
 
-				// clear help message
 				Dev_PrintMessage( player, "", "", 0.1 )
 			}
 
@@ -192,7 +186,6 @@ void function Fastball_PlayerAndTitanEnterAimingMode( entity player, entity tita
 				titan.ClearParent()
 				titan.Anim_Stop()
 
-				// Watch the player as he flies
 				if ( IsValid( player ) && IsAlive( titan ) )
 				{
 
@@ -214,16 +207,12 @@ void function Fastball_PlayerAndTitanEnterAimingMode( entity player, entity tita
 		player.s.helpShown_THROW <- true
 	}
 
-	// Draw the hud
 	player.nv.drawFastballHud = true
-
-	// Disable weapon
 	player.DisableWeaponWithSlowHolster()
 
 	if ( GetBugReproNum() == 110567 )
 		thread TitanRotateForAiming( mover, titan, player )
 
-	// Wait till player is thrown. Then this thread will end and the think function will resume
 	WaitSignal( player, "FastballLaunch" )
 	thread FastballThrowPlayer( player )
 }
@@ -301,7 +290,6 @@ void function ScriptedFastballTriggerThink( entity trigger )
 		if ( !IsValid( titan ) )
 			continue
 
-		// Fastball
 		waitthread ScriptedTitanFastball( player, titan, titanNode, throwTarget )
 	}
 }
@@ -353,7 +341,6 @@ void function ScriptedTitanFastball( entity player, entity titan, entity titanNo
 		}
 	)
 
-	// Send the titan to the throw position
 	//RunToAnimStartForced_Deprecated( titan, file.fastballAnims[0], ref )
 
 	//titan.SetParent( ref )
@@ -362,16 +349,13 @@ void function ScriptedTitanFastball( entity player, entity titan, entity titanNo
 	Assert( file.fastballAnims[1] != "" )
 	Assert( file.fastballAnims[2] != "" )
 
-	// Play the anim to get into throw pose
 	if ( file.fastballAnims[0] != "" )
 		waitthread PlayAnim( titan, file.fastballAnims[0], ref, "REF" )
 
-	// Get into looping anim to wait for the player
 	thread PlayAnim( titan, file.fastballAnims[1], ref, "REF" )
 
 	Signal( titan, "ReadyForFastball" )
 
-	// Wait for player to be near the hand
 	int attachID = titan.LookupAttachment( "FASTBALL_R" )
 	vector tagOrigin = titan.GetAttachmentOrigin( attachID )
 	vector tagAngles = titan.GetAttachmentAngles( attachID )
@@ -390,14 +374,12 @@ void function ScriptedTitanFastball( entity player, entity titan, entity titanNo
 
 	player.DisableWeaponWithSlowHolster()
 
-	// Titan and player animate together for throw
 	thread PlayAnim( titan, file.fastballAnims[2], ref, "REF" )
 	titan.Anim_AdvanceCycleEveryFrame( true )
 	thread PlayerScriptedFastballAnim( player, titan, ref )
 
 	WaitSignal( titan, "fastball_release" )
 
-	// Throw the player
 	vector throwVelocity = Fastball_GetThrowVelocity( player )//file.fastballVelocityFunc( player, throwTarget )
 
 	player.ClearParent()
@@ -405,7 +387,6 @@ void function ScriptedTitanFastball( entity player, entity titan, entity titanNo
 	player.DeployWeapon()
 	EmitSoundOnEntity( player, "bt_beacon_fastball_Whoosh" )
 
-	// Make titan stop animating
 	WaittillAnimDone( titan )
 
 	ShowName( titan )
@@ -458,13 +439,8 @@ void function PlayerScriptedFastballAnim( entity player, entity titan, entity re
 	player.UnforceStand()
 }
 
-#endif //SERVER
+#endif 
 
-
-
-// =================================
-// ========== CLIENT ONLY ==========
-// =================================
 #if CLIENT
 void function DrawFastballHudChanged( player, varName, newValue, oldValue )
 {
@@ -495,7 +471,6 @@ void function FastballHudThink( entity player )
 		GravityLandData data = GetGravityLandData( arcStart, parentVelocity, throwVelocity, timeLimit, false, drawPathDuration, pathColor )
 		//printt( "data points:", data.points.len())
 
-		// draw the lines on the sides
 		vector viewRight = player.GetViewRight()
 		vector arcStartRight = arcStart + ( viewRight * 1.5 )
 		vector arcStartRight2 = arcStart + ( viewRight * 3 )
@@ -555,7 +530,7 @@ void function ActivateFastballThink( entity player )
 	bool w = false
 	while( true )
 	{
-		if ( w ) // dont wait on the first loop, makes button more responsive
+		if ( w )
 			WaitFrame()
 		w = true
 
@@ -574,4 +549,4 @@ void function ActivateFastballThink( entity player )
 	player.ClientCommand( "FastballActivate" )
 }
 
-#endif //CLIENT
+#endif

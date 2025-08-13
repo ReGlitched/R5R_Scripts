@@ -45,7 +45,7 @@ global const STEAL_PISTOL_MODEL = $"mdl/weapons/p2011/w_p2011.rmdl"
 global const WINGMAN_MODEL = $"mdl/weapons/b3wing/w_b3wing.rmdl"
 global const AWALL_MODEL = $"mdl/weapons/sentry_shield/sentry_shield_proj.rmdl"
 global const AWALL_WALL = $"mdl/fx/pilot_shield_wall.rmdl"
-global const PULSE_BLADE_MODEL = $"mdl/weapons/b3wing/w_b3wing.rmdl"//$"mdl/weapons/kunai/w_kunai.rmdl" - TODO: Port the correct model later -Kral
+global const PULSE_BLADE_MODEL = $"mdl/weapons/b3wing/w_b3wing.rmdl"//$"mdl/weapons/kunai/w_kunai.rmdl" - TODO: Port the correct model later
 
 void function Anim_Init()
 {
@@ -66,8 +66,8 @@ void function Anim_Init()
 	PrecacheModel( AWALL_WALL )
 	PrecacheModel( PULSE_BLADE_MODEL )
 	
-	RegisterSignal( "DeleteAWall" ) //ForAWallExecution
-	RegisterSignal( "PlayNextSound" ) //ForAwallExecution, generally could be used when we have long chains of sounds that need to be played that are different for robopilots versus non-robopilots
+	RegisterSignal( "DeleteAWall" ) 
+	RegisterSignal( "PlayNextSound" )
 
 	AddGlobalAnimEvent( "spawn_awall", GlobalAnimEvent_spawn_awall )
 	AddGlobalAnimEvent( "front_shot_high", AnimEvent_front_shot_high )
@@ -135,7 +135,7 @@ void function Anim_Init()
 	AddGlobalAnimEvent( "footstep_human_small_R", GlobalAnimEvent_footstep_human_small_R )
 	AddGlobalAnimEvent( "prowler_bodyfall", GlobalAnimEvent_BodyFallProwler )
 	AddGlobalAnimEvent( "prowler_landing", GlobalAnimEvent_BodyFallProwler )
-	AddGlobalAnimEvent( "prowler_landing", GlobalAnimEvent_PutProwlerInSafeSpot ) //(cafe) Fixes bh tt prowlers from falling through the map
+	AddGlobalAnimEvent( "prowler_landing", GlobalAnimEvent_PutProwlerInSafeSpot ) 
 	AddGlobalAnimEvent( "setWeaponSkin00", GlobalAnimEvent_SetWeaponSkin00 )
 	AddGlobalAnimEvent( "setWeaponSkin01", GlobalAnimEvent_SetWeaponSkin01 )
 	AddGlobalAnimEvent( "phase_shift_start", PhaseEmbarkPhaseStart )
@@ -148,7 +148,7 @@ void function Anim_Init()
 	AddGlobalAnimEventTokenize( "spawn_fake_weapon", GlobalAnimEvent_SpawnFakeWeapon )
 	AddGlobalAnimEventTokenize( "set_body_group", GlobalAnimEvent_SetBodyGroup )
 	#if SP
-	PrecacheWeapon( "mp_titanweapon_salvo_rockets" ) // used by bt_pod_fire_left/bt_pod_fire_right anim events. Only BT has these anim events.
+	PrecacheWeapon( "mp_titanweapon_salvo_rockets" )
 	AddGlobalAnimEvent( "bt_pod_fire_left", GlobalAnimEvent_BT_Pod_Left )
 	AddGlobalAnimEvent( "bt_pod_fire_right", GlobalAnimEvent_BT_Pod_Right )
 	#endif
@@ -274,7 +274,7 @@ void function GlobalAnimEvent_SetVelocity( entity actor )
 	local distance 		= Distance( actor.GetOrigin(), record.origin )
 	local time			= Time() - record.time
 	if ( time <= 0 )
-		time = 0.001 // timescale bug?
+		time = 0.001
 	local speed 		= distance / time
 
 	actor.SetVelocity( dir * speed )
@@ -506,7 +506,6 @@ void function GlobalAnimEvent_PutProwlerInSafeSpot( entity guy )
 
 void function GlobalAnimEvent_SetBodyGroup( entity model, array<string> tokens )
 {
-	// ex: "set_body_group:l_hand_usb:0"	// the 0 at the end designates the stat index, 0 in this case meens not show, but in some cases it might mean show.
 	Assert( tokens.len() == 3 )
 	string bodyGroup = tokens[1]
 	int value = int( tokens[2] )
@@ -583,7 +582,6 @@ function GetRefPosition( reference )
 	return position
 }
 
-// play the anim
 function __PlayAnim( guy, animation_name, reference = null, optionalTag = null, blendTime = DEFAULT_SCRIPTED_ANIMATION_BLEND_TIME )
 {
 	expect entity( guy )
@@ -599,7 +597,6 @@ function __PlayAnim( guy, animation_name, reference = null, optionalTag = null, 
 	#if !DEVELOPER
 	if ( guy.IsNPC() && !guy.IsInterruptable() )
 	{
-		// better than nothing failsafe
 		guy.Signal( "OnAnimationInterrupted" )
 		guy.Signal( "OnAnimationDone" )
 		return
@@ -732,7 +729,7 @@ function TeleportToAnimStart( _guy, animation_name, reference, optionalTag = nul
 	}
 	//Assert( animStartPos, "No animStartPos for " + animation + " on " + guy )
 
-	// hack! shouldn't need to do this
+	//HACK: shouldn't need to do this
 	animStartPos.origin = ClampToWorldspace( animStartPos.origin )
 
 	if ( guy.GetParent() )
@@ -755,7 +752,6 @@ function TeleportToAnimStart( _guy, animation_name, reference, optionalTag = nul
 	}
 }
 
-// wait till arrive at goal and animation is done
 function RunToAndPlayAnimAndWait( entity guy, string animation_name, reference, bool doArrival = false, optionalTag = null )
 {
 	bool savedEnableFriendlyFollower = guy.ai.enableFriendlyFollower
@@ -774,7 +770,6 @@ function RunToAndPlayAnimAndWait( entity guy, string animation_name, reference, 
 	guy.ai.enableFriendlyFollower = savedEnableFriendlyFollower
 }
 
-// wait till arrive at goal and start animation but don't wait until animation is done
 function RunToAndPlayAnim( entity guy, string animation_name, reference, bool doArrival = false, optionalTag = null )
 {
 	bool savedEnableFriendlyFollower = guy.ai.enableFriendlyFollower
@@ -836,7 +831,7 @@ function RunToAndPlayAnimGravityForced( entity guy, string animation_name, refer
 function __RunToAndPlayAnim( entity guy, string animation_name, reference, bool doArrival, optionalTag )
 {
 	Assert( IsAlive( guy ) )
-	guy.Anim_Stop() // in case we were doing an anim already
+	guy.Anim_Stop()
 	guy.EndSignal( "OnDeath" )
 
 	string animation = expect string( GetAnim( guy, animation_name ) )
@@ -867,13 +862,13 @@ function __RunToAndPlayAnim( entity guy, string animation_name, reference, bool 
 	guy.AssaultPointToAnim( origin, angles, animation, doArrival, 4.0 )
 }
 
-// run to the place to start the anim, then play it
+//DEPRECATED TODO: Remove Later
 function RunToAnimStart_Deprecated( guy, animation_name, reference = null, optionalTag = null )
 {
 	expect entity( guy )
 
 	Assert( IsAlive( guy ) )
-	guy.Anim_Stop() // in case we were doing an anim already
+	guy.Anim_Stop()
 	guy.EndSignal( "OnDeath" )
 
 	local allowFlee = guy.GetNPCFlag( NPC_ALLOW_FLEE )
@@ -919,11 +914,10 @@ function RunToAnimStart_Deprecated( guy, animation_name, reference = null, optio
 //	Assert( Distance( animStartPos.origin, guy.GetOrigin() ) < 32, guy + " finished assault but was " + ( Distance( animStartPos.origin, guy.GetOrigin() ) ) + " away from where he should have ended up." )
 }
 
-// only use this if you are OK with a frame pause before the start of the animation
 void function RunToAnimStartPos( entity guy, string animation_name, reference = null, bool doArrival = false, optionalTag = null )
 {
 	Assert( IsAlive( guy ) )
-	guy.Anim_Stop() // in case we were doing an anim already
+	guy.Anim_Stop()
 	guy.EndSignal( "OnDeath" )
 
 	local allowFlee = guy.GetNPCFlag( NPC_ALLOW_FLEE )
@@ -979,7 +973,6 @@ void function RunToAnimStartPos( entity guy, string animation_name, reference = 
 	//thread DebugAssaultEnt( guy, assaultEnt )
 	WaitSignal( guy, "OnFinishedAssault" )
 
-	//in case the scripter reset during run, we want to honor the intended change
 	if ( guy.AssaultGetFightRadius() == runtoRadius )
 		guy.AssaultSetFightRadius( fightRadius )
 
@@ -993,12 +986,11 @@ void function RunToAnimStartPos( entity guy, string animation_name, reference = 
 	guy.ai.enableFriendlyFollower = savedEnableFriendlyFollower
 }
 
-///////////////////////////////////////////////////////////////////
-// Deprecated, use RunToAndPlayAnim, otherwise there will be a gap between arriving at position and playing the animation
+//DEPRECATED TODO: Remove Later. Use RunToAndPlayAnim
 function RunToAnimStartForced_Deprecated( entity guy, string animation_name, reference = null, optionalTag = null, bool disableArrival = true, disableAssaultAngles = false )
 {
 	Assert( IsAlive( guy ) )
-	guy.Anim_Stop() // in case we were doing an anim already
+	guy.Anim_Stop() 
 	guy.EndSignal( "OnDeath" )
 
 	local allowFlee = guy.GetNPCFlag( NPC_ALLOW_FLEE )
@@ -1065,7 +1057,6 @@ function RunToAnimStartForced_Deprecated( entity guy, string animation_name, ref
 //	guy.WaitSignal( "OnFinishedAssault" )
 
 */
-	//in case the scripter reset during run, we want to honor the intended change
 	if ( guy.AssaultGetFightRadius() == runtoRadius )
 		guy.AssaultSetFightRadius( fightRadius )
 
@@ -1085,7 +1076,6 @@ void function ShowEnt( entity viewmodel )
 		viewmodel.ShowFirstPersonProxy()
 }
 
-// anim teleport
 function PlayAnimTeleport( guy, animation_name, reference = null, optionalTag = null, initialTime = -1.0, smooth = false )
 {
 	if ( type( guy ) == "array" || type( guy ) == "table" )
@@ -1118,7 +1108,6 @@ function PlayAnimTeleport( guy, animation_name, reference = null, optionalTag = 
 	}
 }
 
-// play the anim
 function PlayAnim( guy, animation_name, reference = null, optionalTag = null, blendTime = DEFAULT_SCRIPTED_ANIMATION_BLEND_TIME, initialTime = -1.0 )
 {
 	if ( type( guy ) == "array" )
@@ -1219,7 +1208,6 @@ void function GlobalAnimEvent_headstab_death( entity ent )
 	#endif
 }
 
-// play the anim
 function PlayAnimNoWait( guy, animation_name, reference = null, optionalTag = null, blendTime = DEFAULT_SCRIPTED_ANIMATION_BLEND_TIME, initialTime = -1.0)
 {
 	if ( type( guy ) == "array" )
@@ -1284,7 +1272,7 @@ void function StealP2011MuzzleFlash( entity pistol )
 
 	StartParticleEffectOnEntity( pistol, GetParticleSystemIndex( effectName ), FX_PATTACH_POINT_FOLLOW, muzzleTagIdx )
 
-	EmitSoundOnEntity( pistol, "Pilot_Gunshot_Execution_StealToUnload_3P" ) // sound above cannot play because it's an asset instead of a string
+	EmitSoundOnEntity( pistol, "Pilot_Gunshot_Execution_StealToUnload_3P" )
 }
 
 void function GlobalAnimEvent_detach_pistol( entity ent )
@@ -1311,7 +1299,7 @@ void function GlobalAnimEvent_attach_pistol( entity ent )
 void function GlobalAnimEvent_turnoff_executionDOF( entity ent )
 {
 	if ( ent.IsPlayer() )
-		RemoveCinematicFlag( ent, CE_FLAG_EXECUTION ) //This flag is added in PlayerTriesSyncedMelee(). Cloak interacts badly with DOF (adding this flag turns DOF effect on), so for cloak execution only we remove the DOF.
+		RemoveCinematicFlag( ent, CE_FLAG_EXECUTION )
 }
 
 void function GlobalAnimEvent_spawn_awall( entity attacker )
@@ -1343,12 +1331,12 @@ void function AnimEvent_CreateAwall( entity awall_base )
 	ampedWall.kv.CollisionGroup = TRACE_COLLISION_GROUP_BLOCK_WEAPONS_AND_PHYSICS
 	ampedWall.SetPassThroughFlags( PTF_ADDS_MODS | PTF_NO_DMG_ON_PASS_THROUGH )
 	ampedWall.SetBlocksRadiusDamage( true )
-	ampedWall.SetTakeDamageType( DAMAGE_NO ) //Can't kill this AWall!
+	ampedWall.SetTakeDamageType( DAMAGE_NO ) 
 	ampedWall.SetDamageNotifications( true )
 	ampedWall.SetMaxHealth( 1000 )
 	ampedWall.SetHealth( 1000 )
 	awall_base.EndSignal( "OnDestroy" )
-	awall_base.EndSignal( "DeleteAWall" ) //Signaled from the animation
+	awall_base.EndSignal( "DeleteAWall" ) 
 	ampedWall.Hide()
 
 	OnThreadEnd(
@@ -1439,7 +1427,7 @@ void function AnimEvent_front_shot_high( entity ent )
 		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
 }
 
-void function HoloPilot_Execution_MuzzleFlash( entity pistol ) //Only real difference between this and p2011 version is the sound effect
+void function HoloPilot_Execution_MuzzleFlash( entity pistol )
 {
 	string attachName = "muzzle_flash"
 	asset effectName = $"wpn_muzzleflash_pistol"
@@ -1448,12 +1436,12 @@ void function HoloPilot_Execution_MuzzleFlash( entity pistol ) //Only real diffe
 
 	StartParticleEffectOnEntity( pistol, GetParticleSystemIndex( effectName ), FX_PATTACH_POINT_FOLLOW, muzzleTagIdx )
 
-	EmitSoundOnEntity( pistol, "weapon_wingman_fire_3p" ) // sound above cannot play because it's an asset instead of a string
+	EmitSoundOnEntity( pistol, "weapon_wingman_fire_3p" ) 
 }
 
 void function AnimEvent_Cloak_On( entity ent )
 {
-	EnableCloak( ent, 1.5, 0.35 ) //Make sure duration is longer than animation seqeunce length
+	EnableCloak( ent, 1.5, 0.35 )
 }
 
 void function AnimEvent_Cloak_Off( entity ent )
@@ -1511,7 +1499,7 @@ void function HoloPilot_Execution_DecoySetup( entity decoy )
 	decoy.SetNameVisibleToEnemy( false )
 	decoy.SetTimeout( DECOY_DURATION )
 	decoy.NotSolid()
-	AddAnimEvent( decoy, "decoy_dissolve", HoloPilot_Execution_DissolveDecoy ) //Doesn't seem to work for decoy entities?
+	AddAnimEvent( decoy, "decoy_dissolve", HoloPilot_Execution_DissolveDecoy ) 
 }
 
 void function AnimEvent_holopilot_headshot_sfx( entity victim )
@@ -1537,7 +1525,7 @@ void function HoloPilot_Execution_MonitorLifeTime( entity attacker, entity decoy
 		}
 	)
 
-	wait 0.1 //0.1s chosen because it looks fine
+	wait 0.1 
 
 }
 
@@ -1593,7 +1581,7 @@ void function PhaseGib( entity target )
 	//target.TakeDamage( damageAmount , attacker, attacker, { forceKill = true, damageType = DMG_MELEE_EXECUTION, damageSourceId = eDamageSourceId.human_execution, scriptType = DF_NO_INDICATOR | DF_GIB } )
 }
 
-void function AnimEvent_attach_pulseBlade( entity ent ) //Copy of the function that attaches the data knife. Easier to do this than to pass in a model to load instead because of the animeevent limitation
+void function AnimEvent_attach_pulseBlade( entity ent ) 
 {
 	entity knife = CreatePropDynamic( PULSE_BLADE_MODEL )
 	knife.kv.targetname = KNIFE_TARGETNAME
@@ -1613,7 +1601,7 @@ void function AnimEvent_attach_pulseBlade( entity ent ) //Copy of the function t
 	WaittillAnimDone( ent )
 }
 
-void function AnimEvent_detach_pulseBlade( entity ent ) //Literally a copy of the function that detaches the dataknife. Could just call the same function really, but I prefer having a pair of functions that are differently named for consistency
+void function AnimEvent_detach_pulseBlade( entity ent ) 
 {
 	var childEnt =  ent.FirstMoveChild()
 
@@ -1668,12 +1656,6 @@ void function AnimEvent_mriPulseEvent( entity ent )
 
 	while( Time() < lifeTimeOfEffect )
 	{
-		/*
-		2 things here:
-		1. keep setting origin to make the effect look like it's coming from where the head is, as opposed to where the head was, even during the falling down part of the animation
-		2. Set time as the parameter manually because it looks like i.time in the highlight is not the same as Time(). It's server tick rate so not as smooth though :/
-		*/
-
 		Highlight_SetSonarExecutionHighlightOrigin( ent, ent.GetAttachmentOrigin( headShotAttachmentIndex ), <startTime, Time(), Time() - startTime> )
 		WaitFrame()
 	}
@@ -1692,7 +1674,6 @@ void function PlaySoundsForBodyType( entity ent, string roboSound, string humanS
 	}
 }
 
-// play the anim
 function PlayAnimRun( entity guy, string animation_name, reference, bool doArrival, optionalTag = null, blendTime = DEFAULT_SCRIPTED_ANIMATION_BLEND_TIME  )
 {
 	RunToAndPlayAnim( guy, animation_name, reference, doArrival, optionalTag )
@@ -1802,7 +1783,6 @@ void function __PlayFPSAnimInternal( entity player, string anim3rd, string anim1
 	sequence.teleport			= teleport
 	sequence.hideProxy			= hideProxy
 
-	//hard coded in this function
 	sequence.noParent			= true
 
 	FirstPersonSequence( sequence, player, ref )
@@ -1814,13 +1794,12 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 	player.EndSignal( "NewFirstPersonSequence" )
 	player.EndSignal( "ScriptAnimStop" )
 
-	player.SetVelocity( <0,0,0> ) // fix this
+	player.SetVelocity( <0,0,0> ) //TODO: fix this
 	if ( player.IsPlayer() && sequence.snapPlayerFeetToEyes )
 	{
 		player.SnapFeetToEyes()
 	}
 
-	//figure out if we have/should do a first person sequence and handle Spawn slots.
 	bool doFirstPersonAnim = sequence.firstPersonAnim != ""
 
 	entity firstPersonProxy
@@ -1847,7 +1826,6 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 		firstPersonProxy.SetAbsOrigin( player.GetOrigin() )
 		firstPersonProxy.SetAbsAngles( player.GetAngles() )
 
-		// Set anim view entity *after* setting the proxy's origin so that we calculate our initial view offset correctly (for lerping)
 		SetPlayerAnimViewEntity( player, firstPersonProxy )
 		firstPersonProxy.SetNextThinkNow()
 		SetForceDrawWhileParented( firstPersonProxy, true )
@@ -1858,7 +1836,7 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 	{
 		if ( player.IsPlayer() )
 		{
-			entity fpProxy = player.GetFirstPersonProxy() //Shouldn't ever need to show the first person proxy when doing thirdPersonCameraAttachments; hide it explicitly here to stop it from showing up when chaining animations
+			entity fpProxy = player.GetFirstPersonProxy()
 			if ( IsValid( fpProxy )  )
 				fpProxy.HideFirstPersonProxy()
 
@@ -1890,7 +1868,6 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 
 	if ( ent )
 	{
-		// the entity we are animating relative to may change during the animation
 		if ( IsSoul( ent ) )
 		{
 			soul = ent
@@ -1960,9 +1937,6 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 
 		if ( player.GetParent() != ent )
 		{
-			// you could be parenting from one tag to another but we don't do
-			// that anywhere currently, and if we want to do it we can do some
-			// special stuff
 			player.SetParent( ent, optionalTag, false, sequence.blendTime )
 		}
 	}
@@ -2104,7 +2078,6 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 			return
 	}
 
-	// time passed
 	if ( soul )
 	{
 		if ( !IsValid( soul ) )
@@ -2138,7 +2111,7 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 		firstPersonProxy = player.GetFirstPersonProxy()
 		firstPersonProxy.ShowFirstPersonProxy()
 
-		if ( IsValid( firstPersonProxy ) && EntHasModelSet( firstPersonProxy ) ) //JFS: Defensive fix for player not having view models sometimes
+		if ( IsValid( firstPersonProxy ) && EntHasModelSet( firstPersonProxy ) )
 		{
 			if ( sequence.renderWithViewModels )
 				firstPersonProxy.RenderWithViewModels( true )
@@ -2171,7 +2144,6 @@ void function FirstPersonSequence( FirstPersonSequenceStruct sequence, entity pl
 			sequence.viewConeFunction( player )
 	}
 }
-
 
 function ClampPlayerViewCone( player )
 {

@@ -21,7 +21,7 @@ void function ClientCodeCallback_MapInit()
 		AddTargetNameCreateCallback( "leviathan_zone_6", AddAirdropTraceIgnoreEnt )
 		AddTargetNameCreateCallback( "leviathan_zone_9", AddAirdropTraceIgnoreEnt )
 	#endif
-	RegisterSignal( "RoarStop" ) //needed for anim callbacks in not-yet-shipped DFS scripts
+	RegisterSignal( "RoarStop" )
 	AddCallback_GameStateEnter( eGameState.WinnerDetermined, MU1_OnWinnerDetermined )
 
 	AddCreateCallback( "prop_dynamic", OnTeaseDronePropSpawned )
@@ -112,7 +112,6 @@ void function MinimapLabelsCanyonlandsMU1()
 	ModelFX_EndData()
 }
 
-
 void function OnLeviathanMarkerCreated( entity marker )
 {
 	string markerTargetName = marker.GetTargetName()
@@ -142,7 +141,6 @@ void function LeviathanThink( entity marker, entity leviathan, bool stagingOnly 
 
 	WaitForever()
 }
-
 
 void function MU1_OnWinnerDetermined()
 {
@@ -179,7 +177,6 @@ void function Thread_TweakLightFlicker()
 
 	bool lightsOn = true
 
-	// Make sure to leave lights in default on state
 	OnThreadEnd(
 		function() : ( origPointLightBrightness, origSpotLightBrightness )
 		{

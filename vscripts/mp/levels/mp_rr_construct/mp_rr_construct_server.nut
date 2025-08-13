@@ -55,5 +55,3 @@ void function CloakLoopFunny()
         WaitFrame()
     }
 }
-
-

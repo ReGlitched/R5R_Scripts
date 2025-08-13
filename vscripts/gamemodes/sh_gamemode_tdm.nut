@@ -1,4 +1,3 @@
-
 global function GamemodeTdmShared_Init
 
 void function GamemodeTdmShared_Init()

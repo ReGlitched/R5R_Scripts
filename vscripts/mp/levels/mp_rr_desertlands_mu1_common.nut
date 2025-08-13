@@ -9,11 +9,9 @@ global function Desertlands_MU1_UpdraftInit_Common
 global function Desertlands_SetTrainEnabled
 #endif
 
-
 #if SERVER
-//Copied from _jump_pads. This is being hacked for the geysers.
 const float JUMP_PAD_PUSH_RADIUS = 256.0
-const float JUMP_PAD_PUSH_PROJECTILE_RADIUS = 32.0//98.0
+const float JUMP_PAD_PUSH_PROJECTILE_RADIUS = 32.0
 const float JUMP_PAD_PUSH_VELOCITY = 2000.0
 const float JUMP_PAD_VIEW_PUNCH_SOFT = 25.0
 const float JUMP_PAD_VIEW_PUNCH_HARD = 4.0
@@ -30,20 +28,17 @@ const float JUMP_PAD_ACTIVATION_TIME = 0.5
 const asset JUMP_PAD_LAUNCH_FX = $"P_grndpnd_launch"
 const JUMP_PAD_DESTRUCTION = "jump_pad_destruction"
 
-// Loot drones
 const int NUM_LOOT_DRONES_TO_SPAWN = 12
 const int NUM_LOOT_DRONES_WITH_VAULT_KEYS = 4
 #endif
 
 global struct UpdraftTriggerSettings
 {
-	//needs script_server_fps 20 so it feels like retail native implementation, otherwise reduce maxShakeActivationHeight to 375 and liftExitDuration to 1.5
-	
-	float minShakeActivationHeight = 500.0               // At what z-position to start shaking the player's view
-	float maxShakeActivationHeight = 380 //400.0               // At what z-position will the player's view be shaking at the maximum
-	float liftSpeed                = 300.0                   	// Maximum upward speed
-	float liftAcceleration         = 100.0                 		// How fast to accelerate to the maximum upward speed
-	float liftExitDuration         = 1.5 //2.5                   		// After clearing the updraft trigger, how many extra seconds to continue lifting for
+	float minShakeActivationHeight = 500.0
+	float maxShakeActivationHeight = 380 
+	float liftSpeed                = 300.0
+	float liftAcceleration         = 100.0
+	float liftExitDuration         = 1.5
 }
 
 struct
@@ -158,7 +153,7 @@ void function Desertlands_MU1_MapInit_Common()
 
 	AddDamageCallbackSourceID( eDamageSourceId.burn, OnBurnDamage )
 
-	svGlobal.evacEnabled = false //Need to disable this on a map level if it doesn't support it at all
+	svGlobal.evacEnabled = false
 }
 
 void function OnBurnDamage( entity player, var damageInfo )
@@ -166,7 +161,6 @@ void function OnBurnDamage( entity player, var damageInfo )
 	if ( !player.IsPlayer() )
 		return
 
-	// sky laser shouldn't hurt players in plane
 	if ( player.GetPlayerNetBool( "playerInPlane" ) )
 	{
 		DamageInfo_SetDamage( damageInfo, 0 )
@@ -239,7 +233,6 @@ void function Desertlands_MU1_EntitiesLoaded_Common()
 	entity HarvestFX3 = CreatePropDynamic( HARVESTER_BEAM_MDL, <-2541, -11265, 55642>, <0, 0, 0> )
 }
 
-//Geyster stuff
 void function GeyserInit()
 {
 	array<entity> geyserTargets = GetEntArrayByScriptName( "geyser_jump" )
@@ -263,7 +256,7 @@ void function GeyersJumpTriggerArea( entity jumpPad )
 	trigger.SetOwner( jumpPad )
 	trigger.SetRadius( JUMP_PAD_PUSH_RADIUS )
 	trigger.SetAboveHeight( 32 )
-	trigger.SetBelowHeight( 16 ) //need this because the player or jump pad can sink into the ground a tiny bit and we check player feet not half height
+	trigger.SetBelowHeight( 16 )
 	trigger.SetOrigin( origin )
 	trigger.SetAngles( angles )
 	trigger.SetTriggerType( TT_JUMP_PAD )
@@ -290,12 +283,10 @@ void function GeyersJumpTriggerArea( entity jumpPad )
 	WaitForever()
 }
 
-
 void function Geyser_OnJumpPadAreaEnter( entity trigger, entity ent )
 {
 	Geyser_JumpPadPushEnt( trigger, ent, trigger.GetOrigin(), trigger.GetAngles() )
 }
-
 
 void function Geyser_JumpPadPushEnt( entity trigger, entity ent, vector origin, vector angles )
 {
@@ -318,7 +309,6 @@ void function Geyser_JumpPadPushEnt( entity trigger, entity ent, vector origin, 
 		}
 	}
 }
-
 
 void function Geyser_JumpJetsWhileAirborne( entity player )
 {
@@ -399,11 +389,6 @@ bool function Geyser_JumpPad_ShouldPushPlayerOrNPC( entity target )
 
 	return true
 }
-
-
-///////////////////////
-///////////////////////
-//// Updrafts
 
 const string UPDRAFT_TRIGGER_SCRIPT_NAME = "skydive_dust_devil"
 void function Updrafts_Init()
@@ -507,7 +492,6 @@ void function Player_EnterUpdraft( entity trigger, entity player, float minHeigh
 		WaitFrame()
 	}
 
-	// Player is out of trigger, use liftExitDuration
 	float starttime = Time()
 	float endTime = starttime + liftExitDuration
 	
@@ -568,14 +552,6 @@ void function FullmapPackage_Train( entity ent, var rui )
 	RuiSetFloat3( rui, "iconColor", <0.5,0.5,0.5> )
 }
 #endif
-                           // 888                                .d888                            888    d8b
-                           // 888                               d88P"                             888    Y8P
-                           // 888                               888                               888
- // .d8888b 888  888 .d8888b  888888 .d88b.  88888b.d88b.       888888 888  888 88888b.   .d8888b 888888 888  .d88b.  88888b.  .d8888b
-// d88P"    888  888 88K      888   d88""88b 888 "888 "88b      888    888  888 888 "88b d88P"    888    888 d88""88b 888 "88b 88K
-// 888      888  888 "Y8888b. 888   888  888 888  888  888      888    888  888 888  888 888      888    888 888  888 888  888 "Y8888b.
-// Y88b.    Y88b 888      X88 Y88b. Y88..88P 888  888  888      888    Y88b 888 888  888 Y88b.    Y88b.  888 Y88..88P 888  888      X88
- // "Y8888P  "Y88888  88888P'  "Y888 "Y88P"  888  888  888      888     "Y88888 888  888  "Y8888P  "Y888 888  "Y88P"  888  888  88888P'
 
 #if SERVER
 void function RespawnItem(entity item, string ref, int amount = 1, int wait_time=6)
@@ -643,8 +619,6 @@ entity function CreateEditorPropLobby(asset a, vector pos, vector ang, bool mant
     e.SetScriptName("editor_placed_prop")
     e.e.gameModeId = realm
    // printl("[editor]" + string(a) + ";" + positionSerialized + ";" + anglesSerialized + ";" + realm)
-
     return e
 }
-
 #endif

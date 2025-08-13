@@ -1,8 +1,6 @@
 untyped
 
-
 global function CreateRandomZiplineOnClientConnected
-
 
 void function CreateRandomZiplineOnClientConnected( entity player )
 {
@@ -11,10 +9,9 @@ void function CreateRandomZiplineOnClientConnected( entity player )
         {
             thread ThreadCreateRandomZipline( player )
         }
-    #endif // DEVELOPER
+    #endif 
 }
 
-// Create random zipline to test the proper functioning
 void function ThreadCreateRandomZipline( entity player )
 {
     wait 1
@@ -22,7 +19,6 @@ void function ThreadCreateRandomZipline( entity player )
     vector origin
     vector angles
 
-    // Changes the position according to the map
     switch ( MapName() )
     {
         case eMaps.mp_rr_canyonlands_staging:
@@ -54,15 +50,12 @@ void function ThreadCreateRandomZipline( entity player )
     player.SetOrigin( origin + < 0, 0, 96 > )
     player.SetAngles( angles )
     player.SetVelocity( < 0, 0, 0 > )
-
 }
-
 
 void function ZiplinesInit( vector startingorg )
 {
     
 }
-
 
 void function ZiplinePlatformInit( vector startingorg )
 {

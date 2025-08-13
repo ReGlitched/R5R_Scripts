@@ -1,4 +1,4 @@
-untyped //Required for string to functionref convertion to work
+untyped
 
 global function GameModes_Init
 
@@ -62,7 +62,7 @@ global function GameMode_GetLoadoutSelectTime
 
 global function GameMode_VerifyModes
 
-// External gamemodes ( registered from mods )
+//External gamemodes
 global function RegisterExternalGamemode
 global function RegisterGamemodeTemplate
 global function CreateGamemodeFromTemplate
@@ -75,7 +75,6 @@ global function GetRegisteredGamemodes
 global function IsExternalGamemode
 global function GetGamemodeModSource
 
-// Direct gamemode registration
 global function RegisterGamemode
 
 global struct GamemodeSettings
@@ -109,14 +108,12 @@ global struct GamemodeSettings
 	array<int> scoreboardColumnNumDigits
 	void functionref(entity) customIntroAnnouncementFunc
 	
-	// Enhanced registration system properties
 	string modSource = "core"
 	bool dynamicallyRegistered = false
 	int dynamicId = -1
 	string templateBase = ""
 }
 
-// Gamemode template for reusable configurations
 global struct GamemodeTemplate
 {
 	string templateName = ""
@@ -125,7 +122,6 @@ global struct GamemodeTemplate
 	string description = ""
 }
 
-// Scoreboard column definition
 global struct ScoreboardColumn
 {
 	string title = ""
@@ -133,11 +129,6 @@ global struct ScoreboardColumn
 	int numDigits = 2
 }
 
-
-
-// Don't remove items from this list once the game is in production
-// Durango online analytics needs the numbers for each mode to stay the same
-// DO NOT CHANGE THESE VALUES AFTER THEY HAVE GONE LIVE
 global enum eGameModes
 {
 invalid =             -1,
@@ -165,8 +156,7 @@ struct
 {
 	table<string, GamemodeSettings> gameModeDefs
 	
-	// Enhanced registration system
-	int nextAvailableId = 1000  // Start external IDs at 1000
+	int nextAvailableId = 1000
 	table<string, int> externalGamemodeIds
 	table<string, string> modOwnership
 	table<string, GamemodeTemplate> gamemodeTemplates
@@ -233,10 +223,7 @@ void function GameModes_Init()
 
 // TODO: scoreboards
 
-/*************************************************************
-	Setters
-*************************************************************/
-
+//Set
 GamemodeSettings function GameMode_Create( string gameModeName )
 {
 	Assert( !(gameModeName in file.gameModeDefs), "Gametype already defined!" )
@@ -389,10 +376,7 @@ void function GameMode_SetCustomIntroAnnouncement( string gameModeName, void fun
 	file.gameModeDefs[gameModeName].customIntroAnnouncementFunc = func
 }
 
-/*************************************************************
-	Getters
-*************************************************************/
-
+//Get
 int function GameMode_GetScoreLimit( string gameModeName )
 {
 	Assert( gameModeName in file.gameModeDefs, "No MP Gametype specified in _settings.nut" )
@@ -539,9 +523,7 @@ void functionref(entity) function GameMode_GetCustomIntroAnnouncement( string ga
 	return file.gameModeDefs[gameModeName].customIntroAnnouncementFunc
 }
 
-/*************************************************************
-
-*************************************************************/
+//
 void function GameMode_RunServerInits()
 {
 	Assert( GAMETYPE in file.gameModeDefs, "No MP Gametype specified in _settings.nut" )
@@ -579,7 +561,6 @@ void function GameMode_VerifyModes()
 		int gameModeId = GameMode_GetGameModeId( gameModeName )
 		bool foundGameModeIdString = false
 		
-		// For external gamemodes, skip enum verification since they use dynamic IDs
 		if ( gameModeData.dynamicallyRegistered )
 		{
 			foundGameModeIdString = true
@@ -587,7 +568,6 @@ void function GameMode_VerifyModes()
 		}
 		else
 		{
-			// Verify core gamemodes against enum
 			foreach ( idString, gameModeEnumId in eGameModes )
 			{
 				if ( gameModeEnumId != gameModeId )
@@ -611,11 +591,9 @@ void function GameMode_VerifyModes()
 
 int function GameMode_GetGameModeId( string gameModeName )
 {
-	// Check core gamemodes first
 	if ( gameModeName in gameModesStringToIdMap )
 		return gameModesStringToIdMap[gameModeName]
 	
-	// Check external gamemodes
 	if ( gameModeName in file.externalGamemodeIds )
 		return file.externalGamemodeIds[gameModeName]
 
@@ -634,10 +612,8 @@ float function GameMode_GetLoadoutSelectTime()
 	return GetCurrentPlaylistVarFloat( "pick_loadout_time", 5.0 )
 }
 
-// Enhanced gamemode registration system implementation
 void function RegisterExternalGamemode( string gameModeName, string modSource )
 {
-	// Check if the gamemode already exists and skip registration if it does
 	if ( gameModeName in file.gameModeDefs )
 	{
 		printw( "[GAMEMODE] Warning: Gamemode " + gameModeName + " already exists, skipping registration" )
@@ -650,22 +626,18 @@ void function RegisterExternalGamemode( string gameModeName, string modSource )
 		return
 	}
 	
-	// Generate a dynamic ID for this external gamemode
 	int dynamicId = file.nextAvailableId
 	file.nextAvailableId++
 	
-	// Create the gamemode with enhanced properties
 	GameMode_Create( gameModeName )
 	file.gameModeDefs[gameModeName].modSource = modSource
 	file.gameModeDefs[gameModeName].dynamicallyRegistered = true
 	file.gameModeDefs[gameModeName].dynamicId = dynamicId
 	
-	// Track the external gamemode
 	file.externalGamemodeIds[gameModeName] <- dynamicId
 	file.modOwnership[gameModeName] <- modSource
 	file.registeredExternalGamemodes.append( gameModeName )
 	
-	// Register with enum system for Gamemode() function support
 	RegisterExternalGamemodeEnum( gameModeName, modSource, dynamicId )
 	
 	printt( "[GAMEMODE] Registered external gamemode: " + gameModeName + " from mod: " + modSource + " with ID: " + dynamicId )
@@ -706,23 +678,18 @@ void function CreateGamemodeFromTemplate( string gameModeName, string templateNa
 	
 	GamemodeTemplate template = file.gamemodeTemplates[templateName]
 	
-	// Check if required mods are available (basic check - could be enhanced)
 	foreach ( requiredMod in template.requiredMods )
 	{
-		// This is a basic check - in a real implementation you'd check loaded mods
 		printt( "[GAMEMODE] Warning: Template requires mod: " + requiredMod )
 	}
 	
-	// Register the external gamemode first
 	RegisterExternalGamemode( gameModeName, modSource )
 	
-	// Copy template settings
 	GamemodeSettings templateSettings = template.baseSettings
 	templateSettings.modSource = modSource
 	templateSettings.dynamicallyRegistered = true
 	templateSettings.templateBase = templateName
-	
-	// Apply the template to the gamemode
+
 	file.gameModeDefs[gameModeName] = templateSettings
 	
 	printt( "[GAMEMODE] Created gamemode " + gameModeName + " from template " + templateName )
@@ -813,15 +780,12 @@ void function RegisterGamemode( string gamemodeName, string modName, string disp
 		return
 	}
 	
-	// Register
 	RegisterExternalGamemode( gamemodeName, modName )
 	RegisterExternalPlaylist( gamemodeName, modName )
 	
-	// Configure basic gamemode properties
 	GameMode_SetName( gamemodeName, displayName )
 	GameMode_SetDesc( gamemodeName, description )
-	// GameMode_SetIcon( gamemodeName, $"ui/menu/playlist/tdm" ) // Not used currently by any script
-	GameMode_SetColor( gamemodeName, [255, 128, 0, 255] ) // Orange color
+	GameMode_SetColor( gamemodeName, [255, 128, 0, 255] )
 	GameMode_SetDefaultScoreLimits( gamemodeName, 25, 0 )
 	GameMode_SetDefaultTimeLimits( gamemodeName, 10, 0.0 )
 	GameMode_SetEvacEnabled( gamemodeName, false )
@@ -836,8 +800,6 @@ void function RegisterGamemode( string gamemodeName, string modName, string disp
 	GameMode_SetScoreCompareFunc( gamemodeName, CompareKills )
 	#endif
 	
-	// Register initialization functions
-	// Always register the required shared survival init
 	#if SERVER || CLIENT
 	RegisterGamemodeSharedInit( gamemodeName, GamemodeSurvivalShared_Init )
 	
@@ -857,11 +819,6 @@ void function RegisterGamemode( string gamemodeName, string modName, string disp
 	
 	printw( "[" + modName + "] Custom gamemode registered successfully: " + gamemodeName + " (" + displayName + ")" )
 }
-
-////////////////////////////////////////
-// String-Based Function Registration //
-////////////////////////////////////////
-// Cool string to functionref convertion
 
 void function RegisterGamemodeServerInitByName( string gameModeName, string functionName )
 {
@@ -901,4 +858,3 @@ void function RegisterGamemodeSharedInitByName( string gameModeName, string func
 	
 	RegisterGamemodeSharedInit( gameModeName, wrapperFunc )
 }
-

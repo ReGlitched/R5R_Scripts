@@ -57,18 +57,16 @@ void function Olympus_MapInit_Common()
 			InitLootRollers()
 		}
 
-		//thread KillPlayersUnderMap_Thread( MAP_KILL_VOLUME_OFFSET_OLYMPUS ) //-28320
+		//thread KillPlayersUnderMap_Thread( MAP_KILL_VOLUME_OFFSET_OLYMPUS )
 
-		/////////////////////////////////////////////////////////////REMOVE THESE ONCE FIXED/////////////////////////////////////////////////////////////////////////
-
-		AddSpawnCallbackEditorClass( "player_vehicle", "hover_vehicle", EditorSpawnCallbackRemoveEnts )
+		//AddSpawnCallbackEditorClass( "player_vehicle", "hover_vehicle", EditorSpawnCallbackRemoveEnts )
 		//AddSpawnCallbackEditorClass( "prop_dynamic", "script_loot_marvin", EditorSpawnCallbackRemoveEnts )
 		AddSpawnCallbackEditorClass( "prop_dynamic", "audio_log_console_03", EditorSpawnCallbackRemoveEnts )
 		AddSpawnCallbackEditorClass( "prop_dynamic", "audio_log_console_tunnel", EditorSpawnCallbackRemoveEnts )
 		AddSpawnCallbackEditorClass( "prop_dynamic", "script_survival_crafting_harvester", EditorSpawnCallbackRemoveEnts )
-		AddSpawnCallbackEditorClass( "prop_dynamic", "script_survival_crafting_workbench_cluster", EditorSpawnCallbackRemoveEnts )//TODO: REMOVE THESE!!!
+		AddSpawnCallbackEditorClass( "prop_dynamic", "script_survival_crafting_workbench_cluster", EditorSpawnCallbackRemoveEnts )//TODO: Remove These
 		AddSpawnCallbackEditorClass( "func_brush", "func_brush_control_wall", EditorSpawnCallbackRemoveEnts )
-		InitVehicleARBarriers()
+		InitVehicleARBarriers() //TODO: Fix now that we have tridents
 	#endif
 
 	#if SERVER
@@ -86,8 +84,6 @@ void function EntitiesDidLoad()
 	#if SERVER && DEVELOPER
 		//test_runmapchecks()
 	#endif
-
-	// JFS: Create phase runner pings
 }
 
 void function EditorSpawnCallbackRemoveEnts( entity ent )
@@ -95,27 +91,22 @@ void function EditorSpawnCallbackRemoveEnts( entity ent )
 	if( !IsValid( ent ) )
 		return
 
-	ent.Destroy()//TODO: Remove this function once we get tridents -LorryLeKral
+	ent.Destroy()
 }
 #endif
-
-
 
 #if SERVER
 void function InitVehicleARBarriers()
 {
 	AddSpawnCallback( "func_brush", void function ( entity brush )
 	{
-		//printf( "Vehicle AR Barriers - tn:'%s', ec:'%s'", brush.GetTargetName(), GetEditorClass( brush ) )
 		if ( brush.GetScriptName() != "vehicle_fence_01" )
 			return
 
 		brush.NotSolid()
-		brush.Destroy()//TODO: Recover this function once we get tridents -LorryLeKral
+		brush.Destroy()
 	} )
 }
-
-///// Olympus rift /////
 
 void function Rift_Init( entity ent )
 {
@@ -145,8 +136,6 @@ void function Rift_Init( entity ent )
 void function OnEntityEnterRiftTrigger( entity trigger, entity ent )
 {
 	printf( "Rift: Entity entered" )
-
-	// PreparePlayerForPositionReset here and in sh_warp_gates.gnut
 
 	if ( IsValid( ent ) ) //&& ent.IsPlayerVehicle() && ent.VehicleGetType() == VEHICLE_FLYING_CAMERA )
 		ent.TakeDamage( ent.GetMaxHealth(), svGlobal.worldspawn, svGlobal.worldspawn, { damageSourceId = eDamageSourceId.crushed, scriptType =  DF_BYPASS_SHIELD | DF_SKIPS_DOOMED_STATE }   )

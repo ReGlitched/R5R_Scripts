@@ -1,7 +1,3 @@
-//=========================================================
-//	sh_melee_synced.gnut
-//=========================================================
-
 #if SERVER || CLIENT || UI
 global function MeleeSyncedShared_Init
 #endif
@@ -24,36 +20,22 @@ global function ServerCallback_WatchForSyncedMeleeCancelPeriod
 global function ServerCallback_SyncedMeleeDone
 #endif
 
-
-////////////////
-////////////////
-//// Consts ////
-////////////////
-////////////////
 const float SYNCED_MELEE_MAX_HEIGHT_DIFFERENCE = 30.0
 
 const float SYNCED_MELEE_ANIMATION_BLEND_TIME = 0.5
 const float SYNCED_MELEE_CAMERA_BLEND_IN_TIME = 0.0
 const float SYNCED_MELEE_CAMERA_BLEND_OUT_TIME = 0.0
-
 //
 const vector SYNCED_MELEE_ATTACKER_SCREEN_FADE_COL = <224, 224, 224>
 const float SYNCED_MELEE_ATTACKER_SCREEN_FADE_ALPHA = 255
 const float SYNCED_MELEE_ATTACKER_SCREEN_FADE_FADE_TIME = 0.15
 const float SYNCED_MELEE_ATTACKER_SCREEN_FADE_FADE_HOLD = 0.1
-
-// victim, going for red flash frame at start of execution
+//
 const vector SYNCED_MELEE_TARGET_SCREEN_FADE_COL = <173, 15, 15>
 const float SYNCED_MELEE_TARGET_SCREEN_FADE_ALPHA = 255
 const float SYNCED_MELEE_TARGET_SCREEN_FADE_FADE_TIME = 0.15
 const float SYNCED_MELEE_TARGET_SCREEN_FADE_FADE_HOLD = 0.1
 
-
-/////////////////////////
-/////////////////////////
-//// Initialiszation ////
-/////////////////////////
-/////////////////////////
 #if SERVER || CLIENT || UI
 void function MeleeSyncedShared_Init()
 {
@@ -73,11 +55,6 @@ void function MeleeSyncedShared_Init()
 }
 #endif
 
-//////////////////////////
-//////////////////////////
-//// Global functions ////
-//////////////////////////
-//////////////////////////
 #if SERVER || CLIENT
 bool function AttackerCanStartSyncedMelee( entity attacker, entity meleeInputWeapon, entity meleeAttackWeapon )
 {
@@ -87,7 +64,7 @@ bool function AttackerCanStartSyncedMelee( entity attacker, entity meleeInputWea
 	if ( attacker.IsHuman() && !attacker.IsOnGround() )
 		return false
 
-	if ( attacker.IsWallRunning() || attacker.IsTraversing() ) // No necksnaps while wall running or mantling
+	if ( attacker.IsWallRunning() || attacker.IsTraversing() )
 		return false
 
 	//if ( IsDoingPullshot( attacker ) )
@@ -95,7 +72,6 @@ bool function AttackerCanStartSyncedMelee( entity attacker, entity meleeInputWea
 	return true
 }
 #endif
-
 
 #if SERVER || CLIENT
 bool function IsValidSyncedMeleeTarget( entity attacker, entity meleeInputWeapon, entity meleeAttackWeapon, entity target )
@@ -115,16 +91,15 @@ bool function IsValidSyncedMeleeTarget( entity attacker, entity meleeInputWeapon
 	if ( IsFriendlyTeam( attacker.GetTeam(), target.GetTeam() ) )
 		return false
 	
-	// Disallow executing someone that is already in execution. That road leads to script errors and asserts.
-	if ( target.ContextAction_IsMeleeExecution() ) // Covers both attacker and victim.
+	if ( target.ContextAction_IsMeleeExecution() )
 		return false
 
-	//if ( target.ContextAction_IsBusy() ) // (dw): Nothing uses the "busy" context action as of 2018-10-29
+	//if ( target.ContextAction_IsBusy() )
 	//	return false
 
-	if ( target.IsPlayer() ) //Disallow execution on a bunch of player-only actions
+	if ( target.IsPlayer() )
 	{
-		if ( !target.IsOnGround() ) //disallow mid-air necksnaps.
+		if ( !target.IsOnGround() )
 			return false
 
 		if ( target.IsWallRunning() )
@@ -164,7 +139,6 @@ bool function IsValidSyncedMeleeTarget( entity attacker, entity meleeInputWeapon
 }
 #endif
 
-
 #if SERVER
 bool function TryStartSyncedMelee( entity attacker, entity target )
 {
@@ -172,7 +146,7 @@ bool function TryStartSyncedMelee( entity attacker, entity target )
 	Assert( attacker.IsPlayer() )
 	Assert( IsValid( target ) )
 
-	entity meleeInputWeapon  = null // We don't know what it is because they haven't pressed a button yet
+	entity meleeInputWeapon  = null
 	entity meleeAttackWeapon = null
 
 	if ( !AttackerCanStartSyncedMelee( attacker, meleeInputWeapon, meleeAttackWeapon ) )
@@ -186,17 +160,9 @@ bool function TryStartSyncedMelee( entity attacker, entity target )
 }
 #endif
 
-///////////////////
-///////////////////
-//// Internals ////
-///////////////////
-///////////////////
 #if SERVER || CLIENT
 bool function CodeCallback_IsValidMeleeExecutionTarget( entity attacker, entity target )
 {
-	// Called after pressing the melee button to recheck for targets
-	// (dW): This function never seems to be used.
-
 	return IsValidSyncedMeleeTarget( attacker, null, null, target )
 }
 #endif
@@ -294,11 +260,11 @@ void function DoSyncedMelee_Thread( entity attacker, entity target )
 						
 					if ( target.e.markedForExecutionDeath && IsValid(attacker) && IsAlive(attacker))
 					{
-						entity killCreditAttacker = null //If the attacker disconnected, we don't have a player to give credit to, that's fine. Script will not error
+						entity killCreditAttacker = null
 						if ( IsValid( target.e.syncedMeleeAttacker ) )
 						{
 							killCreditAttacker = target.e.syncedMeleeAttacker
-							killCreditAttacker.SetShieldHealth( min( killCreditAttacker.GetShieldHealthMax(), 125 ) ) //refill shields after succesfull finisher, don't add more than red shield amount otherwise finisher would be broken in hiswattson ltm. Colombia
+							killCreditAttacker.SetShieldHealth( min( killCreditAttacker.GetShieldHealthMax(), 125 ) )
 						}
 
 						target.Die( killCreditAttacker, killCreditAttacker, {
@@ -322,7 +288,6 @@ void function DoSyncedMelee_Thread( entity attacker, entity target )
 		}
 	} )
 
-	// Signals to other script
 	{
 		Signal( attacker, "OnSyncedMelee" )
 		Signal( target, "OnSyncedMelee" )
@@ -330,33 +295,26 @@ void function DoSyncedMelee_Thread( entity attacker, entity target )
 		Signal( target, "OnSyncedMeleeVictim" )
 	}
 
-	// Ways this synced melee may end
 	{
-		// someone dies or is destroyed
 		EndSignal( attacker, "OnDeath" )
 		EndSignal( target, "OnDeath" )
 		EndSignal( target, "OnDestroy" )
 		
-		// synced melee gets interrupted
 		EndSignal( attacker, "OnAnimationInterrupted" )
 		EndSignal( attacker, "ScriptAnimStop" )
 		EndSignal( attacker, "BleedOut_OnStartDying" )
 		EndSignal( attacker, "InterruptSyncedMelee" )
 
-		// synced melee animation finishes
 		EndSignal( attacker, "OnAnimationDone" )
 	}
 
-	// Execution loadout data
 	ItemFlavor attackerCharacter = LoadoutSlot_GetItemFlavor( attacker, Loadout_CharacterClass() )
 	ItemFlavor attackerExecution = LoadoutSlot_GetItemFlavor( attacker, Loadout_CharacterExecution( attackerCharacter ) )
 
-	// Anim sequence setup
 	FirstPersonSequenceStruct attackSequence
 	FirstPersonSequenceStruct targetSequence
 	
 	{
-		// positioning
 		attackSequence.noParent = true
 		attackSequence.playerPushable = true
 		attackSequence.enablePlanting = true
@@ -364,12 +322,10 @@ void function DoSyncedMelee_Thread( entity attacker, entity target )
 		targetSequence.useAnimatedRefAttachment = true
 		targetSequence.attachment = "ref"
 
-		// anim sequences
 		attackSequence.thirdPersonAnim = string(CharacterExecution_GetAttackerAnimSeq( attackerExecution ))
 		string targetRigWeight = target.GetPlayerSettingString( "bodyModelRigWeight" )
 		targetSequence.thirdPersonAnim = string(CharacterExecution_GetVictimAnimSeq( attackerExecution, targetRigWeight ))
 
-		// timing
 		attackSequence.blendTime = SYNCED_MELEE_ANIMATION_BLEND_TIME
 		targetSequence.blendTime = SYNCED_MELEE_ANIMATION_BLEND_TIME
 		attackSequence.thirdPersonBlendInTime = SYNCED_MELEE_CAMERA_BLEND_IN_TIME
@@ -377,7 +333,6 @@ void function DoSyncedMelee_Thread( entity attacker, entity target )
 		targetSequence.thirdPersonBlendOutTime = SYNCED_MELEE_CAMERA_BLEND_OUT_TIME
 		attackSequence.thirdPersonBlendOutTime = SYNCED_MELEE_CAMERA_BLEND_OUT_TIME
 
-		// camera
 		attackSequence.firstPersonAnim = ""
 		targetSequence.firstPersonAnim = ""
 		
@@ -395,7 +350,6 @@ void function DoSyncedMelee_Thread( entity attacker, entity target )
 	Assert( attackDuration == targetDuration )
 
 	{
-
 		AddCinematicFlag( attacker, CE_FLAG_TITAN_3P_CAM | CE_FLAG_EXECUTION )
 		ScreenFade( attacker, SYNCED_MELEE_ATTACKER_SCREEN_FADE_COL.x, SYNCED_MELEE_ATTACKER_SCREEN_FADE_COL.y, SYNCED_MELEE_ATTACKER_SCREEN_FADE_COL.z, SYNCED_MELEE_ATTACKER_SCREEN_FADE_ALPHA,
 			SYNCED_MELEE_ATTACKER_SCREEN_FADE_FADE_TIME, SYNCED_MELEE_ATTACKER_SCREEN_FADE_FADE_HOLD, FFADE_IN )
@@ -446,7 +400,7 @@ void function MarkForDeath( entity target )
 		target.e.markedForExecutionDeath = false
 	} )
 
-	target.e.markedForExecutionDeath = true //This will kill off the player even if the execution animation is interruped from this point forward
+	target.e.markedForExecutionDeath = true
 
 	WaitForever()
 }

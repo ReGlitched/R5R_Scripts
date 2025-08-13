@@ -154,12 +154,10 @@ void function Canyonlands_MapInit_Common()
 
 		FlagSet( "DisableDropships" )
 
-		svGlobal.evacEnabled = false //Need to disable this on a map level if it doesn't support it at all
+		svGlobal.evacEnabled = false
 
-		
 		RegisterSignal( SIGNAL_HOVERTANK_AT_ENDPOINT )
 		RegisterSignal( "PathFinished" )
-
 
 		//SURVIVAL_AddOverrideCircleLocation_Nitro( <24744, 24462, 3980>, 2048 )
 
@@ -184,8 +182,7 @@ void function Canyonlands_MapInit_Common()
 	#endif
 
 	#if CLIENT
-		// Doing this automatically since someone has to call InitWaterLeviathans() just to make the markers
-		AddTargetNameCreateCallback( CANYONLANDS_LEVIATHAN1_NAME, OnLeviathanMarkerCreated ) //Created from the server to mark where the leviathans should be on the client
+		AddTargetNameCreateCallback( CANYONLANDS_LEVIATHAN1_NAME, OnLeviathanMarkerCreated )
 		AddTargetNameCreateCallback( CANYONLANDS_LEVIATHAN2_NAME, OnLeviathanMarkerCreated )
 		AddTargetNameCreateCallback( "LeviathanMarker", OnLeviathanMarkerCreated  )
 		AddTargetNameCreateCallback( "LeviathanStagingMarker", OnLeviathanMarkerCreated )
@@ -199,7 +196,7 @@ void function Canyonlands_MapInit_Common()
 		if ( !IsPVEMode() )
 			SetMapFeatureItem( 300, "#SUPPLY_DROP", "#SUPPLY_DROP_DESC", $"rui/hud/gametype_icons/survival/supply_drop" )
 
-		if ( MapName() == eMaps.mp_rr_canyonlands_mu1_night )// TODO(AMOS): desertlands_nx
+		if ( MapName() == eMaps.mp_rr_canyonlands_mu1_night )
 		{
 			SetVictorySequenceLocation( <10472, 30000, 8500>, <0, 60, 0> )
 			SetVictorySequenceSunSkyIntensity( 0.8, 0.0 )
@@ -250,16 +247,15 @@ void function EntitiesDidLoad()
 
 void function __EntitiesDidLoad()
 {
-	//Moved to Playing Game State due to some changes in survival deathfield. Cafe
-	// FlagWait( "DeathCircleSetup" )
-	// waitthread FindHoverTankEndNodes()
-	// SpawnHoverTanks()
+/*	FlagWait( "DeathCircleSetup" )
+	waitthread FindHoverTankEndNodes()
+	SpawnHoverTanks()
 
-	// if ( GetCurrentPlaylistVarBool( "enable_nessies", false ) )
-		// Nessies()
+	if ( GetCurrentPlaylistVarBool( "enable_nessies", false ) )
+		Nessies()
 
-	// FlagSet( "IntroHovertanksSet" )
-	//DestroyHoverTankNodes()
+	FlagSet( "IntroHovertanksSet" )
+	DestroyHoverTankNodes()*/
 }
 
 void function DestroyHoverTankNodes()
@@ -364,7 +360,6 @@ void function FindHoverTankEndNodes()
 
 void function SpawnHoverTanks()
 {
-	// Spawn hover tanks at level load, even though they don't fly in yet, so they exist when loot is spawned.
 	if ( file.numHoverTanksIntro == 0 && file.numHoverTanksMid == 0 )
 		return
 
@@ -477,7 +472,6 @@ void function HoverTanksOnGamestatePlaying_Thread()
 
 	if ( GetCurrentPlaylistVarInt( "canyonlands_hovertank_flyin", 1 ) == 1 )
 	{
-		// Fly to final nodes
 		FlyHoverTanksIntoPosition( file.hoverTanksIntro, HOVER_TANKS_TYPE_INTRO )
 	}
 	else if ( GetCurrentPlaylistVarInt( "canyonlands_hovertank_flyin", 1 ) == 2 )
@@ -486,7 +480,6 @@ void function HoverTanksOnGamestatePlaying_Thread()
 	}
 	else
 	{
-		// Teleport to final nodes
 		TeleportHoverTanksIntoPosition( file.hoverTanksIntro, HOVER_TANKS_TYPE_INTRO )
 	}
 
@@ -516,7 +509,6 @@ void function Dev_TestHoverTankIntro()
 
 void function FlyHoverTanksIntoPosition( array<HoverTank> hoverTanks, int hoverTanksType )
 {
-	// Get start nodes and end nodes. Playlist vars change how these are selected.
 	array<entity> startNodes
 	array<entity> endNodes
 	if ( hoverTanksType == HOVER_TANKS_TYPE_INTRO )
@@ -650,12 +642,12 @@ void function CreateHoverTankMinimapIconForPlayers( HoverTank hoverTank )
 {
 	vector hoverTankOrigin = hoverTank.interiorModel.GetOrigin()
 	entity minimapObj = CreatePropScript( $"mdl/dev/empty_model.rmdl", hoverTankOrigin )
-	minimapObj.Minimap_SetCustomState( eMinimapObject_prop_script.HOVERTANK )		// Minimap icon
+	minimapObj.Minimap_SetCustomState( eMinimapObject_prop_script.HOVERTANK )
 	minimapObj.SetParent( hoverTank.interiorModel )
 	minimapObj.SetLocalAngles( < 0, 0, 0 > )
-	minimapObj.Minimap_SetZOrder( MINIMAP_Z_OBJECT + 10 ) // +10 to make it show up above the endpoint marker below
+	minimapObj.Minimap_SetZOrder( MINIMAP_Z_OBJECT + 10 )
 	SetTeam( minimapObj, TEAM_UNASSIGNED )
-	SetTargetName( minimapObj, "hovertank" )		// Full map icon
+	SetTargetName( minimapObj, "hovertank" )
 
 	SetMinimapObjectVisibleToPlayers( minimapObj, true )
 }
@@ -664,10 +656,10 @@ void function CreateHoverTankEndpointIconForPlayers( entity endpoint, HoverTank 
 {
 	vector hoverTankOrigin = endpoint.GetOrigin()
 	entity minimapObj = CreatePropScript( $"mdl/dev/empty_model.rmdl", hoverTankOrigin )
-	minimapObj.Minimap_SetCustomState( eMinimapObject_prop_script.HOVERTANK_DESTINATION )		// Minimap icon
-	minimapObj.Minimap_SetZOrder( MINIMAP_Z_OBJECT + 5 ) // +5 to make it show up above respawn beacons etc
+	minimapObj.Minimap_SetCustomState( eMinimapObject_prop_script.HOVERTANK_DESTINATION )
+	minimapObj.Minimap_SetZOrder( MINIMAP_Z_OBJECT + 5 )
 	SetTeam( minimapObj, TEAM_UNASSIGNED )
-	SetTargetName( minimapObj, "hovertankDestination" )		// Full map icon
+	SetTargetName( minimapObj, "hovertankDestination" )
 	file.hovertankEndpointMapObjects[ hoverTank ] <- minimapObj
 
 	SetMinimapObjectVisibleToPlayers( minimapObj, true )
@@ -704,7 +696,6 @@ void function SetMinimapObjectVisibleToPlayers( entity minimapObj, bool visible 
 			minimapObj.Minimap_Hide( 0, player )
 	}
 }
-
 
 //#if NAVMESH_ALL_SUPPORTED
 const int HULL_HOVERTANK = HULL_TITAN
@@ -865,7 +856,7 @@ array<entity> function GetHoverTankStartNodes( array<entity> endNodes )
 	}
 
 	const vector DEV_APPROX_Z_OFFSET = < 0, 0, 8000 >
-	const float NODE_TO_TARGET_DIR_DOT_TOLERANCE = cos( PI / 4 ) 			// Start nodes to be considered for selection must be within 45 degrees of target dir
+	const float NODE_TO_TARGET_DIR_DOT_TOLERANCE = cos( PI / 4 )
 
 	Assert( endNodes.len() == 2, "Hover tank start location chooser only works with 2 hover tanks!" )
 	array<entity> startNodes = GetEntArrayByScriptName( HOVERTANK_START_NODE_NAME )
@@ -886,12 +877,11 @@ array<entity> function GetHoverTankStartNodes( array<entity> endNodes )
 	vector orthoBToA = CrossProduct( dirBToA, < 0, 0, 1 > )
 
 	array< array< table > > startNodesSplitByEndNodes
-	for( int i; i < endNodes.len(); i++ ) // Crashes if declared as [ [], [] ]
+	for( int i; i < endNodes.len(); i++ )
 	{
 		startNodesSplitByEndNodes.append( [] )
 	}
 
-	// Split nodes into two halves, separated by the line between end nodes. Save dot product values for later.
 	foreach( node in startNodes)
 	{
 		vector nodeOrigin2D = node.GetOrigin()
@@ -900,21 +890,16 @@ array<entity> function GetHoverTankStartNodes( array<entity> endNodes )
 		vector nodeToMidpointDir = Normalize( endNodesMiddlePoint - nodeOrigin2D )
 		float mapHalfDot = DotProduct( nodeToMidpointDir, orthoBToA )
 		if ( mapHalfDot < 0 )
-			startNodesSplitByEndNodes[ 1 ].append( { ent = node, dot = mapHalfDot } )		// Negative half
+			startNodesSplitByEndNodes[ 1 ].append( { ent = node, dot = mapHalfDot } )
 		else
-			startNodesSplitByEndNodes[ 0 ].append( { ent = node, dot = mapHalfDot } )		// Positive half
+			startNodesSplitByEndNodes[ 0 ].append( { ent = node, dot = mapHalfDot } )
 	}
 
-	// Pick a random half of the map to fly in from (using splits above). If not enough nodes in given half, use other half.
 	int startNodeSplitToUse = RandomIntRangeInclusive( 0, 1 )
-
-	// if ( GetBugReproNum() == 31493 )
-		// startNodeSplitToUse = 0
 
 	if ( startNodesSplitByEndNodes[ startNodeSplitToUse ].len() < 2 )
 		startNodeSplitToUse = 1 - startNodeSplitToUse
 
-	// Find the two start nodes closest to the vector orthogonal to vector connecting end nodes, stemming from the midpoint between both nodes.
 	entity closestNode
 	entity secondClosestNode
 	float smallestDot = -1
@@ -926,7 +911,7 @@ array<entity> function GetHoverTankStartNodes( array<entity> endNodes )
 			DebugDrawCircle( expect entity(nodeData.ent).GetOrigin(), < 0, 0, 0 >, 1300.0, 0, 255, 0, true, 10 )
 
 		float nodeDot = expect float( nodeData.dot )
-		nodeDot = fabs( nodeDot )	// Since using a split half of the nodes, no issues if abs value this
+		nodeDot = fabs( nodeDot )
 		entity nodeEnt = expect entity( nodeData.ent )
 
 		if ( (smallestDot < 0) || (nodeDot > smallestDot) )
@@ -943,7 +928,6 @@ array<entity> function GetHoverTankStartNodes( array<entity> endNodes )
 		}
 	}
 
-	// Order the chosen start nodes to match end nodes. Make sure start node is paired with correct end node. If paths intersect, flip start -> node assignment
 	array< entity > retArray		= [ secondClosestNode, closestNode ]
 	bool intersect           = Do2DLinesIntersect( retArray[ 0 ].GetOrigin(), endNodes[ 0 ].GetOrigin(), retArray[ 1 ].GetOrigin(), endNodes[ 1 ].GetOrigin() )
 	if ( intersect )
@@ -977,13 +961,11 @@ array<entity> function GetHoverTankEndNodes( int count, int endNodeType, array<e
 	Assert( endNodeType == HOVER_TANKS_TYPE_INTRO || endNodeType == HOVER_TANKS_TYPE_MID )
 	array<entity> potentialEndNodes = GetAllHoverTankEndNodes()
 
-	// Remove exclude nodes
 	foreach( entity node in excludeNodes )
 		potentialEndNodes.fastremovebyvalue( node )
 
 	if ( GetCurrentPlaylistVarInt( "canyonlands_dynamic_hovertank_locations", 1 ) != 1 )
 	{
-		// Don't use random locations, only use original end locations
 		for ( int i = potentialEndNodes.len() - 1; i >= 0; i-- )
 		{
 			if ( !potentialEndNodes[i].HasKey( "original_tank_location" ) || (int( expect string( potentialEndNodes[i].kv.original_tank_location ) ) != 1) )
@@ -992,7 +974,6 @@ array<entity> function GetHoverTankEndNodes( int count, int endNodeType, array<e
 	}
 	potentialEndNodes.randomize()
 
-	// Don't allow hover tank positions that will be within one of the final circles because they are OP positions for end game
 	array<entity> nodesNotInFinalCircles
 	int deathFieldStageIndexSmall = GetCurrentPlaylistVarInt( "canyonlands_hovertanks_circle_index", HOVER_TANKS_DEFAULT_CIRCLE_INDEX ) + 1
 	if ( deathFieldStageIndexSmall >= SURVIVAL_GetDeathFieldStages().len() )
@@ -1013,7 +994,6 @@ array<entity> function GetHoverTankEndNodes( int count, int endNodeType, array<e
 
 	if ( endNodeType == HOVER_TANKS_TYPE_MID )
 	{
-		// Exclude end nodes that are outside the current safe circle
 		int deathFieldStageIndexLarge = GetCurrentPlaylistVarInt( "canyonlands_hovertanks_circle_index", HOVER_TANKS_DEFAULT_CIRCLE_INDEX )
 		if ( deathFieldStageIndexLarge >= SURVIVAL_GetDeathFieldStages().len() )
 		{
@@ -1034,7 +1014,6 @@ array<entity> function GetHoverTankEndNodes( int count, int endNodeType, array<e
 	if ( potentialEndNodes.len() > 1 )
 		potentialEndNodes.randomize()
 
-	// Pick randomly from what we have left
 	array<entity> endNodesToUse
 	foreach( entity node in potentialEndNodes )
 	{
@@ -1080,9 +1059,7 @@ void function HoverTank_DebugFlightPaths()
 
 void function HoverTank_DebugFlightPaths_Thread()
 {
-	printt( "++++--------------------------------------------------------------------------------------------------------------------------++++" )
 	printt( ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> DEBUGGING HOVERTANK FLIGHT PATH PERMUTATIONS ON CANYONLANDS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" )
-	printt( "++++--------------------------------------------------------------------------------------------------------------------------++++" )
 
 	array<entity> endNodes = GetAllHoverTankEndNodes()
 	array<entity> startNodes = GetEntArrayByScriptName( HOVERTANK_START_NODE_NAME )
@@ -1112,7 +1089,6 @@ void function HoverTank_DebugFlightPaths_Thread()
 			}
 		}
 	}
-	printt( "++++--------------------------------------------------------------------------------------------------------------------------++++" )
 	printt( "++++--------------------------------------------------------------------------------------------------------------------------++++" )
 }
 
@@ -1177,7 +1153,6 @@ void function StagingArea_MoveSkybox()
 	thread StagingArea_MoveSkybox_Thread()
 }
 
-
 void function StagingArea_MoveSkybox_Thread()
 {
 	FlagWait( "EntitiesDidLoad" )
@@ -1198,12 +1173,10 @@ void function StagingArea_MoveSkybox_Thread()
 	skyboxCamera.SetAngles( SKYBOX_ANGLES_STAGING_AREA )
 }
 
-
 void function StagingArea_ResetSkybox()
 {
 	thread StagingArea_ResetSkybox_Thread()
 }
-
 
 void function StagingArea_ResetSkybox_Thread()
 {
@@ -1322,8 +1295,6 @@ void function OnLeviathanMarkerCreated( entity marker )
 	thread LeviathanThink( marker, leviathan, stagingOnly )
 }
 
-
-
 void function LeviathanThink( entity marker, entity leviathan, bool stagingOnly )
 {
 	marker.EndSignal( "OnDestroy" )
@@ -1344,7 +1315,6 @@ void function LeviathanThink( entity marker, entity leviathan, bool stagingOnly 
 	int count = 0
 	int liftCount = RandomIntRange( 3, 10 )
 
-	// Prevent rare bug where leviathan anims sync up
 	const float CYCLE_BUFFER_DIST = 0.3
 	Assert( CYCLE_BUFFER_DIST < 0.5, "Warning! Impossible to get second leviathan random animation cycle if cycle buffer distance is 0.5 or greater!" )
 
@@ -1353,8 +1323,6 @@ void function LeviathanThink( entity marker, entity leviathan, bool stagingOnly 
 		randCycle = RandomFloat( 1.0 )
 	else
 	{
-		// Get the range that remains when the full buffer range is subtracted, then roll within that range.
-		// Add that roll to the buffer top end (last chosen val + buffer), use modulo to clamp within 0 - 1
 		float randomRoll = RandomFloat( 1.0 - ( CYCLE_BUFFER_DIST * 2 ) )
 		float adjustedRandCycle = ( file.lastLevAnimCycleChosen + CYCLE_BUFFER_DIST + randomRoll ) % 1.0
 		randCycle = adjustedRandCycle
@@ -1415,7 +1383,7 @@ void function CodeCallback_PlayerEnterUpdraftTrigger( entity trigger, entity pla
 
 void function CodeCallback_PlayerLeaveUpdraftTrigger( entity trigger, entity player )
 {
-//	OnLeaveUpdraftTrigger( trigger, player )
+	//OnLeaveUpdraftTrigger( trigger, player )
 }
 #if CLIENT
 
@@ -1429,7 +1397,6 @@ void function MinimapPackage_HoverTank( entity ent, var rui )
 	RuiSetBool( rui, "useTeamColor", false )
 }
 
-
 void function MinimapPackage_HoverTankDestination( entity ent, var rui )
 {
 	#if DEVELOPER
@@ -1440,4 +1407,3 @@ void function MinimapPackage_HoverTankDestination( entity ent, var rui )
 	RuiSetBool( rui, "useTeamColor", false )
 }
 #endif
-

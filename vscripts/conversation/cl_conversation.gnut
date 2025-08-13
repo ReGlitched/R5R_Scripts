@@ -188,7 +188,7 @@ void function PlayConversationToLocalClient( string convAlias )
 	int priority = GetConversationPriority( convAlias )
 	entity player = GetLocalClientPlayer()
 
-	if ( IsLobby() ) // TEMP: Too many MP assumptions that fail in lobby so just play directly
+	if ( IsLobby() ) //TEMP: Too many MP assumptions that fail in lobby
 		thread ClRunConversation( player, convAlias )
 	else
 		thread ClAttemptConversation( convAlias, player, priority )
@@ -269,7 +269,7 @@ void function ServerCallback_PlaySquadConversation( int conversationIndex, int e
 		return
 	}
 
-	if ( dialogueNotInitialized ) //JFS. Kill replay shenenigans with create callback not being run
+	if ( dialogueNotInitialized )
 	{
 		printt( "ABORTING CONVERSATION: .s.dialogue not initialized: " + conversationType )
 		return
@@ -876,7 +876,6 @@ void function ClRunSquadConversationElement( entity player, elem, array<entity> 
 				break
 			}
 
-			// elem.choices should be an array of lines to choose from randomly
 			Assert( IsArray( elem.choices ) )
 
 			local dialogueChoice = elem.choices.getrandom()

@@ -1,30 +1,23 @@
 untyped
 
-
 global function ZiplineUtility_Init
 
+global const       ZIPLINE_EXPLOSION                        = $"p_impact_exp_small_full"
+global const       ZIPLINE_ERROR_FX                         = $"P_wpn_lasercannon_aim_short"
 
-// Global const
-    global const       ZIPLINE_EXPLOSION                        = $"p_impact_exp_small_full"
-    global const       ZIPLINE_ERROR_FX                         = $"P_wpn_lasercannon_aim_short"
+global const asset ZIPLINE_ARM                              = $"mdl/industrial/zipline_arm.rmdl"
+global const asset ZIPLINE_PLANEL_WALL                      = $"mdl/props/global_access_panel_button/global_access_panel_button_wall.rmdl"
+global const asset ZIPLINE_PLANEL_STAND                     = $"mdl/props/global_access_panel_button/global_access_panel_button_console_w_stand.rmdl"
+global const asset ZIPLINE_SUPPORT                          = $"mdl/industrial/security_fence_post.rmdl"
 
-// Global const assets
-    global const asset ZIPLINE_ARM                              = $"mdl/industrial/zipline_arm.rmdl"
-    global const asset ZIPLINE_PLANEL_WALL                      = $"mdl/props/global_access_panel_button/global_access_panel_button_wall.rmdl"
-    global const asset ZIPLINE_PLANEL_STAND                     = $"mdl/props/global_access_panel_button/global_access_panel_button_console_w_stand.rmdl"
-    global const asset ZIPLINE_SUPPORT                          = $"mdl/industrial/security_fence_post.rmdl"
+global const string ZIPLINE_END_SOUND                       = "explo_spectre"
+global const string ZIPLINE_PANEL_LOCKED                    = "npe_player_fail"
+global const string ZIPLINE_START_SOUND                     = "pathfinder_zipline_expand"
 
-// Global const string
-    global const string ZIPLINE_END_SOUND                       = "explo_spectre"
-    global const string ZIPLINE_PANEL_LOCKED                    = "npe_player_fail"
-    global const string ZIPLINE_START_SOUND                     = "pathfinder_zipline_expand"
-
-// Global const string error
-    global const string DEV_PRINTMESSAGE_SUBTEXT                = "Please check console log"
-    global const string DEV_PRINTMESSAGE_TEXT_PLURAL            = "Ziplines are invalid"
-    global const string DEV_PRINTMESSAGE_TEXT_SINGULAR          = "Zipline is invalid"
-    global const string REASON_ROPE_HAVE_SAME_ORIGIN            = "The rope of the zipline [ Start / End ] has the same origin, change the origin of the end zipline or the angle"
-
+global const string DEV_PRINTMESSAGE_SUBTEXT                = "Please check console log"
+global const string DEV_PRINTMESSAGE_TEXT_PLURAL            = "Ziplines are invalid"
+global const string DEV_PRINTMESSAGE_TEXT_SINGULAR          = "Zipline is invalid"
+global const string REASON_ROPE_HAVE_SAME_ORIGIN            = "The rope of the zipline [ Start / End ] has the same origin, change the origin of the end zipline or the angle"
 
 global struct ZiplineState
 {
@@ -39,7 +32,6 @@ global struct ZiplineState
 
 global struct KVFilesSettings
 {
-    // KV.Files vars start
     bool isVertical
     float fadeDistance              = -1.0
     float lengthScale               = 1.0
@@ -55,7 +47,6 @@ global struct KVFilesSettings
     int ziplineVersion              = 3
     string material                 = "cable/zipline.vmt"
 
-    // KV.Files vars end
     float endAutoDetachDistance
 }
 
@@ -79,34 +70,29 @@ global struct ZiplinePanel
 
 global enum eZiplinePanelState
 {
-    ENABLE, // 0
-    DISABLE // 1
+    ENABLE,
+    DISABLE
 }
 
 global struct ZiplineUtility
 {
-    // Entities
     entity endEntityZiplinePoint
     entity startEntityZiplinePoint
 
-    // Vectors entities start / end
     vector endZiplineAng
     vector endZiplinePos
     vector startZiplineAng
     vector startZiplinePos
 
-    // Structs
     KVFilesSettings     settings
     ZiplineVars         vars
     ZiplinePanel        panels
     ZiplineState        state
 
-    // Array && Table
     array < ZiplineUtility >            ziplineArray
     table < string, ZiplineUtility >    zipline
 }
 global ZiplineUtility ziplineUtility
-
 
 void function ZiplineUtility_Init()
 {
@@ -115,12 +101,12 @@ void function ZiplineUtility_Init()
 
     #if ZIPLINE_DEBUG_SCRIPTS
         AddCallback_OnClientConnected( ZiplineErrorOnClientConnected )
-    #endif // ZIPLINE_DEBUG_SCRIPTS
+    #endif
 }
 
 void function EntitiesDidLoad()
 {
     #if ZIPLINE_DEBUG_SCRIPTS && DEBUG_ZIPLINE_PLATFORM
         AddCallback_OnClientConnected( CreateRandomZiplineOnClientConnected )
-    #endif // ZIPLINE_DEBUG_SCRIPTS && DEBUG_ZIPLINE_PLATFORM
+    #endif
 }

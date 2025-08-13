@@ -31,7 +31,6 @@ void function CodeCallback_MapInit()
 	else
 		MapZones_RegisterDataTable( $"datatable/map_zones/zones_mp_rr_canyonlands_mu2.rpak" )
 	
-	//Clean up unused ents
 	AddCallback_EntitiesDidLoad( KCMU2_OnEntitiesDidLoad )
 
 	AddSpawnCallback( "info_spawnpoint_human", CleanupEnt )
@@ -167,7 +166,7 @@ void function SetupBunkersDoors()
 
 		if( IsValid( button ) )
 		{
-			button.kv.solid = 0 //fixes crash
+			button.kv.solid = 0
 			button.SetUsableByGroup( "pilot" )
 			button.SetUsePrompts( "%use% To Open Hatch", "%use% To Open Hatch" )
 
@@ -176,7 +175,7 @@ void function SetupBunkersDoors()
 			else
 				AddCallback_OnUseEntity( button, BunkerDoor_OnOpen )
 
-		} else //There is not button only for Ash Teaser bunker, leave it open.
+		} else
 		{
 			thread function() : ( door )
 			{
@@ -234,7 +233,6 @@ void function BunkerDoor_OnOpen( entity button, entity user, int input )
 	vector right   = AnglesToRight( door.GetAngles() )
 	vector up      = AnglesToUp( door.GetAngles() )
 	
-	// Define start offset relative to the door
 	float startForwardOffset = -25
 	float startRightOffset   = -60
 	float startUpOffset      = 365
@@ -242,7 +240,6 @@ void function BunkerDoor_OnOpen( entity button, entity user, int input )
 	vector startOffset = (forward * startForwardOffset) + (right * startRightOffset) + (up * startUpOffset)
 	vector worldStart = door.GetOrigin() + startOffset
 	
-	// Define end offset relative to the door
 	float endForwardOffset = -25
 	float endRightOffset   = -60
 	float endUpOffset      = -700
@@ -372,7 +369,6 @@ array<vector> function Flowstate_GenerateSmoothPathForBasePath( array<vector> pa
     return smoothPath
 }
 
-//Catmull-Rom algo to smooth the path.
 vector function Flowstate_CatmullRom( vector p0, vector p1, vector p2, vector p3, float t)
 {
     vector v0 = p1

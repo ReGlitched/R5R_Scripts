@@ -23,12 +23,12 @@ global function RegisterCLCryptoCallbacks
 #endif
 
 const float CRYPTO_MAP_WORLD_SCAN_SCALE = 80000
-const float CRYPTO_MAP_SCAN_NOTIFICATION_DIST = 12500//18500
+const float CRYPTO_MAP_SCAN_NOTIFICATION_DIST = 12500
 const float CRYPTO_MAP_PROJECTION_RADIUS = 352
 const float CRYPTO_MAP_PROJECTION_RADIUS_BUFFER = 16
-const float CRYPTO_WORLD_TO_HOLO_SCALE = 0.00685//SHOULD BE 0.0085, shrinking while geo gets fixed
+const float CRYPTO_WORLD_TO_HOLO_SCALE = 0.00685 //TODO: 0.0085, shrinking while geo gets fixed
 const vector CRYPTO_HOLO_OFFSET = < -32, 32, 16 >
-const float CRYPTO_TT_TRIGGER_RADIUS = 1536//704
+const float CRYPTO_TT_TRIGGER_RADIUS = 1536
 const float CRYPTO_TT_HOLO_MAP_RUI_INTERACT_RADIUS = 576
 const float CRYPTO_TT_TRIGGER_EXIT_RADIUS = CRYPTO_TT_TRIGGER_RADIUS + 256.0
 
@@ -44,8 +44,6 @@ const float CRYPTO_TT_TINT_DURATION = CRYPTO_TT_ENEMY_MINIMAP_ICON_TIME_BEFORE_F
 const string CRYPTO_TT_MAP_MOVER_SCRIPTNAME = "crypto_tt_map_mover"
 
 #if SERVER
-
-// Satellite animation
 const string SIGNAL_CRYPTO_SATELLITE_END_WARMUP_BLEND = "cryptoSatEndWarmup"
 const float CRYPTO_TT_SAT_BLEND_FIRE = 10.0
 const float CRYPTO_TT_SAT_BLEND_BASE = 0.0
@@ -55,24 +53,21 @@ const float CRYPTO_TT_MAP_DISPLAY_TIME = 30.0
 const float CRYPTO_TT_DEAD_PLAYER_DISPLAY_TIME = 10.0
 
 const vector CRYPTO_HOLO_MAP_CHAMPION_COLOR = TEAM_COLOR_YOU
-const vector CRYPTO_HOLO_MAP_KILL_LEADER_COLOR = < 255, 70, 32 > // Red version of enemy
-const vector CRYPTO_HOLO_MAP_REG_PLAYER_COLOR = TEAM_COLOR_ENEMY //TEAM_COLOR_ENEMY
-const vector CRYPTO_HOLO_MAP_ACTIVATOR_COLOR = TEAM_COLOR_FRIENDLY * 2 //TEAM_COLOR_PARTY
-const vector CRYPTO_HOLO_MAP_CIRCLE_NEXT_COLOR = TEAM_COLOR_FRIENDLY //TEAM_COLOR_PARTY * 0.7
+const vector CRYPTO_HOLO_MAP_KILL_LEADER_COLOR = < 255, 70, 32 >
+const vector CRYPTO_HOLO_MAP_REG_PLAYER_COLOR = TEAM_COLOR_ENEMY
+const vector CRYPTO_HOLO_MAP_ACTIVATOR_COLOR = TEAM_COLOR_FRIENDLY * 2
+const vector CRYPTO_HOLO_MAP_CIRCLE_NEXT_COLOR = TEAM_COLOR_FRIENDLY
 
-// Drawing players on holo map
 const float HOLO_MAP_MAX_PLAYER_RING_RADIUS = 60000 * CRYPTO_WORLD_TO_HOLO_SCALE
 const array<float> HOLO_MAP_RING_SCALE_INTERVALS = [ 0.1, 0.25, 0.5, 1 ]
 const array<float> HOLO_MAP_PLAYER_OPACITY_INTERVALS = [ 1.0, 0.85, 0.5, 0.1 ]
 const float HOLO_MAP_PLAYER_PIN_HEIGHT = 16
 const float CRYPTO_RADAR_PULSE_TIME = 5.0//2.35
 
-// Draw deathfield
 const float CRYPTO_TT_HOLO_MAP_DEATHFIELD_MAX_DRAW_SIZE = CRYPTO_MAP_WORLD_SCAN_SCALE
 const vector CRYPTO_TT_HOLO_MAP_DEATHFIELD_COLOR = < 255, 160, 20 >
 
-// Drawing circle on the holo map
-const float CIRCLE_FX_SEGMENT_LEN_DEG = 360.0 / 1.0  // 360.0 / 64.0 - setting to /1.0 to only draw 1 set of FX
+const float CIRCLE_FX_SEGMENT_LEN_DEG = 360.0 / 1.0  // 360.0 / 64.0
 const float CIRCLE_FX_SEPARATION_LEN_DEG = 0.0
 const vector CRYPTO_TT_CIRCLE_DEFAULT_OFFSET = < 0, 0, 32 >
 
@@ -99,8 +94,8 @@ const string CRYPTO_MAP_PIECE_02_HU	 		= "mdl/levels_terrain/mp_rr_canyonlands/c
 
 const string CRYPTO_MAP_CIRCLE_FX 			= "P_holo_ar_radius_pc64_CP_1x20"
 const string CRYPTO_MAP_NEXT_CIRCLE_FX 		= "P_map_holo_ring_CP"
-const string CRYPTO_MAP_PLAYER_FX 			= "P_map_player_pt_enemy" //enemy
-const string CRYPTO_MAP_ACTIVATOR_SQUAD_FX	= "P_map_player_pt_team" //team
+const string CRYPTO_MAP_PLAYER_FX 			= "P_map_player_pt_enemy"
+const string CRYPTO_MAP_ACTIVATOR_SQUAD_FX	= "P_map_player_pt_team"
 const string CRYPTO_MAP_SCAN_FX 			= "P_crypto_holo_sat_scan"
 #endif
 
@@ -111,8 +106,8 @@ const float CRYPTO_MAP_TOPO_HEIGHT = 128.0
 const float CRYPTO_MAP_TOPO_FLYOUT_WIDTH = 8.0
 
 const float CRYPTO_MAP_RUI_ORIENT_MIN_DIST = 8.0
-const float CRYPTO_MAP_RUI_LOOKING_AT_ORIENT_MIN_DIST = 16.0	// Line this up with close fade dist in crypto_tt_holo_map.rui
-const float CRYPTO_MAP_RUI_EXPANDED_LOOKING_AT_ORIENT_MIN_DIST = 48.0	// Line this up with close fade dist in crypto_tt_holo_map.rui
+const float CRYPTO_MAP_RUI_LOOKING_AT_ORIENT_MIN_DIST = 16.0
+const float CRYPTO_MAP_RUI_EXPANDED_LOOKING_AT_ORIENT_MIN_DIST = 48.0
 const vector CRYPTO_MAP_RUI_OFFSET = < CRYPTO_MAP_TOPO_ICON_WIDTH + 8.0, 64, 0 >
 const vector CRYPTO_MAP_RUI_EXPANDED_OFFSET = < 80, 64, 0 >
 
@@ -133,8 +128,6 @@ enum eCryptoRUIColorIdxs
 	U_R_HERE
 
 }
-
-
 #endif
 
 #if SERVER
@@ -145,7 +138,7 @@ struct HoloMapFXCircleData
 	vector			moverOffset
 	array<entity> 	fxEnts
 	bool            wasInscribedArcFlipped
-	int             hiddenFxIdx = -1// The index including and past which all fx are hidden
+	int             hiddenFxIdx = -1
 }
 
 struct PlayerOnCryptoMapData
@@ -237,18 +230,6 @@ void function CryptoTT_Init()
 	#endif
 }
 
-////====================================================================================================================
-//
-//  ######   #######  ##     ##    ###    ########     ######## ##     ##
-// ##    ## ##     ## ##     ##   ## ##   ##     ##       ##    ##     ##
-// ##       ##     ## ##     ##  ##   ##  ##     ##       ##    ##     ##
-//  ######  ##     ## ##     ## ##     ## ##     ##       ##    ##     ##
-//       ## ##  ## ## ##     ## ######### ##     ##       ##     ##   ##
-// ##    ## ##    ##  ##     ## ##     ## ##     ##       ##      ## ##
-//  ######   ##### ##  #######  ##     ## ########        ##       ###
-//
-//======================================================================================================================
-
 #if SERVER
 void function InitCryptoSquadTVs()
 {
@@ -332,7 +313,6 @@ void function OnPlayerEnterSquadTVRange( entity trigger, entity player )
 	{
 		file.numTeamsInSquadTVRange++
 
-		// Subtract 1 to remove the squad of who's looking at it. This will result in lots of -1 cases, so bottom out at 0.
 		SvApexScreens_SetEventIntA( CryptoTT_GetModifiedSquadNumber() )
 	}
 }
@@ -358,21 +338,7 @@ int function CryptoTT_GetModifiedSquadNumber()
 {
 	return maxint( file.numTeamsInSquadTVRange - 1, 0 )
 }
-#endif // SERVER
-
-
-//======================================================================================================================
-//
-// ##     ##  #######  ##        #######     ##     ##    ###    ########
-// ##     ## ##     ## ##       ##     ##    ###   ###   ## ##   ##     ##
-// ##     ## ##     ## ##       ##     ##    #### ####  ##   ##  ##     ##
-// ######### ##     ## ##       ##     ##    ## ### ## ##     ## ########
-// ##     ## ##     ## ##       ##     ##    ##     ## ######### ##
-// ##     ## ##     ## ##       ##     ##    ##     ## ##     ## ##
-// ##     ##  #######  ########  #######     ##     ## ##     ## ##
-//
-//======================================================================================================================
-
+#endif 
 
 void function InitCryptoMap()
 {
@@ -381,9 +347,8 @@ void function InitCryptoMap()
 
 	#if SERVER
 		//file.cryptoMapPieces.append( CRYPTO_MAP_PIECE_02 )
-	#endif // SERVER
+	#endif 
 
-	// Dev safeties
 	array<entity> cryptoHoloMapEnt_Raw = GetEntArrayByScriptName( "crypto_tt_holo_map_center" )
 	if ( cryptoHoloMapEnt_Raw.len() != 1 )
 	{
@@ -434,10 +399,9 @@ void function InitCryptoMap()
 
 
 	#if CLIENT
-		// RUIs for hatch bunkers
 		AddCallback_ItemFlavorLoadoutSlotDidChange_AnyPlayer( Loadout_CharacterClass(), CryptoTT_OnPlayerChangeLoadout )
 
-		//if ( IsCanyonlandsBunkersEnabled() )//active this back later when bunkers fixed - kral
+		//if ( IsCanyonlandsBunkersEnabled() )	//TODO: Enable this when bunkers fixed
 		/*{
 			foreach ( string id in HATCH_ZONE_IDS )
 			{
@@ -487,9 +451,7 @@ void function InitCryptoMap()
 
 		thread DrawDeathFieldOnCryptoTTMap()
 
-		// Create trigger cylinder for holo map room
-
-		entity holoMapRoomTrigger = CreateEntity( "trigger_cylinder" ) //SHAWBS - Changed from heavy trigger to normal trigger to fix drone enter bug.
+		entity holoMapRoomTrigger = CreateEntity( "trigger_cylinder" ) 
 		{
 			SetTargetName( holoMapRoomTrigger, "ctt_holo_room_trig" )
 			holoMapRoomTrigger.SetOwner( file.cryptoHoloMapEnt )
@@ -587,7 +549,7 @@ void function CryptoTT_HoloMap_SetButtonUsable_Server( entity switchEnt )
 	switchEnt.SetSkin( 0 )
 }
 
-#endif // SERVER
+#endif
 
 void function HoloMap_OnUse( entity panel, entity user, int useInputFlags )
 {
@@ -607,7 +569,7 @@ void function HoloMap_OnUse( entity panel, entity user, int useInputFlags )
 		settings.icon = $"rui/hud/gametype_icons/survival/data_knife"
 		settings.hint = Localize( "#HINT_SAT_ACTIVATE" )
 
-	#endif //CLIENT
+	#endif
 
 	settings.successFunc = CryptoTTScan_UseSuccess
 
@@ -620,7 +582,7 @@ void function HoloMap_OnUse( entity panel, entity user, int useInputFlags )
 		settings.movementDisable = true
 		settings.holsterWeapon = true
 		settings.holsterViewModelOnly = true
-	#endif //SERVER
+	#endif
 
 	thread ExtendedUse( panel, user, settings )
 }
@@ -643,7 +605,6 @@ void function DisplayHoldUseRUIForCryptoTTSatellite_Internal( var rui, asset ico
 #endif
 
 #if SERVER
-
 #if DEV
 	void function DEV_TestFireCryptoSatellite_Thread()
 	{
@@ -653,7 +614,7 @@ void function DisplayHoldUseRUIForCryptoTTSatellite_Internal( var rui, asset ico
 		wait CRYPTO_TT_BUTTON_USE_TIME
 		CryptoTTScan_UseSuccess( GP( 0 ), GetEntByScriptName( "crypto_map_switch" ), blankSettings )
 	}
-#endif // DEV
+#endif
 
 void function CryptoTTScan_UseStart( entity button, entity player, ExtendedUseSettings settings )
 {
@@ -808,7 +769,7 @@ void function DEV_TestSatelliteBlendMatrix()
 	printt( "    | ---- Finally, base..." )
 	CryptoTT_SetSatelliteBlendValueTarget( CRYPTO_TT_SAT_BLEND_BASE )
 }
-#endif // DEV
+#endif
 #endif
 
 void function CryptoTTScan_UseSuccess( entity button, entity player, ExtendedUseSettings settings )
@@ -827,7 +788,6 @@ void function SCB_ShowSatelliteChargeRUI( float useSuccessTime )
 
 void function SCB_ShowSatelliteChargeRUI_Thread( float useSuccessTime )
 {
-	// Safety check for R5DEV-179688
 	if ( !IsValid( file.holoMap_YouAreHere.rui ) || ( file.holoMap_YouAreHere.rui == null ) )
 		return
 
@@ -886,20 +846,17 @@ void function CryptoTTScan_UseSuccess_Thread( entity button, entity player )
 		SURVIVAL_ShowSurveyRegionOnSquadMaps( player )
 	}
 
-	// Next deathfield
 	DeathFieldStageData deathField
 	int currentDeathFieldStageValue               = int( max( 0, SURVIVAL_GetCurrentDeathFieldStage() ) )
 	int realm                                     = Survival_Loot_GetDefaultRealm()
 	array< DeathFieldStageData > deathfieldStages = SURVIVAL_GetDeathFieldStagesNew( realm )
 	deathField 									  = deathfieldStages[ int( min( currentDeathFieldStageValue + 1, deathfieldStages.len() - 1 ) ) ]
 
-	// Map pulse
 	int mapPulseFX = GetParticleSystemIndex( GetAssetFromString( CRYPTO_MAP_SCAN_FX ) )
 	vector fxOrigin = WorldToCryptoMapPos( button.GetOrigin() )
 	file.holoMapFXForClearnup.append( StartParticleEffectInWorld_ReturnEntity( mapPulseFX, fxOrigin, < 0, 0, 0 > ) )
 	EmitSoundAtPosition( TEAM_UNASSIGNED, fxOrigin, "Canyonlands_Scr_Cryto_TT_Pulse_Expands", button )
 
-	// Next circle
 	HoloMapFXCircleData fxCircleData = CreateWorldCircleOnCryptoMap( deathField.endPos, deathField.endRadius, CRYPTO_HOLO_MAP_CIRCLE_NEXT_COLOR, CRYPTO_TT_CIRCLE_DEFAULT_OFFSET, GetAssetFromString( CRYPTO_MAP_NEXT_CIRCLE_FX ) )
 	thread DeleteHolomapFX_Delayed( fxCircleData, file.enemyDisplayTimeOnMap )
 	vector soundOrigin = WorldToCryptoMapPos( deathField.endPos )
@@ -919,7 +876,6 @@ void function DrawDeathFieldOnCryptoTTMap()
 	DeathFieldData dfData = SURVIVAL_GetDeathFieldData()
 	float radius = DeathField_GetRadiusForTime( Time() )
 
-	// Don't draw deathfield until it's within a more reasonable size
 	while ( radius > CRYPTO_TT_HOLO_MAP_DEATHFIELD_MAX_DRAW_SIZE )
 	{
 		radius = DeathField_GetRadiusForTime( Time() )
@@ -1001,7 +957,6 @@ HoloMapFXCircleData function CreateWorldCircleOnCryptoMap( vector worldOrigin, f
 	int numFXArcsToPlace = int( 360.0 / CIRCLE_FX_SEGMENT_LEN_DEG )
 	for( int i; i < numFXArcsToPlace; i++ )
 	{
-		// Spawn and angle the full circle, but leave them hidden
 		float targetAngle = ( CIRCLE_FX_SEPARATION_LEN_DEG + ( CIRCLE_FX_SEGMENT_LEN_DEG * i ) ) % 360.0
 		entity newFxEnt = StartParticleEffectOnEntityWithPos_ReturnEntity( newData.fxMover, circleFXIdx, FX_PATTACH_ABSORIGIN_FOLLOW, ATTACHMENTID_INVALID, newData.fxMover.GetOrigin(), < 0, targetAngle, 0 > )
 		EffectSetControlPointVector( newFxEnt, 1, color )
@@ -1022,12 +977,10 @@ void function UpdateWorldCircleOnCryptoMap( HoloMapFXCircleData fxCircleData, ve
 	DisplayCircleOnCryptoMap( fxCircleData, drawPosition, radius * CRYPTO_WORLD_TO_HOLO_SCALE, debug )
 }
 
-// http://paulbourke.net/geometry/circlesphere/   <-- The following circle intersect math kindly provided by this webpage
 void function DisplayCircleOnCryptoMap( HoloMapFXCircleData fxCircleData, vector origin, float radius, bool debug = false )
 {
 	float projectionRadius = CRYPTO_MAP_PROJECTION_RADIUS - CRYPTO_MAP_PROJECTION_RADIUS_BUFFER
 
-	// The [start, end] in angles, within which to draw the circle. Defaults to full circle. If circle intersects bounds of projection radius, draw a partial circle.
 	array<float> circleDrawAngleBounds = [ 0.0, 360.0 ]
 
 	if ( debug )
@@ -1039,12 +992,9 @@ void function DisplayCircleOnCryptoMap( HoloMapFXCircleData fxCircleData, vector
 	if ( IsCircleAEncompassingCircleB( origin, radius, file.cryptoHoloProjBasinOrigin, projectionRadius ) )
 		return
 
-	// Get intersection of circle and projection area
 	if ( CirclesAreIntersecting( file.cryptoHoloProjBasinOrigin, projectionRadius, origin, radius ) )
 	{
 		array<vector> intersectionPoints = GetCircleToCircleIntersectionPoints( file.cryptoHoloProjBasinOrigin, projectionRadius, origin, radius, file.cryptoHoloMapEnt.GetUpVector(), debug )
-		// Convert the intersection points to degree angles, calculate the degree arc of the circle to draw
-		// Have to use the relative origin of the circle to the map center, since GetCircleToCircleIntersectionPoints calculations are all done relative to map center
 		vector relOrigin = origin - file.cryptoHoloProjBasinOrigin
 		array<float> intersectionAngles
 		array<float> intersectionAnglesDeg
@@ -1058,7 +1008,6 @@ void function DisplayCircleOnCryptoMap( HoloMapFXCircleData fxCircleData, vector
 				intersectionAnglesDeg[ i ] += 360
 		}
 
-		// Determine order of points such that range is p0 -> p1
 		float arcLen = GetArcLengthDeg( intersectionAnglesDeg[ 0 ], intersectionAnglesDeg[ 1 ] )
 
 		float midPoint_Angle = ( intersectionAnglesDeg[ 0 ] + ( arcLen * 0.5 ) ) % 360.0
@@ -1088,7 +1037,6 @@ void function DisplayCircleOnCryptoMap( HoloMapFXCircleData fxCircleData, vector
 	DrawFXCircleFromSegments( fxCircleData, origin, radius, circleDrawAngleBounds )
 }
 
-// Place the FX segments according to the range to draw
 const float CRYPTO_HOLO_MAP_RECREATE_CIRCLE_FX_DEBOUNCE = 1.0
 void function DrawFXCircleFromSegments( HoloMapFXCircleData fxCircleData, vector origin, float radius, array<float> circleDrawAngleBounds )
 {
@@ -1105,12 +1053,7 @@ void function DrawFXCircleFromSegments( HoloMapFXCircleData fxCircleData, vector
 	int numNewFXToShow         = numFXSegmentsToShow - numShownFx
 	if ( numNewFXToShow > 0 )
 	{
-		// Set mover rotaion back by #fx to add
 		vector moverAngles = fxCircleData.fxMover.GetAngles()
-		// Let's say there are 10 new segments to show. If the mover is facing the middle of the arc that represents the total visible range, then the
-		// new space to fill is theoretically divided evenly on both sides of this visible arc. The mover will rotate half the length of new segments to show,
-		// so that it's flush with one edge. This makes room for the full 10 on the other side. The 10 to show will then be revealed. Since the segments are revealed
-		// in the forwards (positive) direction, the mover will counter-rotate negatively.
 		float adjustedArcEndBound = circleDrawAngleBounds[ 0 ] > circleDrawAngleBounds[ 1 ] ? ( circleDrawAngleBounds[ 1 ] + 360.0 ) : circleDrawAngleBounds[ 1 ]
 		float visibleArcLength = adjustedArcEndBound - circleDrawAngleBounds[ 0 ]
 		float visibleArcCenter = ( circleDrawAngleBounds[ 0 ] + ( visibleArcLength * 0.5 ) ) % 360.0
@@ -1129,7 +1072,6 @@ void function DrawFXCircleFromSegments( HoloMapFXCircleData fxCircleData, vector
 
 		EffectSetControlPointVector( fxEnt, 2, <radius, 0, 0 > )
 
-		// Show FX if they're to be revealed. Using this set up so I can have a fade system later.
 		if ( i > fxCircleData.hiddenFxIdx && i <= ( fxCircleData.hiddenFxIdx + numNewFXToShow ) )
 			EffectSetControlPointVector( fxEnt, 4, < 1.0, 0, 0 > )
 	}
@@ -1154,7 +1096,6 @@ void function CryptoTT_DisplayPlayersOnHoloMap( entity activatingPlayer = null )
 		playerRangeBandData.append( { center = curRingCenter, radius = curRingRadius } )
 	}
 
-	// Get all player locations
 	array<entity> allPlayers = GetPlayerArray_AliveConnected()
 	array<vector> mappedOriginsXY
 	int numPlayers = allPlayers.len()
@@ -1173,8 +1114,6 @@ void function CryptoTT_DisplayPlayersOnHoloMap( entity activatingPlayer = null )
 	int fxIdxToUse = playerFXIdx
 	for( int i; i < numPlayers; i++ )
 	{
-
-		// Calculating these in the loop because of R5DEV-133412
 		int killLeaderTeam = -1
 		if ( IsValid( killLeaderPlayer ) )
 			killLeaderTeam = killLeaderPlayer.GetTeam()
@@ -1188,7 +1127,7 @@ void function CryptoTT_DisplayPlayersOnHoloMap( entity activatingPlayer = null )
 			activatingPlayerTeam = activatingPlayer.GetTeam()
 
 		vector color = CRYPTO_HOLO_MAP_REG_PLAYER_COLOR
-		float alpha = HOLO_MAP_PLAYER_OPACITY_INTERVALS.top() // Init alpha to the lowest possible
+		float alpha = HOLO_MAP_PLAYER_OPACITY_INTERVALS.top()
 		entity curPlayer = allPlayers[ i ]
 		int team = curPlayer.GetTeam()
 		switch( team )
@@ -1242,7 +1181,6 @@ void function CryptoTT_DisplayPlayersOnHoloMap( entity activatingPlayer = null )
 		newData.fxIdx = fxIdxToUse
 		newData.player = curPlayer
 		newData.activatingTeam = -1
-		// Can be null in rare cases
 		if ( IsValid( activatingPlayer ) )
 		{
 			newData.activatingTeam = activatingPlayer.GetTeam()
@@ -1367,8 +1305,8 @@ void function DEV_SpawnBotsRandomlyForCryptoTT()
 		allPlayers[ i ].SetOrigin( randomPoint )
 	}
 }
-#endif // DEV
-#endif // SERVER
+#endif
+#endif
 
 vector function WorldToCryptoMapPos( vector origin )
 {
@@ -1420,7 +1358,6 @@ void function CryptoTT_DisplayEnemiesOnMinimap_Thread( float endTime )
 	array<entity> entsForTracking
 	foreach( entity enemy in aliveEnemies )
 	{
-		// Full map
 		var fRui = FullMap_AddEnemyLocation( enemy )
 		//RuiSetBool( fRui, "additive", true )
 		fullMapRuis.append( fRui )
@@ -1435,7 +1372,6 @@ void function CryptoTT_DisplayEnemiesOnMinimap_Thread( float endTime )
 
 	if ( timeToWait > 0 )
 	{
-		// Fullmap RUI starts fading out when the "fadeOutEndTime" gametime is set. Wait, fade, wait again, destroy.
 		float testIsThereTimeUntilStartFade = timeToWait - CRYPTO_TT_ENEMY_MINIMAP_ICON_TIME_BEFORE_FADE
 		if ( testIsThereTimeUntilStartFade > 0 )
 		{
@@ -1464,7 +1400,6 @@ void function CryptoTT_DisplayEnemiesOnMinimap_Thread( float endTime )
 
 void function CryptoTT_PlayerEnterRoomTrig( entity trigger, entity player )
 {
-	//SHAWBS - Jump out if drone entering trigger, fixes a crash.
 	if( !player.IsPlayer() )
 		return
 
@@ -1487,13 +1422,12 @@ void function CryptoTT_SetPlayerInHoloRoom( bool isInHoloRoom )
 	file.playerInHoloRoom = isInHoloRoom
 }
 
-// TODO: QA - will this break if I die in the room and go to spectate? Should this instead just pause functionality until player is valid again? Big yike. Test local w/ a bot in the room
+//TODO: QA - will this break if I die in the room and go to spectate? Should this instead just pause functionality until player is valid again? Big yike. Test local w/ a bot in the room
 void function CryptoTT_MonitorShouldUpdateRUIForPlayer( entity trigger, entity player )
 {
 	EndSignal( player, "OnDestroy" )
 	EndSignal( player, "OnDeath" )
 
-	// Hide all RUI when the player dies to avoid having to handle a player spectating someone. Rui will become visible if the player enters after respawning.
 	OnThreadEnd(
 		function() : ( player )
 		{
@@ -1505,10 +1439,9 @@ void function CryptoTT_MonitorShouldUpdateRUIForPlayer( entity trigger, entity p
 		}
 	)
 
-	// No exit callbacks exist, so end it when the player leaves the radius
 	while ( file.playerInHoloRoom )
 	{
-		// TODO: CRASHES WHEN PLAYER IS SPECTATOR
+		//TODO: CRASHES WHEN PLAYER IS SPECTATOR
 		vector playerOrg = player.GetOrigin()
 		float dist2D = Distance2D( trigger.GetOrigin(), playerOrg )
 		if ( dist2D > CRYPTO_TT_TRIGGER_EXIT_RADIUS )
@@ -1536,7 +1469,6 @@ void function CryptoTT_HoloMap_OrientRuiThink( entity trigger, entity player )
 
 	while ( file.playerInHoloRoom )
 	{
-		// Point appropriate topos at player
 		CryptoTT_HoloMap_OrientHoloRuis( player )
 
 		WaitFrame()
@@ -1552,7 +1484,6 @@ void function CryptoTT_HoloMap_OrientHoloRuis( entity player )
 		vector forwardNorm = Normalize( < forward.x, forward.y, 0 > )
 		vector rightDir    = CrossProduct( forwardNorm, < 0, 0, 1 > )
 
-		// If rui is in expanded state, recalculate "center of billboard" target, and orientation directions, to match the expanded RUI.
 		float rightOffset = CRYPTO_MAP_RUI_OFFSET.x
 		if ( ruiData.isExpanded )
 		{
@@ -1562,8 +1493,6 @@ void function CryptoTT_HoloMap_OrientHoloRuis( entity player )
 			forward = player.CameraPosition() - ruiData.originExpanded
 			forwardNorm = Normalize( < forward.x, forward.y, 0 > )
 			rightDir = CrossProduct( forwardNorm, < 0, 0, 1 > )
-
-			// Orient the topo for the flyout line
 			{
 				vector expandedRuiLeftCorner  = ruiData.originExpanded - (rightDir * ((rightOffset * 0.5) + 16))
 				vector flyoutTopoBottomCorner = ruiData.origin - < 0, 0, CRYPTO_MAP_TOPO_HEIGHT * 0.5 >
@@ -1584,7 +1513,6 @@ void function CryptoTT_HoloMap_OrientHoloRuis( entity player )
 		if ( ruiData.isExpanded )
 			minDist = CRYPTO_MAP_RUI_EXPANDED_LOOKING_AT_ORIENT_MIN_DIST
 
-		// Either player isn't looking at the rui (in which case set orientation more freely to avoid orientation snaps), or player IS looking and orientation has to freeze earlier
 		bool shouldSkipOrientation = ( distToRUI < CRYPTO_MAP_RUI_ORIENT_MIN_DIST ) || ( playerLookingAtRUI && ( distToRUI < minDist ) )
 		if ( shouldSkipOrientation )
 			continue
@@ -1600,7 +1528,6 @@ void function CryptoTT_HoloMap_OrientHoloRuis( entity player )
 const float CRYPTO_TT_VIS_TRACE_INTERVAL = 0.1
 const float CAN_EXPAND_RADIUS_FROM_MAP = 640
 const float CAN_EXPAND_RADIUS_FROM_MAP_SQR = CAN_EXPAND_RADIUS_FROM_MAP * CAN_EXPAND_RADIUS_FROM_MAP
-// Determines if one of the holo map RUIs should expand to show more info.
 void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bool debug = false)
 {
 	EndSignal( player, "OnDestroy" )
@@ -1631,7 +1558,6 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 		int testVisColGroup = TRACE_COLLISION_GROUP_NONE
 		int testVisCollMask = (TRACE_MASK_VISIBLE_AND_NPCS | CONTENTS_BLOCKLOS | CONTENTS_BLOCK_PING | CONTENTS_HITBOX)
 
-		// Only trace 10 times/second (or whatever the interval is)
 		if ( playerCloseEnoughToExpandRUI && ( ( Time() - lastTraceTime ) > CRYPTO_TT_VIS_TRACE_INTERVAL ) )
 		{
 			vector orgStart = playerCamOrg
@@ -1642,7 +1568,6 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 			lastTraceTime = Time()
 		}
 
-		// If the player is too far away, skip the logic to determine if they're focusing on a RUI. Just run script to collapse already-expanded RUI.
 		if ( playerCloseEnoughToExpandRUI )
 		{
 			for( int i; i < numRuis; i++ )
@@ -1650,7 +1575,6 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 				HoloMapRUIData ruiData = file.expandableHoloMapRUIData[ i ]
 				bool isActivatedPanel = ruiData.topo == activatedPanel.topo
 
-				// Get the origin to focus on
 				vector viewTargetOrigin = CryptoTT_GetRuiOriginToUse( ruiData )//ruiData.origin
 				vector offsetUpDir      = < 0, 0, 1 >//AnglesToUp( player.CameraAngles() )
 				vector offsetFwdDir     = Normalize( viewTargetOrigin - playerCamOrg )
@@ -1663,12 +1587,10 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 				if ( distToTarget < CRYPTO_MAP_FOCUS_MIN_DISTANCE )
 					continue
 
-				// Player's view is obstructed. Point of obstruction os closer than the RUI to focus on so... there's no line of sight
 				float traceDist = traceFrac * CRYPTO_TT_TRIGGER_EXIT_RADIUS
 				if ( distToTarget > traceDist )
 					continue
 
-				// Get the FOV to focus within - Calculated from a target worldspace radius
 				float radiusTarget = isActivatedPanel ? CRYPTO_MAP_FOCUS_EXIT_RADIUS : CRYPTO_MAP_FOCUS_ENTER_RADIUS
 				float fovTarget = asin( radiusTarget / distToTarget ) * RAD_TO_DEG
 				float fovBlockTarget = asin( CRYPTO_MAP_FOCUS_BLOCK_RADIUS / distToTarget ) * RAD_TO_DEG
@@ -1684,15 +1606,12 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 						//DebugDrawSphere( ruiData.originExpanded, 4, COLOR_WHITE, true, 0.1 )
 				}
 
-				// Of all targets player is looking at (looking within FOV range), get the closest to look direction, and closest to the player.
 				vector playerToRuiDir = Normalize( viewTargetOrigin - playerCamOrg )
 				float facingDot = DotProduct( playerToRuiDir, AnglesToForward( player.CameraAngles() ) )
 				float dotAngle = DotToAngle( facingDot )
 
 				if ( dotAngle < fovTarget )
 				{
-					// Save this index if it's the new closest angle.
-					// If this is the active panel, override it to be closest match. Only closest dist with FOV block can override looking at the active panel.
 					if ( isActivatedPanel || ( ( dotAngle < closestAngle ) && !closestAngleOverridden ) )
 					{
 						closestAngle = dotAngle
@@ -1717,7 +1636,6 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 		if ( closestAngleIdx >= 0 && closestDistanceIdx >= 0 )
 		{
 			prevFocusCandidate = focusCandidate
-			// Only take closest distance if the closest target is "blocking" what's behind it, since player is looking at it so direclty
 			if ( closestAngleIdx != closestDistanceIdx )
 			{
 				float closestAngleDist = Distance2D( file.expandableHoloMapRUIData[ closestAngleIdx ].origin, playerCamOrg )
@@ -1729,13 +1647,11 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 			else
 				focusCandidate = file.expandableHoloMapRUIData[ closestAngleIdx ]
 		}
-		// Set focus candidate to a blank struct (effectively setting it to null)
 		else if ( focusCandidate.topo != null )
 		{
 			focusCandidate = CryptoTT_CreateEmptyHoloMapRUIData()
 		}
 
-		// If new candidate, start the timer
 		if ( prevFocusCandidate.topo != focusCandidate.topo )
 		{
 			focusCandidateStartTime = Time()
@@ -1753,13 +1669,11 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 		}
 		else if ( ( focusCandidate.topo != null ) && ( Time() - focusCandidateStartTime > CRYPTO_MAP_FOCUS_TIME_TO_ACTIVATE ) )
 		{
-			// Dethrone old activated RUI
 			if ( activatedPanel.topo != null && activatedPanel.topo != focusCandidate.topo )
 			{
 				CryptoTT_SetHoloMapRUIExpandedState( activatedPanel, false )
 			}
 
-			// Activate new RUI
 			if ( activatedPanel.topo != focusCandidate.topo )
 			{
 				CryptoTT_SetHoloMapRUIExpandedState( focusCandidate, true )
@@ -1774,7 +1688,6 @@ void function CryptoTT_HoloMap_ExpandRUIThink( entity trigger, entity player, bo
 			activatedFocusCandidateStartTime = Time()
 		}
 
-		// Hide active panel if it's not looked at for period of time
 		if ( Time() - activatedFocusCandidateStartTime > CRYPTO_ACTIVATED_PANEL_INACTIVE_HIDE_TIME )
 		{
 			if ( activatedPanel.topo != null )
@@ -1824,7 +1737,6 @@ void function CryptoTT_SetHoloMapRUIExpandedState( HoloMapRUIData ruiData, bool 
 		RuiSetFloat3( ruiData.rui, "ruiOrigin", ruiData.origin )
 	}
 
-	// Update RUI immediately to avoid popping
 	entity player = GetLocalViewPlayer()
 	if ( IsValid( player ) )
 		CryptoTT_HoloMap_OrientHoloRuis( player )
@@ -1840,7 +1752,6 @@ vector function CryptoTT_GenerateNewRuiExpandedOrigin( HoloMapRUIData ruiData )
 	vector forwardNorm = Normalize( < forward.x, forward.y, 0 > )
 	vector rightDir    = CrossProduct( forwardNorm, < 0, 0, 1 > )
 
-	// If rui is in expanded state, recalculate "center of billboard" target, and orientation directions, to match the expanded RUI.
 	float rightOffset = CRYPTO_MAP_RUI_EXPANDED_OFFSET.x
 	return ruiData.origin + ( rightDir * rightOffset )//CRYPTO_MAP_TOPO_WIDTH * 0.5 )//rightOffset )
 }
@@ -1895,7 +1806,6 @@ void function CryptoTT_UpdateHoloMapRUIText( HoloMapRUIData ruiData, string hatc
 {
 	string titleText
 	string descText
-	// If not crypto, desc text will be overridden
 	switch( hatchId )
 	{
 		case "16":
@@ -1974,7 +1884,6 @@ vector function CryptoTT_GetRuiOriginToUse( HoloMapRUIData ruiData )
 }
 #endif
 
-//CHECK IF THE TT EXISTS IN THE MAP
 bool function IsCryptoTTEnabled()
 {
 	if ( GetMapName() == "mp_rr_canyonlands_mu2_tt" )

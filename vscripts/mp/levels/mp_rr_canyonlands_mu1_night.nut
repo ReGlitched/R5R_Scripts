@@ -2,21 +2,17 @@
 #if CLIENT
 	global function ClientCodeCallback_MapInit
 	global function MinimapLabelsCanyonlandsNight
-#endif //CLIENT
-
+#endif
 
 #if SERVER
 	global function CodeCallback_MapInit
-#endif //SERVER
-
-
+#endif
 
 #if CLIENT
 	const asset FX_LEVIATHAN_EYE_GLOW = $"P_leviathan_eye"
 	const asset FX_LEVIATHAN_FIRE = $"P_leviathan_roar_fire"
 	const asset FX_LEVIATHAN_FIRE_END = $"P_ship_fire_large"
-#endif //CLIENT
-
+#endif
 
 #if SERVER
 void function CodeCallback_MapInit()
@@ -33,9 +29,6 @@ void function CodeCallback_MapInit()
 	MapZones_RegisterDataTable( $"datatable/map_zones/zones_mp_rr_canyonlands_mu1_night.rpak" )
 	//SetFlyersToSpawn( 8  )
 	AddCallback_EntitiesDidLoad( EntitiesDidLoad )
-
-
-	// ------------------ DEV --------------------
 
 	PrecacheModel(BANGALORE_SMOKE_MODEL)
 	PrecacheModel(BUTTON_ASSET)
@@ -56,12 +49,8 @@ void function CodeCallback_MapInit()
 
 	SpawnButton()
 	RegisterSignal("onFireworksStop")
-
-	// ------------------------------------------
-
 }
-#endif //SERVER
-
+#endif
 
 #if CLIENT
 void function ClientCodeCallback_MapInit()
@@ -76,7 +65,6 @@ void function ClientCodeCallback_MapInit()
 	AddTargetNameCreateCallback( "leviathan_zone_9", AddAirdropTraceIgnoreEnt )
 	RequireVolumetricLighting( true )
 
-
 	RegisterSignal( "RoarStop" )
 	if ( EvilLeviathansEnabled() )
 	{
@@ -86,27 +74,21 @@ void function ClientCodeCallback_MapInit()
 		PrecacheParticleSystem( FX_LEVIATHAN_EYE_GLOW )
 		PrecacheParticleSystem( FX_LEVIATHAN_FIRE )
 	}
-
 }
-#endif //CLIENT
-
+#endif
 
 void function SharedInit()
 {
 	ShPrecacheEvacShipAssets()
 	//ShLootCreeps_Init()
-
 }
-
 
 #if SERVER
 void function EntitiesDidLoad()
 {
 
-
-
 }
-#endif //SERVER
+#endif
 
 
 #if SERVER
@@ -114,10 +96,7 @@ void function OnDeathFieldStopShrink_ShadowSquad( DeathFieldData deathFieldData 
 {
 	LootCreepGarbageCollect()
 }
-#endif //SERVER
-
-
-
+#endif 
 
 #if CLIENT
 void function MinimapLabelsCanyonlandsNight()
@@ -153,13 +132,8 @@ void function MinimapLabelsCanyonlandsNight()
 	SURVIVAL_AddMinimapLevelLabel( GetZoneMiniMapNameForZoneId( MapZones_GetZoneIdForTriggerName( "Z_12_A" ) ), 0.16, 0.23, 0.6 )//"Slum Lakes"
 	SURVIVAL_AddMinimapLevelLabel( GetZoneMiniMapNameForZoneId( MapZones_GetZoneIdForTriggerName( "Z_16_MALL" ) ), 0.49, 0.68, 0.6 ) //"Market"
 	SURVIVAL_AddMinimapLevelLabel( GetZoneMiniMapNameForZoneId( MapZones_GetZoneIdForTriggerName( "Z_16_SKULLTOWN" ) ), 0.32, 0.74, 0.6 )//"Skull Town"
-
 }
-#endif //CLIENT
-
-
-
-
+#endif
 
 #if CLIENT
 void function OnLeviathanMarkerCreated( entity marker )
@@ -170,8 +144,7 @@ void function OnLeviathanMarkerCreated( entity marker )
 
 	thread LeviathanThink( marker, leviathan, stagingOnly )
 }
-#endif //CLIENT
-
+#endif
 
 #if CLIENT
 void function LeviathanThink( entity marker, entity leviathan, bool stagingOnly )
@@ -194,9 +167,7 @@ void function LeviathanThink( entity marker, entity leviathan, bool stagingOnly 
 
 	WaitForever()
 }
-#endif //CLIENT
-
-
+#endif
 
 #if CLIENT
 void function OnLeviathanBreathesFire( entity ent )
@@ -207,9 +178,7 @@ void function OnLeviathanBreathesFire( entity ent )
 	thread LeviathanBreathesFire( ent )
 
 }
-#endif //CLIENT
-
-
+#endif
 
 #if CLIENT
 void function LeviathanBreathesFire( entity ent )
@@ -264,16 +233,11 @@ void function LeviathanBreathesFire( entity ent )
 
 	WaitForever()
 }
-#endif //CLIENT
-
-
+#endif
 
 #if CLIENT
 void function OnEvilLeviathanCreated( entity ent )
 {
-	///////////////////
-	// Eye glows
-	///////////////////
 	entity leviathan = ent
 	array <string> eyeGlowAttachments
 	eyeGlowAttachments.append( "EYE_L" )
@@ -283,8 +247,7 @@ void function OnEvilLeviathanCreated( entity ent )
 	StartParticleEffectOnEntity( leviathan, fxIndex, FX_PATTACH_POINT_FOLLOW, leviathan.LookupAttachment( eyeGlowAttachment ) )
 
 }
-#endif //CLIENT
-
+#endif
 
 #if CLIENT
 bool function EvilLeviathansEnabled()
@@ -294,15 +257,9 @@ bool function EvilLeviathansEnabled()
 		return true
 	return false
 }
-#endif //CLIENT
-
-
-///// ----------------------------- FIREWORKS MOD --------------------------//////////////
-
+#endif
 
 #if SERVER
-
-
 const asset BUTTON_ASSET = $"mdl/props/global_access_panel_button/global_access_panel_button_console_w_stand.rmdl"
 
 const asset TROPHY_INTERCEPT_PROJECTILE_SMALL_FX = $"P_wpn_trophy_imp_sm"//
@@ -321,7 +278,6 @@ const asset HOLO_TRAIL_FX = $"P_ar_holopilot_trail"
 const asset DOG_SMOKE = $"P_dog_w_fire_trail_1"
 const asset SHIP_ROCK = $"P_fire_large"
 
-// locations on map KC night
 const vector FIRE_A = < 29416, -17672, 5692>
 const vector FIRE_B = < 29511, -12159, 5692>
 const vector FIRE_C = < 27205, -12175, 5692>
@@ -334,41 +290,37 @@ const vector LAUNCHER_C = < 26838, -15176, 5272>
 const vector PANEL_POS = < 29389, -15057, 5367>
 const vector PANEL_ANG = <0,90,0>
 
+/*
+void function Fireworks_Init()
+{
 
-// ---- IF USED IN A SEPARATE FILE --------
+	PrecacheModel(BANGALORE_SMOKE_MODEL)
+	PrecacheModel(BUTTON_ASSET)
 
-// void function Fireworks_Init()
-// {
+	PrecacheParticleSystem( TROPHY_INTERCEPT_PROJECTILE_SMALL_FX )
+	PrecacheParticleSystem( TROPHY_INTERCEPT_PROJECTILE_LARGE_FX )
+	PrecacheParticleSystem( TROPHY_INTERCEPT_PROJECTILE_CLOSE_FX )
 
-// 	PrecacheModel(BANGALORE_SMOKE_MODEL)
-// 	PrecacheModel(BUTTON_ASSET)
+	PrecacheParticleSystem( FX_BOMBARDMENT_MARKER )
+	PrecacheParticleSystem( FX_ARTILLERY_PLASMA )
+	PrecacheParticleSystem( METEOR_TRAIL )
+	PrecacheParticleSystem( SHIELD_BRAKER )
+	PrecacheParticleSystem( MASTIF_PROJ )
+	PrecacheParticleSystem( TRACER_PROJ )
+	PrecacheParticleSystem( HOLO_TRAIL_FX )
+	PrecacheParticleSystem( DOG_SMOKE )
+	PrecacheParticleSystem( SHIP_ROCK )
 
-// 	PrecacheParticleSystem( TROPHY_INTERCEPT_PROJECTILE_SMALL_FX )
-// 	PrecacheParticleSystem( TROPHY_INTERCEPT_PROJECTILE_LARGE_FX )
-// 	PrecacheParticleSystem( TROPHY_INTERCEPT_PROJECTILE_CLOSE_FX )
-
-// 	PrecacheParticleSystem( FX_BOMBARDMENT_MARKER )
-// 	PrecacheParticleSystem( FX_ARTILLERY_PLASMA )
-// 	PrecacheParticleSystem( METEOR_TRAIL )
-// 	PrecacheParticleSystem( SHIELD_BRAKER )
-// 	PrecacheParticleSystem( MASTIF_PROJ )
-// 	PrecacheParticleSystem( TRACER_PROJ )
-// 	PrecacheParticleSystem( HOLO_TRAIL_FX )
-// 	PrecacheParticleSystem( DOG_SMOKE )
-// 	PrecacheParticleSystem( SHIP_ROCK )
-
-// 	RegisterSignal("onFireworksStop")
+	RegisterSignal("onFireworksStop")
 
 
-// 	if ( GetMapName() == "mp_rr_canyonlands_mu1_night") 
-// 	{
-// 		print("---------------- " +  GetMapName() + " --------------------")
-// 		SpawnButton()
-// 		RegisterSignal("onFireworksStop")
-// 	}
-// }
-
-// -------------------------------------
+	if ( GetMapName() == "mp_rr_canyonlands_mu1_night") 
+	{
+		print("---------------- " +  GetMapName() + " --------------------")
+		SpawnButton()
+		RegisterSignal("onFireworksStop")
+	}
+}*/
 
 void function SpawnButton()
 {
@@ -382,7 +334,6 @@ void function SpawnButton()
 
 void function startFireworks(entity panel)
 {
-	// busy state
 	panel.SetSkin( 1 )
 
 	panel.UnsetUsable()
@@ -391,8 +342,6 @@ void function startFireworks(entity panel)
 	waitthread LaunchShow(panel)
 	wait 5
 
-
-	// normal state
 	panel.SetSkin( 0 )
 
 	string prompt = "%&use% START FIREWORK SHOW"
@@ -421,7 +370,6 @@ entity function CreateButton(vector pos, vector ang)
 	return button
 }
 
-// unused
 void function sequenceTest(entity panel)
 {
 	float speed = 1500
@@ -442,11 +390,7 @@ void function LaunchShow(entity panel)
 
 void function fullSequence(entity panel)
 {
-	// PART 1 : light up fire
 	thread flameSequence(panel)
-
-	// PART 2 : small firework 
-	// 2.1 solo firework small
 
 	wait 10.0
 
@@ -464,18 +408,14 @@ void function fullSequence(entity panel)
 	wait 3.0 
 	thread megaBomb(1500, 0.5, <0, 0.1, 1> , 500, 1, -0.6, LAUNCHER_B)
 
-	// 2.2 multiple firwork small
 	wait 5.0
 	thread smallSequence(panel)
 
-	// PART 3: ZAP firework 
 	wait 15.0
 	thread zapSequence(panel, 10)
 
-	// PART 4 : big firework
 	wait 20.0
 
-	// 4.1 solo firework big
 	thread megaBomb(3500, 3.0, <-0, 0, 1>, 1500, 0, -1, LAUNCHER_C )
 	wait 7.0
 
@@ -494,8 +434,6 @@ void function fullSequence(entity panel)
 	thread megaBomb(3000, 3.0, <0.2, -0.1, 1>, 1500, 0, -1, LAUNCHER_B )
 	wait 10.0
 
-
-	// PART 5 : FINAL MIX
 	thread bigSequence()
 	thread zapSequence(panel, 28)
 
@@ -503,7 +441,6 @@ void function fullSequence(entity panel)
 	thread smallSequence(panel)
 	wait 20.0
 
-	// PART 6: 2022 firework
 	float speed = 2000
 	float dt = 3
 	float xOffset = -0.3
@@ -547,8 +484,6 @@ void function flameSequence(entity panel)
 {
 	panel.EndSignal("onFireworksStop")
 
-	// PART 1 : light up fire 
-
 	for (int i=0; i < 5; i++)
 	{
 		thread repeatFlame(LAUNCHER_C, 15)
@@ -560,8 +495,6 @@ void function flameSequence(entity panel)
 	}
 	wait 10.0
 
-
-	// PART 2 : alternate fire
 	while(true)
 	{
 		thread repeatFlame(FIRE_A, 3)
@@ -624,13 +557,12 @@ void function bigSequence()
 	}
 }
 
-
 entity function CreateFireworkProp(vector pos)
 {
 	entity prop_physics = CreateEntity( "prop_physics" )
 	prop_physics.SetValueForModelKey( BANGALORE_SMOKE_MODEL )
 
-	prop_physics.kv.spawnflags = 4 // 4 = SF_PHYSPROP_DEBRIS
+	prop_physics.kv.spawnflags = 4
 	prop_physics.kv.fadedist = 2000
 	prop_physics.kv.renderamt = 255
 	prop_physics.kv.rendercolor = "255 255 255"
@@ -646,7 +578,6 @@ entity function CreateFireworkProp(vector pos)
 
 	return prop_physics
 }
-
 
 void function flamethrower(vector pos)
 {
@@ -683,12 +614,12 @@ void function stopFlame(entity prop_physics)
 void function megaBomb(float v, float launchtime, vector vVec, float bombV, int index, float shape, vector pos)
 {
 	entity prop = Launcher(v, vVec, index, pos )
-	wait launchtime // launch time
+	wait launchtime
 
 	vector endPosition = prop.GetOrigin() + <0,0,250>
 	prop.Destroy()
 
-	// wait 0.3 // time before explo
+	// wait 0.3
 
 	if (index == 0 ){
 		wait 0.3
@@ -696,22 +627,19 @@ void function megaBomb(float v, float launchtime, vector vVec, float bombV, int 
 		wait 0.1
 	}
 
-	
-	// exploding
 	thread CreateBomb(endPosition, bombV, index, shape)
 }
 
 void function numberBomb(float v, float launchtime, vector vVec, int number, vector pos)
 {
 	entity prop = Launcher(v, vVec, 1, pos )
-	wait launchtime // launch time
+	wait launchtime 
 
 	vector endPosition = prop.GetOrigin() + <-200,0,350>
 	prop.Destroy()
 
-	wait 0.3 // time before explo
+	wait 0.3
 	
-	// exploding
 	thread CreateYearBomb_number(endPosition, number)
 }
 
@@ -758,7 +686,6 @@ void function delayedExplosionSound(vector exploPosition)
 
 void function delayedSmallSound(vector exploPosition)
 {
-	// wait 0.2
 	wait 0.1
 	EmitSoundAtPosition(TEAM_UNASSIGNED, exploPosition, "Weapon_p2011_FireSuppressed_3P")
 }
@@ -770,10 +697,8 @@ void function CreateYearBomb_number(vector position, int index)
 
 	if (index == 0)
 	{
-		// 0
 		p = [ <-12,0,0>, <-11.5,0,4>, <-11.5,0,-4>, <-10,0,7>, <-10,0,-7>, <-7,0,-8>, <-7,0,8>, <-4,0,7>, <-4,0,-7>, <-2.5,0,4>, <-2.5,0,-4>, <-2,0,0> ] 
 	} else {
-		// 2
 		p = [ <-26, 0,3>, <-25.5,0,5>, <-24.5, 0, 6.5>, <-23,0,7.5>, <-21,0,8>, <-19,0,7.5>, <-17.5,0,6.5>, <-16,0,3>, <-17,0,1>, <-18,0,1>, <-21,0,-3>, <-24,0,-5>, <-26,0,-8>, <-23,0,-8>, <-21,0,-8>, <-19,0,-8>, <-16,0,-8> ]
 	}
 
@@ -788,7 +713,6 @@ void function CreateYearBomb_number(vector position, int index)
 		} else {
 			offset = <21, 0, 0>
 		}
-		// should do for more numbers
 
 		vector tempP = p[i] + offset
 
@@ -816,7 +740,6 @@ void function CreateBomb(vector position, float bombV, int index, float shape)
 	vector startPosition = position
 	vector ang = <0,0,0>
 
-	// --- get points ---
 	int n = 100
 	float l = shape
 
@@ -841,18 +764,7 @@ void function CreateBomb(vector position, float bombV, int index, float shape)
 		{
 			p.append(tempP)
 		}
-		// else drop p
 	}
-
-	// print(p.len())
-	// for (int j =0; j< p.len(); j++)
-	// {
-	// 	print(p[j])
-	// }
-
-	// ----- 1D perlin noise lookalike func -----
-	// float nx = sin(2 * x) + sin(3.14 * x)
-	// ------------------------------------------
 
 	for ( int i=0; i< p.len(); i++)
 	{
@@ -862,27 +774,23 @@ void function CreateBomb(vector position, float bombV, int index, float shape)
 
 		entity prop_physics = CreateFireworkProp(startPosition)
 		prop_physics.SetModel( BANGALORE_SMOKE_MODEL )
-		// --
 
 		vector startAngle = VectorToAngles(startVelocity)
 
 		if (index == 0)
 		{
-			// big fw
 			entity fx = PlayFXOnEntity( FX_ARTILLERY_PLASMA, prop_physics, "",  <0,0,0>, startAngle)
 			prop_physics.e.fxArray.append( fx )
 			thread CorrectFx(fx, prop_physics, zt)
 			thread delayedExplosionSound(startPosition)
 		} else if (index == 1)
 		{
-			// tiny fw
 			entity fx = PlayFXOnEntity( MASTIF_PROJ, prop_physics, "",  <0,0,0>, startAngle)
 			prop_physics.e.fxArray.append( fx )
 			thread CorrectFxSmall(fx, prop_physics, zt)
 			thread delayedSmallSound(startPosition)
 		} else if (index == 2)
 		{
-			// number fw
 			entity fx = PlayFXOnEntity( DOG_SMOKE, prop_physics, "",  <0,0,0>, startAngle)
 			prop_physics.e.fxArray.append( fx )
 			thread CorrectFxSmall(fx, prop_physics, zt)
@@ -899,32 +807,28 @@ void function CreateBomb(vector position, float bombV, int index, float shape)
 		prop_physics.SetVelocity( startVelocity )
 	}
 
-	////----------- flat circle -----------
+/*	int nbBranches = 8
+	int branchLength = 100
+	vector baseVec = <1, 0, 0>
 
-	// int nbBranches = 8
-	// int branchLength = 100
-	// vector baseVec = <1, 0, 0>
+	for ( int i=0; i< nbBranches; i++)
+	{
+		float rotAng = 2 * 3.14 / nbBranches * i
+		vector dirVec = < cos(rotAng), sin(rotAng), 0 >
 
-	// for ( int i=0; i< nbBranches; i++)
-	// {
-	// 	float rotAng = 2 * 3.14 / nbBranches * i
-	// 	vector dirVec = < cos(rotAng), sin(rotAng), 0 >
+		vector startVelocity = dirVec * branchLength
+		startVelocity.z = 300
 
-	// 	vector startVelocity = dirVec * branchLength
-	// 	startVelocity.z = 300
+		entity prop_physics = CreateFireworkProp(startPosition)
+		vector startAngle = VectorToAngles(startVelocity)
 
-	// 	entity prop_physics = CreateFireworkProp(startPosition)
-	// 	vector startAngle = VectorToAngles(startVelocity)
+		entity fx = PlayFXOnEntity( FX_ARTILLERY_PLASMA, prop_physics, "",  <0,0,0>, startAngle)
+		prop_physics.e.fxArray.append( fx )
+		thread CorrectFx(fx, prop_physics)
 
-	// 	entity fx = PlayFXOnEntity( FX_ARTILLERY_PLASMA, prop_physics, "",  <0,0,0>, startAngle)
-	// 	prop_physics.e.fxArray.append( fx )
-	// 	thread CorrectFx(fx, prop_physics)
-
-	// 	prop_physics.SetVelocity( startVelocity )
-	// 	// print("bomb created")
-	// }
-
-	// -----------------------------
+		prop_physics.SetVelocity( startVelocity )
+		// print("bomb created")
+	}*/
 
 	// print("bomb created")
 }
@@ -1009,9 +913,9 @@ void function CreateZap(vector launcherPos)
 	vector ang  = <0,0,0>
 
 	int random = RandomInt(3)
-	int level = 1 // temporary
+	int level = 1 //TEMP
 
-	int duration = 1 // temporary
+	int duration = 1 //TEMP
 
 	entity zap = StartParticleEffectInWorld_ReturnEntity( GetParticleSystemIndex( TROPHY_INTERCEPT_PROJECTILE_LARGE_FX ), endPosition, ang )
 
@@ -1064,8 +968,7 @@ void function delayedDestroy(entity zap)
 	}
 	catch(error)
 	{
-		// error print
+		
 	}
 }
-
 #endif

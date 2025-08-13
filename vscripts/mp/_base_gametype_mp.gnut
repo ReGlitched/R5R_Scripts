@@ -62,7 +62,6 @@ void function CodeCallback_OnClientConnectionCompleted( entity player )
 	FinishClientScriptInitialization( player )
 }
 
-
 void function CodeCallback_OnClientDisconnected( entity player, string reason )
 {
 	printt( "CodeCallback_OnClientDisconnected", player, reason )
@@ -71,15 +70,13 @@ void function CodeCallback_OnClientDisconnected( entity player, string reason )
 	if ( !player.hasConnected || player.GetTeam() == TEAM_SPECTATOR )
 		return
 
-	player.p.isDisconnected = true    // need to be before the script callbacks so that we can know if a player is disconnecting
+	player.p.isDisconnected = true
 
-	// Added via AddCallback_OnPreClientDisconnected
 	foreach ( callbackFunc in svGlobal.onPreClientDisconnectedCallbacks )
 	{
 		callbackFunc( player )
 	}
 
-	// Added via AddCallback_OnClientDisconnected
 	foreach ( callbackFunc in svGlobal.onClientDisconnectedCallbacks )
 	{
 		callbackFunc( player )
@@ -88,7 +85,6 @@ void function CodeCallback_OnClientDisconnected( entity player, string reason )
 	if( GetGameState() == eGameState.Playing && Gamemode() == eGamemodes.SURVIVAL && !IsDevGamemode() && reason != "#DISCONNECT_GAMESHUTTINGDOWN" )
 		SetPlayerEliminated( player )
 }
-
 
 void function CodeCallback_OnPlayerRespawned( entity player )
 {
@@ -116,23 +112,19 @@ void function CodeCallback_OnPlayerRespawned( entity player )
 
 	Remote_CallFunction_NonReplay( player, "ServerCallback_YouRespawned" )
 
-	// Added via AddCallback_OnPlayerRespawned
 	foreach ( callbackFunc in svGlobal.onPlayerRespawnedCallbacks )
 	{
 		callbackFunc( player )
 	}
 
-	// // Added via AddCallback_OnPlayerPostRespawned
 	// foreach ( callbackFunc in svGlobal.onPlayerPostRespawnedCallbacks )
 	// {
 		// callbackFunc( player )
 	// }
 
-	// Added via AddEntityCallback_OnPlayerRespawned
 	foreach ( func in player.p.playerSpawnedCallbacks )
 		func( player )
 		
-	// Added via AddEntityCallback_OnPlayerRespawned_FireOnce
 	foreach ( func in player.p.playerSpawnedCallbacks_FireOnce )
 	{
 		func( player )
@@ -149,9 +141,6 @@ void function CodeCallback_OnPlayerRespawned( entity player )
 
 void function PlayerLifeThread( entity player )
 {
-	// this thread will run for the span of the player's life plus a little bit extra
-	// (the extra is the time after they die before they're moved to spectator)
-
 	EndSignal( player, "OnDestroy" )
 	EndSignal( player, "OnRespawned" )
 	EndSignal( player, "OnPostDeathLogicEnd" )
@@ -177,17 +166,13 @@ void function PlayerLifeThread( entity player )
 	WaitForever()
 }
 
-
 void function BeginPlayerCharacterThread( entity player, ItemFlavor character )
 {
 	thread PlayerCharacterThread( player, character )
 }
 
-
 void function PlayerCharacterThread( entity player, ItemFlavor character )
 {
-	// this thread will run for the span of the player being a specific character
-	// if the character is null, it means they currently don't have a character
 	Signal( player, "HaltPlayerCharacterThread" )
 	EndSignal( player, "HaltPlayerCharacterThread" )
 
@@ -203,14 +188,11 @@ void function PlayerCharacterThread( entity player, ItemFlavor character )
 		//	cb( player, character )
 	} )
 
-	// apply chosen skin
 	ItemFlavor skin = LoadoutSlot_GetItemFlavor( player, skinSlot )
 	ApplyPlayerCharacterSkin( player, skin )
-	// and keep it up to date
 	AddCallback_ItemFlavorLoadoutSlotDidChange_SpecificPlayer( player, skinSlot, ApplyPlayerCharacterSkin )
 
-	// if we have a character, apply settings
-	// todo(dw): make this get done here
+	//TODO: make this get done here
 	//asset setFile = CharacterClass_GetSetFile( character )
 	//array<string> existingMods = player.GetPlayerSettingsMods()
 	//player.SetPlayerSettingsWithMods( setFile, existingMods )
@@ -223,7 +205,6 @@ void function PlayerCharacterThread( entity player, ItemFlavor character )
 
 void function ApplyPlayerCharacterSkin( entity player, ItemFlavor skin )
 {
-	//see Declan as to why this needed to change from CharacterSkin_Apply()
 	// ApplyAppropriateCharacterSkin( player )
 	
 	ItemFlavor character = LoadoutSlot_GetItemFlavor( ToEHI( player ), Loadout_CharacterClass() )
@@ -297,7 +278,7 @@ void function ObserverThread( entity player )
 
 			wait 1.0
 		}
-		else //allowSpectatingEnemySquad is false
+		else
 		{
 			array<entity> observeablePlayers = GetPlayerArrayOfTeam_Alive( player.GetTeam() )
 			player.SetPlayerNetInt( "spectatorTargetCount", observeablePlayers.len() )
@@ -316,7 +297,6 @@ entity function PickBestObserverTarget( entity player, int cycleDirection = 0 )
 	if ( observeablePlayers.len() == 0 )
 		observeablePlayers = GetPlayerArray_AliveConnected()
 
-	//dont let player observe bots
 	if ( GetCurrentPlaylistVarBool( "NotAllowSpectatingBots", false ) )
 	{
 		array<entity> botPlayers
@@ -344,7 +324,6 @@ entity function PickBestObserverTarget( entity player, int cycleDirection = 0 )
 		}
 	}
 
-	//Don't allow player switch to other player if it's being respawned from beacon
 	if( IsValid( player.p.respawnPod ) )
 		return player.p.respawnPod
 	
@@ -397,7 +376,7 @@ entity function PickBestObserverTarget( entity player, int cycleDirection = 0 )
 		return null
 
 	}
-	else // allowSpectatingEnemySquad is false
+	else
 	{
 		if ( observingTeamMembers )
 		{
@@ -406,7 +385,7 @@ entity function PickBestObserverTarget( entity player, int cycleDirection = 0 )
 				return observeablePlayers[0]
 
 			int indexToObserve = 0
-			foreach ( index, observeable in observeablePlayers ) // look for a pivot
+			foreach ( index, observeable in observeablePlayers )
 			{
 				if ( observeable == observerTarget || observeable == player)
 				{
@@ -419,7 +398,7 @@ entity function PickBestObserverTarget( entity player, int cycleDirection = 0 )
 				}
 			}
 
-			return observeablePlayers[indexToObserve] // 0 if pivot not found
+			return observeablePlayers[indexToObserve]
 		}
 		else
 		{
@@ -445,12 +424,11 @@ entity function PickBestObserverTarget( entity player, int cycleDirection = 0 )
 	unreachable
 }
 
-
 entity function PickBestPlayerOnteamToObserve( array< entity > playerAliveOnTeam, entity observingPlayer, int cycleDirection = 0 )
 {
 	entity observerTarget = observingPlayer.GetObserverTarget()
 
-	playerAliveOnTeam.sort( int function( entity a, entity b ) : ( observingPlayer ) //Sort by teammemberindex, except always put killer to spectate first
+	playerAliveOnTeam.sort( int function( entity a, entity b ) : ( observingPlayer )
 	{
 		Assert( a.GetTeam() == b.GetTeam() )
 
@@ -467,7 +445,7 @@ entity function PickBestPlayerOnteamToObserve( array< entity > playerAliveOnTeam
 		return playerAliveOnTeam[0]
 
 	int indexToObserve = 0
-	foreach ( index, observeable in playerAliveOnTeam ) // look for a pivot
+	foreach ( index, observeable in playerAliveOnTeam )
 	{
 		if ( observeable == observerTarget || observeable == observingPlayer)
 		{
@@ -486,7 +464,6 @@ entity function PickBestPlayerOnteamToObserve( array< entity > playerAliveOnTeam
 
 void function CodeCallback_OnClientConnectionStarted( entity player )
 {
-	// not a real player?
 	#if DEV
 		if ( player.GetPlayerName() == "Replay" )
 			return

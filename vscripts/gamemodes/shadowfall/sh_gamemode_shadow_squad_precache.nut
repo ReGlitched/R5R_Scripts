@@ -15,7 +15,7 @@ void function ShPrecacheShadowSquadAssets()
 		const asset ICON_DEATH_LEGEND					= $"rui/hud/gametype_icons/ltm/deathpos_skull_legend_sdk"
 		const asset ICON_DEATH_SHADOW					= $"rui/hud/gametype_icons/ltm/deathpos_skull_default_color_sdk"
 		const asset ICON_DROPSHIP_EVAC_FOR_SHADOWS 		= $"rui/hud/common/evac_location_enemy"
-	#endif //SERVER
+	#endif
 
 	#if CLIENT
 		SHADOW_SCREEN_FX 					= $"P_Bshadow_screen"
@@ -29,13 +29,11 @@ void function ShPrecacheShadowSquadAssets()
 	#if SERVER
 		PrecacheParticleSystem( DEATH_FX_SHADOW_SQUAD )
 		PrecacheParticleSystem( FX_EVAC_SHIP_FOR_SHADOWS )
-	#endif //SERVER
+	#endif
 
 	#if CLIENT
 		PrecacheParticleSystem( SHADOW_SCREEN_FX )
 		PrecacheParticleSystem( FX_HEALTH_RESTORE )
 		PrecacheParticleSystem( FX_SHIELD_RESTORE )
-
 	#endif
-
 }

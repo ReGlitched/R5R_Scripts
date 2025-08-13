@@ -171,7 +171,7 @@ void function Callback_HandleScenariosStats( entity player )
 	string uid = player.p.UID
 		
 	const string strSlice = "scenarios_"
-	foreach( string statKey, var statValue in Stats__GetPlayerStatsTable( uid ) ) //Todo: register by script name group ( set in backend )
+	foreach( string statKey, var statValue in Stats__GetPlayerStatsTable( uid ) ) //TODO: register by script name group ( set in backend )
 	{
 		#if DEVELOPER
 			//printw( "found statKey =", statKey, "statValue =", statValue )
@@ -194,7 +194,7 @@ var function TrackerStats_FSDMRailjumps( string uid )
 	return player.p.railjumptimes 
 }
 
-var function TrackerStats_GamesCompleted( string uid ) //Todo: Handle accumulation from rejoins
+var function TrackerStats_GamesCompleted( string uid ) //TODO: Handle accumulation from rejoins
 {
 	entity player = GetPlayerEntityByUID( uid ) 
 	if( !IsValid( player ) )
@@ -272,7 +272,7 @@ var function Tracker_Badge3( string uid )
 
 // var function TrackerStats_TestIntArray( string uid )
 // {
-	// return MakeVarArrayInt( GetPlayerEntityByUID( uid ).p.testarray ) // must be plain 'array' or made untyped.
+	// return MakeVarArrayInt( GetPlayerEntityByUID( uid ).p.testarray )
 // }
 
 var function TrackerStats_GetPortalPlacements( string uid )
@@ -346,8 +346,6 @@ void function Script_RegisterAllPlayerDataCallbacks()
 	
 	if( Flowstate_EnableReporting() )
 		AddCallback_PlayerData( "cringe_report_data" )
-		
-	//func
 }
 
 void function Script_RegisterAllQueries()
@@ -355,7 +353,6 @@ void function Script_RegisterAllQueries()
 	Tracker_QueryInit()
 	//CustomGamemodeQueries_Init()
 	//Gamemode1v1Queries_Init()
-	//etc...etc..
 }
 
 void function Script_RegisterAllShipFunctions()
@@ -363,10 +360,9 @@ void function Script_RegisterAllShipFunctions()
 	if( Flowstate_EnableReporting() )
 		tracker.RegisterShipFunction( OnStatsShipping_Cringe, true )
 		
-	//more
 }
 
-void function OnStatsShipping_Cringe( string uid ) //todo deprecate
+void function OnStatsShipping_Cringe( string uid ) //TODO: Deprecate
 {
 	entity ent = GetPlayerEntityByUID( uid )
 	
@@ -392,10 +388,7 @@ void function OnStatsShipping_Cringe( string uid ) //todo deprecate
 	}
 }
 
-
-#else //!TRACKER && !HAS_TRACKER_DLL
-
-	//non tracker declarations
+#else
 	void function Tracker_SetShouldResetStatOnShip( string uid, string statKey, var origValue, bool bShouldReset = true ){}
 	void function Tracker_ResyncAllForPlayer( entity player ){}
 	void function Tracker_ResyncStatForPlayer( entity playerToSync, string statKey ){}

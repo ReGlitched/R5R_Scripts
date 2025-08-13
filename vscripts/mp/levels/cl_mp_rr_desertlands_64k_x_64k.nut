@@ -32,25 +32,23 @@ void function ClientCodeCallback_MapInit()
 	//SURVIVAL_AddMinimapLevelLabel( "#DES_ZONE_8_MIRAGE", 0.23, 0.54, 0.5 )
 
 	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.52, 0.64, 0.3)
-//
-	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.74, 0.51, 0.3)
-//
-	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.48, 0.18, 0.3)
-//
-	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.41, 0.51, 0.3)
-//
-	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.67, 0.75, 0.3)
-//
-	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.43, 0.32, 0.3)
 
+	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.74, 0.51, 0.3)
+
+	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.48, 0.18, 0.3)
+
+	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.41, 0.51, 0.3)
+
+	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.67, 0.75, 0.3)
+
+	//SURVIVAL_AddMinimapLevelLabel( "Tunnel", 0.43, 0.32, 0.3)
 
 	//SURVIVAL_AddMinimapLevelLabel( "`1*", 0.70, 0.57, 1.0)
 	//SURVIVAL_AddMinimapLevelLabel( "`1*", 0.77, 0.65, 1.0)
 	//SURVIVAL_AddMinimapLevelLabel( "`1*", 0.18, 0.37, 1.0)
 	//SURVIVAL_AddMinimapLevelLabel( "`1*", 0.37, 0.58, 1.0)
 	//SURVIVAL_AddMinimapLevelLabel( "`1*", 0.20, 0.47, 1.0)
-//
-	////Legand
+
 	//SURVIVAL_AddMinimapLevelLabel( "`1Elevators", 0.12, 0.95, 0.5)
 	//SURVIVAL_AddMinimapLevelLabel( "`1*", 0.05, 0.85, 1.0)
 
@@ -58,7 +56,7 @@ void function ClientCodeCallback_MapInit()
 	//SURVIVAL_AddMinimapLevelLabel( "%$r2_ui/menus/loadout_icons/attachments/energy_ar_quick_charge%", 0.60, 0.20, 2.0 )
 	//SURVIVAL_AddMinimapLevelLabel( "Cave", 0.85, 0.55, 0.5 )
 	//SURVIVAL_AddMinimapLevelLabel( "Bridge", 0.75, 0.80, 0.5 )
-//
+
 	//SURVIVAL_AddMinimapLevelLabel( "Elevator", 0.22, 0.57, 0.3)
 	//SURVIVAL_AddMinimapLevelLabel( "Elevator", 0.80, 0.87, 0.3)
 	//SURVIVAL_AddMinimapLevelLabel( "Gandola", 0.20, 0.75, 0.3)

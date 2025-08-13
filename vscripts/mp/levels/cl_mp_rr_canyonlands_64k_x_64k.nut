@@ -91,7 +91,6 @@ void function OnLeviathanMarkerCreated( entity marker )
 
 	entity leviathan = CreateClientSidePropDynamic( marker.GetOrigin(), marker.GetAngles(), LEVIATHAN_MODEL )
 
-
 	if ( markerTargetName == CANYONLANDS_LEVIATHAN1_NAME )
 		file.clientSideLeviathan1 = leviathan
 	else if ( markerTargetName == CANYONLANDS_LEVIATHAN2_NAME )
@@ -135,7 +134,6 @@ array<entity> function GetClientSideLeviathans()
 entity function GetClientSideLeviathan1()
 {
 	return file.clientSideLeviathan1
-
 }
 
 entity function GetClientSideLeviathan2()
@@ -143,5 +141,3 @@ entity function GetClientSideLeviathan2()
 	return file.clientSideLeviathan2
 
 }
-
-

@@ -14,24 +14,18 @@ global function ForceTickLaunch
 global function Reaper_LaunchFragDrone_Think
 global function ReaperMinionLauncherThink
 
-//==============================================================
-// AI Super Spectre
-//
-// Super Spectre keeps an array of the minions it spawned.
-// Each of those minions has a reference back to it's "master."
-//==============================================================
 const FRAG_DRONE_BATCH_COUNT				= 10
 const FRAG_DRONE_IN_FRONT_COUNT				= 2
 const FRAG_DRONE_MIN_LAUNCH_COUNT			= 4
 const FRAG_DRONE_LAUNCH_INTIAL_DELAY_MIN	= 10
 const FRAG_DRONE_LAUNCH_INTIAL_DELAY_MAX	= 20
 const FRAG_DRONE_LAUNCH_INTERVAL			= 40
-const SPAWN_ENEMY_TOO_CLOSE_RANGE_SQR		= 1048576 	// Don't spawn guys if the target enemy is closer than this range (1024^2).
-const SPAWN_HIDDEN_ENEMY_WITHIN_RANGE_SQR	= 1048576 	// If the enemy can't bee seen, and they are within in this range (1024^2), spawn dudes to find him.
-const SPAWN_ENEMY_ABOVE_HEIGHT  			= 128		// If the enemy is at least this high up, then spawn dudes to find him.
-const SPAWN_FUSE_TIME						= 2.0	  	// How long after being fired before the spawner explodes and spawns a spectre.
-const SPAWN_PROJECTILE_AIR_TIME				= 3.0    	// How long the spawn project will be in the air before hitting the ground.
-const SPECTRE_EXPLOSION_DMG_MULTIPLIER		= 1.2 		// +20%
+const SPAWN_ENEMY_TOO_CLOSE_RANGE_SQR		= 1048576
+const SPAWN_HIDDEN_ENEMY_WITHIN_RANGE_SQR	= 1048576
+const SPAWN_ENEMY_ABOVE_HEIGHT  			= 128
+const SPAWN_FUSE_TIME						= 2.0
+const SPAWN_PROJECTILE_AIR_TIME				= 3.0
+const SPECTRE_EXPLOSION_DMG_MULTIPLIER		= 1.2
 const DEV_DEBUG_PRINTS						= false
 
 struct
@@ -57,7 +51,7 @@ function AiSuperspectre_Init()
 	RegisterSignal( "SuperSpectre_OnGroundSlamImpact" )
 	RegisterSignal( "SuperSpectre_OnGroundLandImpact" )
 	RegisterSignal( "SuperSpectreThinkRunning" )
-	RegisterSignal( "OnNukeBreakingDamage" ) // enough damage to break out or skip nuke
+	RegisterSignal( "OnNukeBreakingDamage" )
 	RegisterSignal( "death_explosion" )
 	RegisterSignal( "WarpfallComplete" )
 	RegisterSignal( "BeginLaunchAttack" )
@@ -74,7 +68,6 @@ void function SuperSpectre_OnDamage( entity npc, var damageInfo )
 	int damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
 	if ( damageSourceId == eDamageSourceId.suicideSpectreAoE )
 	{
-		// super spectre takes reduced damage from suicide spectres
 		DamageInfo_ScaleDamage( damageInfo, 0.666 )
 	}
 }
@@ -89,7 +82,6 @@ void function SuperSpectre_PostDamage( entity npc, var damageInfo )
 	if ( newRatio >= switchRatio )
 		return
 
-	// destroy body groups
 	var bodygroup
 	bodygroup = npc.FindBodyGroup( "lowerbody" )
 	npc.SetBodygroup( bodygroup, 1 )
@@ -110,13 +102,12 @@ void function SuperSpectreNukes( entity npc, entity attacker )
 	PlayFX( $"P_sup_spectre_death_nuke", origin, npc.GetAngles() )
 
 	thread SuperSpectreNukeDamage( npc.GetTeam(), origin, attacker )
-	WaitFrame() // so effect has time to grow and cover the swap to gibs
+	WaitFrame()
 	npc.Gib( <0,0,100> )
 }
 
 void function DoSuperSpectreDeath( entity npc, var damageInfo )
 {
-	// destroyed?
 	if ( !IsValid( npc ) )
 		return
 
@@ -128,7 +119,6 @@ void function DoSuperSpectreDeath( entity npc, var damageInfo )
 
 	if ( !ShouldNukeOnDeath( npc ) || !npc.IsOnGround() || !npc.IsInterruptable() || DamageInfo_GetDamage( damageInfo ) > SUPER_SPECTRE_NUKE_DEATH_THRESHOLD || ( IsValid( attacker ) && attacker.IsTitan() ) )
 	{
-		// just boom
 		vector origin = npc.GetWorldSpaceCenter()
 		EmitSoundAtPosition( npc.GetTeam(), origin, "ai_reaper_explo_3p" )
 		npc.Gib( DamageInfo_GetDamageForce( damageInfo ) )
@@ -176,7 +166,6 @@ void function DoSuperSpectreDeath( entity npc, var damageInfo )
 	//npc.SetBodygroup( bodygroup, 1 )
 
 	// TODO: Add death sound
-
 	WaitSignalOnDeadEnt( npc, "death_explosion" )
 }
 
@@ -191,7 +180,6 @@ entity function CreateExplosionInflictor( vector origin )
 
 void function SuperSpectreNukeDamage( int team, vector origin, entity attacker )
 {
-	// all damage must have an inflictor currently
 	entity inflictor = CreateExplosionInflictor( origin )
 
 	OnThreadEnd(
@@ -215,10 +203,10 @@ void function SuperSpectreNukeDamage( int team, vector origin, entity attacker )
 
 		RadiusDamage_DamageDefSimple(
 			damagedef_reaper_nuke,
-			origin,								// origin
-			explosionOwner,						// owner
-			inflictor,							// inflictor
-			0 )									// dist from attacker
+			origin,
+			explosionOwner,
+			inflictor,
+			0 )	
 
 		wait RandomFloatRange( 0.01, 0.21 )
 	}
@@ -229,12 +217,10 @@ void function SuperSpectre_OnGroundLandImpact( entity npc )
 	PlayImpactFXTable( npc.GetOrigin(), npc, "superSpectre_megajump_land", SF_ENVEXPLOSION_INCLUDE_ENTITIES )
 }
 
-
 void function SuperSpectre_OnGroundSlamImpact( entity npc )
 {
 	PlayGroundSlamFX( npc )
 }
-
 
 function PlayGroundSlamFX( entity npc )
 {
@@ -242,7 +228,6 @@ function PlayGroundSlamFX( entity npc )
 	vector origin = 	npc.GetAttachmentOrigin( attachment )
 	PlayImpactFXTable( origin, npc, "superSpectre_groundSlam_impact", SF_ENVEXPLOSION_INCLUDE_ENTITIES )
 }
-
 
 bool function EnemyWithinRangeSqr( entity npc, entity enemy, float range )
 {
@@ -259,17 +244,13 @@ bool function ShouldLaunchFragDrones( entity npc, int activeMinions_EntArrayID )
 	if ( !npc.ai.superSpectreEnableFragDrones )
 		return false
 
-	// check global minions
 	if ( GetScriptManagedEntArrayLen( file.activeMinions_GlobalArrayIdx ) > 5 )
 		return false
 
-	// only launch if all minions are dead
 	if ( GetScriptManagedEntArrayLen( activeMinions_EntArrayID ) > 5 )
 		return false
 
 	entity enemy = npc.GetEnemy()
-
-	// Only spawn dudes if we have an enemy
 	if ( !IsValid( enemy ) )
 		return false
 
@@ -279,7 +260,6 @@ bool function ShouldLaunchFragDrones( entity npc, int activeMinions_EntArrayID )
 
 	expect vector( lkp )
 
-	// Don't spawn if the enemy is too far away
 	if ( Distance( npc.GetOrigin(), lkp ) > 1500 )
 		return false
 
@@ -289,7 +269,7 @@ bool function ShouldLaunchFragDrones( entity npc, int activeMinions_EntArrayID )
 function SuperSpectreOnLeeched( npc, player )
 {
 	local maxHealth = npc.GetMaxHealth()
-	npc.SetHealth( maxHealth * 0.5 )	 // refill to half health
+	npc.SetHealth( maxHealth * 0.5 )
 }
 
 function SuperSpectreThink( entity npc )
@@ -313,7 +293,6 @@ function SuperSpectreThink( entity npc )
 
 			foreach ( minion in GetScriptManagedEntArray( activeMinions_EntArrayID ) )
 			{
-				// Self destruct the suicide spectres if applicable
 				if ( minion.GetClassName() != "npc_frag_drone" )
 					continue
 
@@ -345,12 +324,10 @@ void function SuperSpectre_LaunchFragDrone_Think( entity npc, int activeMinions_
 
 	npc.RequestSpecialRangeAttack( targetOrigins.len() + FRAG_DRONE_IN_FRONT_COUNT )
 
-	// wait for first attack signal
 	npc.WaitSignal( "OnSpecialAttack" )
 	npc.EndSignal( "OnDeath" )
 	npc.EndSignal( "OnScheduleChange" ) // kv.doScheduleChangeSignal = true
 
-	// drop a few in front of enemy view
 	entity enemy = npc.GetEnemy()
 	if ( enemy )
 	{
@@ -365,7 +342,6 @@ void function SuperSpectre_LaunchFragDrone_Think( entity npc, int activeMinions_
 		}
 	}
 
-	// drop rest in pre-searched spots
 	foreach ( targetOrigin in targetOrigins )
 	{
 		//thread LaunchSpawnerProjectile( npc, targetOrigin, activeMinions_EntArrayID )
@@ -375,43 +351,41 @@ void function SuperSpectre_LaunchFragDrone_Think( entity npc, int activeMinions_
 
 void function ReaperMinionLauncherThink( entity reaper )
 {
-	// if ( GetBugReproNum() != 221936 )
-	// 	reaper.kv.squadname = ""
+/*
+	StationaryAIPosition launchPos = GetClosestAvailableStationaryPosition( reaper.GetOrigin(), 8000, eStationaryAIPositionTypes.LAUNCHER_REAPER )
+	launchPos.inUse = true
 
-	// StationaryAIPosition launchPos = GetClosestAvailableStationaryPosition( reaper.GetOrigin(), 8000, eStationaryAIPositionTypes.LAUNCHER_REAPER )
-	// launchPos.inUse = true
+	OnThreadEnd(
+		function () : ( launchPos )
+		{
+			launchPos.inUse = false
+		}
+	)
 
-	// OnThreadEnd(
-	// 	function () : ( launchPos )
-	// 	{
-	// 		launchPos.inUse = false
-	// 	}
-	// )
+	reaper.EndSignal( "OnDeath" )
+	reaper.AssaultSetFightRadius( 96 )
+	reaper.AssaultSetGoalRadius( reaper.GetMinGoalRadius() )
 
-	// reaper.EndSignal( "OnDeath" )
-	// reaper.AssaultSetFightRadius( 96 )
-	// reaper.AssaultSetGoalRadius( reaper.GetMinGoalRadius() )
+	while ( true )
+	{
+		WaitFrame()
 
-	// while ( true )
-	// {
-	// 	WaitFrame()
+		if ( Distance( reaper.GetOrigin(), launchPos.origin ) > 96 )
+		{
+			printt( reaper," ASSAULT:", launchPos.origin, Distance( reaper.GetOrigin(), launchPos.origin ) )
+			reaper.AssaultPoint( launchPos.origin )
+			table signalData = WaitSignal( reaper, "OnFinishedAssault", "OnEnterGoalRadius", "OnFailedToPath" )
+			printt( reaper," END ASSAULT:", launchPos.origin, signalData.signal )
+			if ( signalData.signal == "OnFailedToPath" )
+				continue
+		}
 
-	// 	if ( Distance( reaper.GetOrigin(), launchPos.origin ) > 96 )
-	// 	{
-	// 		printt( reaper," ASSAULT:", launchPos.origin, Distance( reaper.GetOrigin(), launchPos.origin ) )
-	// 		reaper.AssaultPoint( launchPos.origin )
-	// 		table signalData = WaitSignal( reaper, "OnFinishedAssault", "OnEnterGoalRadius", "OnFailedToPath" )
-	// 		printt( reaper," END ASSAULT:", launchPos.origin, signalData.signal )
-	// 		if ( signalData.signal == "OnFailedToPath" )
-	// 			continue
-	// 	}
-
-	// 	printt( reaper," LAUNCH:", launchPos.origin )
-	// 	waitthread Reaper_LaunchFragDrone_Think( reaper, "npc_frag_drone_fd" )
-	// 	printt( reaper," END LAUNCH:", launchPos.origin )
-	// 	while ( GetScriptManagedEntArrayLen( reaper.ai.activeMinionEntArrayID ) > 2 )
-	// 		WaitFrame()
-	// }
+		printt( reaper," LAUNCH:", launchPos.origin )
+		waitthread Reaper_LaunchFragDrone_Think( reaper, "npc_frag_drone_fd" )
+		printt( reaper," END LAUNCH:", launchPos.origin )
+		while ( GetScriptManagedEntArrayLen( reaper.ai.activeMinionEntArrayID ) > 2 )
+			WaitFrame()
+	}*/
 }
 
 void function Reaper_LaunchFragDrone_Think( entity reaper, string fragDroneSettings = "" )
@@ -458,7 +432,6 @@ void function Reaper_LaunchFragDrone_Think( entity reaper, string fragDroneSetti
 
 	while ( minionsToSpawn > 0 )
 	{
-		// drop rest in pre-searched spots
 		foreach ( targetOrigin in targetOrigins )
 		{
 			if ( minionsToSpawn <= 0 )
@@ -570,89 +543,75 @@ void function FragDroneDeplyAnimation( entity drone, float minDelay = 0.5, float
 
 	drone.Anim_ScriptedPlay( "sd_closed_to_open" )
 
-	// Wait for P_drone_frag_open_flicker FX to play inside sd_closed_to_open
 	wait 0.6
 }
 
 void function LaunchSpawnerProjectile( entity npc, vector targetOrigin, int activeMinions_EntArrayID, string droneSettings = "" )
 {
-// 	//npc.EndSignal( "OnDeath" )
+/*
+	npc.EndSignal( "OnDeath" )
 
-// 	entity weapon  			= npc.GetOffhandWeapon( 0 )
+	entity weapon  			= npc.GetOffhandWeapon( 0 )
 
-// 	if ( !IsValid( weapon ) )
-// 		return
+	if ( !IsValid( weapon ) )
+		return
 
-// 	int id 	   				= npc.LookupAttachment( "launch" )
-// 	vector launchPos		= npc.GetAttachmentOrigin( id )
-// 	int team 				= npc.GetTeam()
-// 	vector launchAngles		= npc.GetAngles()
-// 	string squadname = expect string( npc.kv.squadname )
-// 	vector vel = GetVelocityForDestOverTime( launchPos, targetOrigin, SPAWN_PROJECTILE_AIR_TIME )
+	int id 	   				= npc.LookupAttachment( "launch" )
+	vector launchPos		= npc.GetAttachmentOrigin( id )
+	int team 				= npc.GetTeam()
+	vector launchAngles		= npc.GetAngles()
+	string squadname = expect string( npc.kv.squadname )
+	vector vel = GetVelocityForDestOverTime( launchPos, targetOrigin, SPAWN_PROJECTILE_AIR_TIME )
 
-// //	DebugDrawLine( npc.GetOrigin() + <3,3,3>, launchPos + <3,3,3>, 255, 0, 0, true, 5.0 )
-// 	float armTime = SPAWN_PROJECTILE_AIR_TIME + RandomFloatRange( 1.0, 2.5 )
-// 	entity nade = weapon.FireWeaponGrenade( launchPos, vel, <200,0,0>, armTime, damageTypes.dissolve, damageTypes.explosive, PROJECTILE_NOT_PREDICTED, true, true )
+	//	DebugDrawLine( npc.GetOrigin() + <3,3,3>, launchPos + <3,3,3>, 255, 0, 0, true, 5.0 )
+	float armTime = SPAWN_PROJECTILE_AIR_TIME + RandomFloatRange( 1.0, 2.5 )
+	entity nade = weapon.FireWeaponGrenade( launchPos, vel, <200,0,0>, armTime, damageTypes.dissolve, damageTypes.explosive, PROJECTILE_NOT_PREDICTED, true, true )
 
-// 	AddToScriptManagedEntArray( activeMinions_EntArrayID, nade )
-// 	AddToScriptManagedEntArray( file.activeMinions_GlobalArrayIdx, nade )
+	AddToScriptManagedEntArray( activeMinions_EntArrayID, nade )
+	AddToScriptManagedEntArray( file.activeMinions_GlobalArrayIdx, nade )
 
-// 	nade.SetOwner( npc )
-// 	nade.EndSignal( "OnDestroy" )
+	nade.SetOwner( npc )
+	nade.EndSignal( "OnDestroy" )
 
-// 	OnThreadEnd(
-// 	function() : ( nade, team, activeMinions_EntArrayID, squadname, droneSettings )
-// 		{
-// 			vector origin = nade.GetOrigin()
-// 			vector angles = nade.GetAngles()
+	OnThreadEnd(
+		function() : ( nade, team, activeMinions_EntArrayID, squadname, droneSettings )
+		{
+			vector origin = nade.GetOrigin()
+			vector angles = nade.GetAngles()
 
-// 			vector ornull clampedPos = NavMesh_ClampPointForHullWithExtents( origin, HULL_HUMAN, < 100, 100, 100 > )
-// 			if ( clampedPos == null )
-// 				return
+			vector ornull clampedPos = NavMesh_ClampPointForHullWithExtents( origin, HULL_HUMAN, < 100, 100, 100 > )
+			if ( clampedPos == null )
+				return
 
-// 			entity drone = CreateFragDroneCan( team, expect vector( clampedPos ), < 0, angles.y, 0 > )
-// 			SetSpawnOption_SquadName( drone, squadname )
-// 			if ( droneSettings != "" )
-// 			{
-// 				SetSpawnOption_AISettings( drone, droneSettings )
-// 			}
-// 			drone.kv.spawnflags = SF_NPC_ALLOW_SPAWN_SOLID // clamped to navmesh no need to check solid
-// 			DispatchSpawn( drone )
+			entity drone = CreateFragDroneCan( team, expect vector( clampedPos ), < 0, angles.y, 0 > )
+			SetSpawnOption_SquadName( drone, squadname )
+			if ( droneSettings != "" )
+			{
+				SetSpawnOption_AISettings( drone, droneSettings )
+			}
+			drone.kv.spawnflags = SF_NPC_ALLOW_SPAWN_SOLID // clamped to navmesh no need to check solid
+			DispatchSpawn( drone )
 
-// 			thread FragDroneDeplyAnimation( drone )
+			thread FragDroneDeplyAnimation( drone )
 
-// 			AddToScriptManagedEntArray( activeMinions_EntArrayID, drone )
-// 			AddToScriptManagedEntArray( file.activeMinions_GlobalArrayIdx, drone )
-// 		}
-// 	)
+			AddToScriptManagedEntArray( activeMinions_EntArrayID, drone )
+			AddToScriptManagedEntArray( file.activeMinions_GlobalArrayIdx, drone )
+		}
+	)
 
-// 	Grenade_Init( nade, weapon )
+	Grenade_Init( nade, weapon )
 
-// 	EmitSoundOnEntity( npc, "SpectreLauncher_AI_WpnFire" )
-// 	WaitForever()
+	EmitSoundOnEntity( npc, "SpectreLauncher_AI_WpnFire" )
+	WaitForever()
 
-//	wait SPAWN_PROJECTILE_AIR_TIME + SPAWN_FUSE_TIME
+	//	wait SPAWN_PROJECTILE_AIR_TIME + SPAWN_FUSE_TIME
+*/
 }
 
-
-// Seriously don't use this unless absolutely necessary!  Used for scripted moment in Reapertown.
-// Bypasses all of the tick launch rules and sends a request for launching ticks to code immediately.
 void function ForceTickLaunch( entity npc )
 {
 	SuperSpectre_LaunchFragDrone_Think( npc, file.activeMinions_GlobalArrayIdx )
 }
-
-
-/************************************************************************************************\
-########  ########   #######  ########  #######  ######## ##    ## ########  ########
-##     ## ##     ## ##     ##    ##    ##     ##    ##     ##  ##  ##     ## ##
-##     ## ##     ## ##     ##    ##    ##     ##    ##      ####   ##     ## ##
-########  ########  ##     ##    ##    ##     ##    ##       ##    ########  ######
-##        ##   ##   ##     ##    ##    ##     ##    ##       ##    ##        ##
-##        ##    ##  ##     ##    ##    ##     ##    ##       ##    ##        ##
-##        ##     ##  #######     ##     #######     ##       ##    ##        ########
-\************************************************************************************************/
-
 
 function SuperSpectre_WarpFall( entity ai )
 {
@@ -665,7 +624,7 @@ function SuperSpectre_WarpFall( entity ai )
 	ai.SetEfficientMode( true )
 	ai.SetInvulnerable()
 
-	WaitFrame() // give AI time to hide before moving
+	WaitFrame()
 
 	vector warpPos = origin + < 0, 0, 1000 >
 	mover.SetOrigin( warpPos )
@@ -720,8 +679,8 @@ function SuperSpectre_WarpFall( entity ai )
 	Explosion_DamageDefSimple(
 		damagedef_reaper_fall,
 		origin,
-		ai,								// attacker
-		ai,								// inflictor
+		ai,
+		ai,
 		origin )
 
 	wait 0.1

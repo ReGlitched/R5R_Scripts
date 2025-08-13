@@ -138,7 +138,7 @@ void function AddConversations( int team, array<int> actors )
 				Voices( team, "bc_fleePlayerTitanGroupResponse_01", actors )
 				Voices( team, "bc_fleePlayerTitanGroupResponse_02", actors )
 				Voices( team, "bc_fleePlayerTitanGroupResponse_03", actors )
-				//Voices( team, "bc_fleePlayerTitanGroupResponse_04", actors )  // not available in game yet
+				//Voices( team, "bc_fleePlayerTitanGroupResponse_04", actors ) 
 			]
 		}
 	]

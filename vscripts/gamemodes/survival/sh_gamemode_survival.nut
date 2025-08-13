@@ -133,7 +133,6 @@ void function GamemodeSurvivalShared_Init()
 		AddCallback_PlayerCanUseZipline( Sur_CanUseZipline )
 		AddCallback_CanStartCustomWeaponActivity( ACT_VM_WEAPON_INSPECT, CanWeaponInspect )
 
-		//Bleedout system already started in sh init
 		Sh_RespawnBeacon_Init()
 		Sh_Airdrops_Init()
 
@@ -249,15 +248,12 @@ bool function Survival_CanUseHealthPack( entity player, int itemType, bool check
 			switch( canUseResult )
 			{
 				case eUseHealthKitResult.DENY_NONE:
-					//
 					break
 
 				case eUseHealthKitResult.DENY_NO_HEALTH_KIT:
 				case eUseHealthKitResult.DENY_NO_KITS:
 				case eUseHealthKitResult.DENY_NO_SHIELD_KIT:
 					player.ClientCommand( "ClientCommand_Quickchat " + eCommsAction.INVENTORY_NEED_HEALTH )
-					//
-
 				default:
 					AnnouncementMessageRight( player, healthKitResultStrings[canUseResult] )
 					break
@@ -546,10 +542,11 @@ void function VaultPanelInit( entity panel )
 {
 	thread Delayed_VaultPanelInit( panel )
 }
+
 void function Delayed_VaultPanelInit( entity panel )
 {
 	panel.EndSignal( "OnDestroy" )
-	WaitEndFrame() //
+	WaitEndFrame()
 	ClearCallback_CanUseEntityCallback( panel )
 	SetCallback_CanUseEntityCallback( panel, VaultPanel_CanUseFunction )
 
@@ -565,7 +562,6 @@ bool function VaultPanel_CanUseFunction( entity playerUser, entity controlPanel 
 	return ControlPanel_CanUseFunction( playerUser, controlPanel )
 }
 #endif
-
 
 TargetKitHealthAmounts function PredictHealthPackUse( entity player, HealthPickup itemData )
 {
@@ -595,7 +591,7 @@ TargetKitHealthAmounts function PredictHealthPackUse( entity player, HealthPicku
 
 		Assert( currentShields + shieldsToApply <= shieldHealthMax, "Bad math: " + currentShields + " + " + shieldsToApply + " > " + shieldHealthMax )
 
-		if ( healthToApply || itemData.healTime > 0 ) // healTime items can exceed the cap
+		if ( healthToApply || itemData.healTime > 0 )
 			targetValues.targetHealth = (currentHealth + healthToApply + resourceHealthRemaining) / 100.0
 
 		if ( shieldsToApply && shieldHealthMax > 0 )
@@ -607,7 +603,6 @@ TargetKitHealthAmounts function PredictHealthPackUse( entity player, HealthPicku
 
 	return targetValues
 }
-
 
 #endif
 #if SERVER || CLIENT
@@ -622,7 +617,6 @@ bool function CanWeaponInspect( entity player, int activity )
 	return GetCurrentPlaylistVarBool( "enable_weapon_inspect", true )
 }
 
-
 int function Survival_GetCurrentRank( entity player )
 {
 	int team = player.GetTeam()
@@ -632,7 +626,7 @@ int function Survival_GetCurrentRank( entity player )
 		#if SERVER
 			int squadRank = _GetSquadRank( player )
 			if ( squadRank == 0 )
-				squadRank = GetNumTeamsRemaining() + 1 //player disconnected before his squad was eliminated.
+				squadRank = GetNumTeamsRemaining() + 1
 			return squadRank
 		#else
 			return player.GetPersistentVarAsInt( "lastGameRank" )
@@ -658,12 +652,14 @@ VictoryPlatformModelData function GetVictorySequencePlatformModel()
 	return file.victorySequencePlatforData
 
 }
+
 #if CLIENT || UI 
 string function GetMusicForJump( entity player )
 {
 	return MusicPack_GetSkydiveMusic( GetMusicPackForPlayer( player ) )
 }
 #endif
+
 bool function PositionIsInMapBounds( vector pos )
 {
 	return ( fabs( pos.x ) < MAX_MAP_BOUNDS && fabs( pos.y ) < MAX_MAP_BOUNDS && fabs( pos.z ) < MAX_MAP_BOUNDS )
@@ -673,6 +669,7 @@ bool function Survival_IsPlayerHealing( entity player )
 {
 	return player.GetPlayerNetBool( "isHealing" )
 }
+
 bool function PlayerIsMarkedAsCanBeRespawned( entity player )
 {
 	int respawnStatus = player.GetPlayerNetInt( "respawnStatus" )
@@ -695,8 +692,6 @@ bool function IsSurvivalMode()
 
 bool function ShouldModeDisableCharacterComms()
 {
-	
-	
 	return false
 }
 

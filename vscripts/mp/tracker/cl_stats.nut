@@ -42,21 +42,6 @@ struct
 	
 } file 
 
-// In order to use this feature on the client, 
-// stats need preloaded on the client before fetching.
-
-// Use the entity of the player to lookup and the statname. 
-
-// If you call Tracker_FetchStat on a stat not preloaded, it will return null and 
-// preload the stat for you in the background via the stat queue thread. 
-// Use Tracker_StatExists( player, "statname" ) to check 
-
-// You can preload all of the stats you want from other connected players 
-// by iterating with Tracker_PreloadStatArray( [ player1 ], [ "stat1","stat2" ] ) for example.
-// This should only be done when a player is ready to be stat fetch requested. 
-// The preloader waits for this by default foreach player if not done before called.
-// Use Tracker_IsStatsReadyFor( player ) to get a bool of the status for that player.
-
 void function Tracker_ClientStats_Init()
 {
 	RegisterSignal( "StatDataReceived" )
@@ -373,7 +358,7 @@ bool function Tracker_StatExists( entity player, string statname )
 	return ( statname in file.playerStatTables[ player ] )
 }
 
-void function Tracker_ResyncAllForPlayer( entity remotePlayer ) //this is more expensive. if only updating one key, call "Tracker_ResyncStatForPlayer" on server instead
+void function Tracker_ResyncAllForPlayer( entity remotePlayer )
 {
 	if( PlayerStatTableExists( remotePlayer ) )
 	{

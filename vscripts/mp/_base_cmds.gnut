@@ -1,6 +1,5 @@
 globalize_all_functions
 
-
 void function Base_Cmds_Init()
 {
 		
@@ -32,7 +31,6 @@ bool function ClientCommand_KillSelf(entity player, array<string> args)
     player.Die( null, null, { damageSourceId = eDamageSourceId.damagedef_suicide } )
     return true
 }
-// PLAYLIST GET
 
 bool function CMD_GetTGiveEnabled()                                  { return GetCurrentPlaylistVarBool("tgive_enabled", true) }
 bool function CMD_GetKillSelfEnabled()                               { return GetCurrentPlaylistVarBool("killself_enabled", true) }

@@ -75,14 +75,12 @@ global enum TagToWeaponClass
     marksman = 9
 }
 
-
 array<entity> function GetErray( string name )
 {
    return GetEntArrayByScriptName( name )
 }
 
 vector function RGBToVector(vector RGB){ return <(RGB.x/255.0),(RGB.y/255.0),(RGB.z/255.0)> }
-
 
 entity function DEV_GetCascadeLight()
 {
@@ -111,7 +109,6 @@ void function DebugEffectNuke(bool zipline = true)
         //ball.kv.rendercolor = "255 255 255 0"
         DispatchSpawn( ball )
         //ball.SetModelScale( 4 )
-
     }
 
     if(!zipline)
@@ -232,8 +229,6 @@ void function DebugEffectNuke(bool zipline = true)
         else ent.SetBoundingBox( ent.GetBoundingMins() * scale, ent.GetBoundingMaxs() * scale )
     }
 
-    // Other Functions
-
     entity function CreateParticle( asset FX, vector Origin, vector Angles ) {
         entity trailFXHandle = StartParticleEffectInWorld_ReturnEntity(GetParticleSystemIndex(FX), Origin, Angles)
         trailFXHandle.FXEnableRenderAlways()
@@ -332,22 +327,9 @@ void function DebugEffectNuke(bool zipline = true)
     }
 #endif
 
-
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// d888888b d8888b. d888888b  d888b   d888b  d88888b d8888b. .d8888.
-// `~~88~~' 88  `8D   `88'   88' Y8b 88' Y8b 88'     88  `8D 88'  YP
-//    88    88oobY'    88    88      88      88ooooo 88oobY' `8bo.
-//    88    88`8b      88    88  ooo 88  ooo 88~~~~~ 88`8b     `Y8b.
-//    88    88 `88.   .88.   88. ~8~ 88. ~8~ 88.     88 `88. db   8D
-//    YP    88   YD Y888888P  Y888P   Y888P  Y88888P 88   YD `8888Y'
-//
-//
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 #if SERVER
 void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = false)
     {
-        // Create Trigger
         entity trigger = CreateEntity("trigger_cylinder")
         {
             trigger.SetRadius( radius )
@@ -357,7 +339,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
             trigger.SetParent( ent )
             trigger.SetEnterCallback( SkyfallTriggerEnter )
 
-            // Deploy Trigger
             DispatchSpawn(trigger)
         }
 
@@ -400,7 +381,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                 ent.SetAngles( start.GetAngles())
             } )
 
-            // Deploy Trigger
             DispatchSpawn( trigger )
         }
 
@@ -415,7 +395,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
     entity function CreateBoundsTrigger( vector origin , float radius = 30000 , float Height = 2000, int type = 0, bool debugdraw = false)
     {
-        // Set up the trigger
         entity trigger = CreateEntity( "trigger_cylinder" )
         {
             trigger.SetRadius( radius )
@@ -427,27 +406,26 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
         switch(type)
         {
-            case 1: // kill zone
+            case 1:
             trigger.SetScriptName("WallTrigger_Killzone")
             trigger.SetAboveHeight( 350 )
             break
-            case 2: // out of bounds
+            case 2:
             trigger.SetScriptName("WallTrigger_oob_timer")
             trigger.SetAboveHeight( 2350 )
             break
-            case 3: // skyfall
+            case 3:
             trigger.SetScriptName("WallTrigger_skyfall")
             trigger.SetEnterCallback( SkyfallTriggerEnter )
             break
         }
 
-        if (debugdraw) // draw trigger bounds if needed
+        if (debugdraw)
         {
             DebugDrawCylinder( trigger.GetOrigin() , < -90, 0, 0 >, radius, trigger.GetAboveHeight(), 0, 165, 255, true, 9999.9 )
             DebugDrawCylinder( trigger.GetOrigin() , < -90, 0, 0 >, radius, -trigger.GetBelowHeight(), 255, 90, 0, true, 9999.9 )
         }
 
-        // deploy the trigger
         DispatchSpawn( trigger )
 
         return trigger
@@ -455,7 +433,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
     void function BoundsTriggerEnter( entity trigger , entity ent )
     {
-        if ( IsValid(ent) && ent.IsPlayer() && ent.GetPhysics() != MOVETYPE_NOCLIP) // ensure the entity is valid
+        if ( IsValid(ent) && ent.IsPlayer() && ent.GetPhysics() != MOVETYPE_NOCLIP)
         {
             ent.Zipline_Stop()
 
@@ -511,18 +489,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
     }
 #endif
 
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// db   d8b   db  .d8b.  d888888b d88888b d8888b.
-// 88   I8I   88 d8' `8b `~~88~~' 88'     88  `8D
-// 88   I8I   88 88ooo88    88    88ooooo 88oobY'
-// Y8   I8I   88 88~~~88    88    88~~~~~ 88`8b
-// `8b d8'8b d8' 88   88    88    88.     88 `88.
-//  `8b8' `8d8'  YP   YP    YP    Y88888P 88   YD
-//
-//  Params: vector origin, float radius, float BelowHeight, float AboveHeight, bool debugdraw
-//  Usage : CreateWater( <35210,9000,-19050> , 3000 , 800 , 0 ,false )
-//
 #if SERVER
     void function CreateWater(vector origin = <0,0,0>, float radius = 3000, float BelowHeight = 0, float AboveHeight = 800, bool debugdraw = true)
     {
@@ -532,18 +498,15 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
         water_trigger.SetBelowHeight(BelowHeight)
         water_trigger.SetOrigin(origin)
 
-        // Trigger Callbacks
         water_trigger.SetEnterCallback( WaterTriggerEnter )
         water_trigger.SetLeaveCallback( WaterTriggerLeave )
 
-        // Debug Draw
         if (debugdraw)
         {
             DebugDrawCylinder( water_trigger.GetOrigin() , < -90, 0, 0 >, radius, water_trigger.GetAboveHeight(), 0, 0, 255, true, 9999.9 )
             DebugDrawCylinder( water_trigger.GetOrigin() , < -90, 0, 0 >, radius, -water_trigger.GetBelowHeight(), 0, 0, 255, true, 9999.9 )
         }
 
-        // deploy
         DispatchSpawn(water_trigger)
         printl("[Construct] Water created at " + origin)
     }
@@ -566,45 +529,45 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
         thread function() : ( trigger, ent )
         {
-           //int		i;
-           //vector	wishvel;
-           //float	wishspeed;
-           //vector	wishdir;
-           //vector	start, dest;
-           //vector  temp;
-           //// trace_t	pm;
-           //float speed, newspeed, addspeed, accelspeed;
-           //vector forward, right, up;
+/*         int		i;
+           vector	wishvel;
+           float	wishspeed;
+           vector	wishdir;
+           vector	start, dest;
+           vector  temp;
+           // trace_t	pm;
+           float speed, newspeed, addspeed, accelspeed;
+           vector forward, right, up;
 
-           //const float m_flClientMaxSpeed = 300;
+           const float m_flClientMaxSpeed = 300;
 
-           //while( IsValid(ent) && trigger.IsTouching( ent ) && ent.IsPlayer() && ent.GetPhysics() != MOVETYPE_NOCLIP)
-           //{
-           //    vector angles = FlattenAngles( VectorToAngles(  ent.GetViewVector() ) )
-           //    forward = AnglesToForward( angles )
-           //    right = AnglesToRight( angles )
-           //    up = AnglesToUp( angles )
+           while( IsValid(ent) && trigger.IsTouching( ent ) && ent.IsPlayer() && ent.GetPhysics() != MOVETYPE_NOCLIP)
+           {
+               vector angles = FlattenAngles( VectorToAngles(  ent.GetViewVector() ) );
+               forward = AnglesToForward( angles );
+               right = AnglesToRight( angles );
+               up = AnglesToUp( angles );
 
-	       //    // if we have the jump key down, move us up as well
-	       //    if (ent.IsInputCommandHeld( IN_JUMP ))
-	       //    	wishvel.z += m_flClientMaxSpeed;
+	           // if we have the jump key down, move us up as well
+	           if (ent.IsInputCommandHeld( IN_JUMP ))
+	           	wishvel.z += m_flClientMaxSpeed;
 
-           //    else if (forward != ZERO_VECTOR && right != ZERO_VECTOR && up != ZERO_VECTOR)
-           //    {
-           //        wishvel.z -= 60;		// drift towards bottom
-           //    }
-           //    else  // Go straight up by upmove amount.
-           //    {
-           //        // exaggerate upward movement along forward as well
-           //        float upwardMovememnt = forward * <0,0,forward.z *forward.z> * 2;
-           //        upwardMovememnt = clamp( upwardMovememnt, 0, m_flClientMaxSpeed );
-           //        wishvel.z += up + upwardMovememnt;
-           //    }
+	           else if (forward != ZERO_VECTOR && right != ZERO_VECTOR && up != ZERO_VECTOR)
+	           {
+	               wishvel.z -= 60;		// drift towards bottom
+	           }
+	           else  // Go straight up by upmove amount.
+	           {
+	               // exaggerate upward movement along forward as well
+	               float upwardMovememnt = forward * <0,0,forward.z *forward.z> * 2;
+	               upwardMovememnt = clamp( upwardMovememnt, 0, m_flClientMaxSpeed );
+	               wishvel.z += up + upwardMovememnt;
+	           }
 
-           //    ent.SetVelocity(wishvel)
-           //    WaitFrame()
-           //   // vector wishvel = forward + right[i]*mv->m_flSideMove;
-           //}
+	           ent.SetVelocity(wishvel);
+	           WaitFrame();
+	           // vector wishvel = forward + right[i]*mv->m_flSideMove;
+           }*/
 
             while( IsValid(ent) && trigger.IsTouching( ent ) )
             {
@@ -614,9 +577,9 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                         ent.kv.gravity = -0.1
                     else
                         ent.kv.gravity = -0.35
-//
+
                 } else ent.kv.gravity = -0.35
-//
+
                 wait 0.01
             }
         }()
@@ -625,7 +588,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
     void function WaterTriggerLeave(entity trigger, entity ent)
     {
-        // water leave sound
         EmitSoundOnEntity( ent, "player_leave_water" )
 
         StopSoundOnEntity( ent, "Canyonlands_Generic_Emit_WaterLaps_Calm_A" )
@@ -646,49 +608,25 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
     }
 #endif
 
-//
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-
-//C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// d88888D d888888b d8888b. db      d888888b d8b   db d88888b .d8888.
-// YP  d8'   `88'   88  `8D 88        `88'   888o  88 88'     88'  YP
-//    d8'     88    88oodD' 88         88    88V8o 88 88ooooo `8bo.
-//   d8'      88    88~~~   88         88    88 V8o88 88~~~~~   `Y8b.
-//  d8' db   .88.   88      88booo.   .88.   88  V888 88.     db   8D
-// d88888P Y888888P 88      Y88888P Y888888P VP   V8P Y88888P `8888Y'
-//
-// Params: vector StartOrigin, vector EndOrigin, bool LifelineCable
-// Usage : CreateDynamicZipLine( <0,0,0> , <0,0,-500>, false)
-//
-// Params: entity PrimaryEnt, entity SecondaryEnt, bool LifelineCable
-// Usage : CreateDynamicZipLineOnEntities( PrimaryEnt, SecondaryEnt, false)
-//
 #if SERVER
     array <entity> function CreateDynamicZipLine( vector StartOrigin, vector EndOrigin, bool LifelineCable = false )
     {
-        // Create Entities
         entity zip_start = CreateEntity("zipline")
         entity zip_end = CreateEntity("zipline_end")
 
-        // Set Positions
         zip_start.SetOrigin(StartOrigin)
         zip_end.SetOrigin(EndOrigin)
 
-        // Set Properties
         zip_start.kv.ZiplineAutoDetachDistance = "160"
         zip_end.kv.ZiplineAutoDetachDistance = "160"
 
-        // Create Line
         zip_start.LinkToEnt(zip_end)
 
-        // Set Choosen Rope Material
         if (!LifelineCable)
             zip_start.kv.Material = "cable/zipline.vmt"
         else
             zip_start.kv.Material = "models/cable/drone_medic_cable"
 
-        // Deploy
         DispatchSpawn(zip_start);
         DispatchSpawn(zip_end)
 
@@ -699,7 +637,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
         array<entity> Ziplines = CreateDynamicZipLine( PrimaryEnt.GetOrigin(), SecondaryEnt.GetOrigin(), LifelineCable )
 
-        // Parent ZipLines to Entities
         Ziplines[0].SetParent( PrimaryEnt )
         Ziplines[1].SetParent( SecondaryEnt )
 
@@ -729,26 +666,8 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
         return Nodes
     }
-
-
 #endif
-//
-//C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// .88b  d88. d88888b d8888b. db   dD d888888b d888888b
-// 88'YbdP`88 88'     88  `8D 88 ,8P'   `88'   `~~88~~'
-// 88  88  88 88ooooo 88   88 88,8P      88       88
-// 88  88  88 88~~~~~ 88   88 88`8b      88       88
-// 88  88  88 88.     88  .8D 88 `88.   .88.      88
-// YP  YP  YP Y88888P Y8888D' YP   YD Y888888P    YP
-//
-//
-//
-//
-//
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 #if SERVER
     const asset  MEDKITMDL = $"mdl/weapons_r5/loot/w_loot_wep_iso_health_main_large.rmdl"
     const asset  MEDKITFX  = $"survival_loot_pickup_Medkit_3P"
@@ -772,7 +691,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
             proxy.NotSolid()
         }
 
-        MedkitData structdata // init struct
+        MedkitData structdata
         MedkitObjects[proxy] <- structdata
         MedkitObjects[proxy].healh_time = healh_time
         MedkitObjects[proxy].respawn_time = respawn_time
@@ -843,32 +762,19 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
         CreateGroundMedKit( SpawnData[0] , SpawnData[1] )
     }
-
 #endif
-//
-//C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// db   d8b   db d88888b  .d8b.  d8888b.  .d88b.  d8b   db      d8888b.  .d8b.   .o88b. db   dD .d8888.
-// 88   I8I   88 88'     d8' `8b 88  `8D .8P  Y8. 888o  88      88  `8D d8' `8b d8P  Y8 88 ,8P' 88'  YP
-// 88   I8I   88 88ooooo 88ooo88 88oodD' 88    88 88V8o 88      88oobY' 88ooo88 8P      88,8P   `8bo.
-// Y8   I8I   88 88~~~~~ 88~~~88 88~~~   88    88 88 V8o88      88`8b   88~~~88 8b      88`8b     `Y8b.
-// `8b d8'8b d8' 88.     88   88 88      `8b  d8' 88  V888      88 `88. 88   88 Y8b  d8 88 `88. db   8D
-//  `8b8' `8d8'  Y88888P YP   YP 88       `Y88P'  VP   V8P      88   YD YP   YP  `Y88P' YP   YD `8888Y'
-//
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 #if SERVER
     const array <string> m_VanillaWeapons = [
-        "mp_weapon_energy_ar", "mp_weapon_rspn101", "mp_weapon_hemlok", "mp_weapon_vinson", "mp_weapon_rspn101_og", // AR
-        "mp_weapon_r97", "mp_weapon_alternator_smg", "mp_weapon_pdw" , "mp_weapon_volt_smg", // SMG
-        "mp_weapon_esaw", "mp_weapon_lstar", "mp_weapon_lmg" , // "mp_weapon_mobile_hmg", // LMG
-        "mp_weapon_sniper", "mp_weapon_g2", "mp_weapon_defender", "mp_weapon_dmr", "mp_weapon_doubletake", "mp_weapon_sentinel", // SNIPER
-        "mp_weapon_3030", "mp_weapon_bow", // MARKSMAN
-        "mp_weapon_energy_shotgun", "mp_weapon_mastiff", "mp_weapon_shotgun", "mp_weapon_shotgun_pistol", // SHOTGUN
-        "mp_weapon_wingman", "mp_weapon_autopistol", "mp_weapon_semipistol" , "mp_weapon_smart_pistol", "mp_weapon_wingman_n" // PISTOL
-        "mp_weapon_sniper", "mp_weapon_lstar", "mp_weapon_mastiff", "sp_weapon_arc_tool",  // SPECIAL
-        "mp_weapon_softball", "mp_weapon_smr", "mp_weapon_epg", "mp_weapon_rocket_launcher",  // LAUNCHER
+        "mp_weapon_energy_ar", "mp_weapon_rspn101", "mp_weapon_hemlok", "mp_weapon_vinson", "mp_weapon_rspn101_og",
+        "mp_weapon_r97", "mp_weapon_alternator_smg", "mp_weapon_pdw" , "mp_weapon_volt_smg",
+        "mp_weapon_esaw", "mp_weapon_lstar", "mp_weapon_lmg" ,
+        "mp_weapon_sniper", "mp_weapon_g2", "mp_weapon_defender", "mp_weapon_dmr", "mp_weapon_doubletake", "mp_weapon_sentinel",
+        "mp_weapon_3030", "mp_weapon_bow",
+        "mp_weapon_energy_shotgun", "mp_weapon_mastiff", "mp_weapon_shotgun", "mp_weapon_shotgun_pistol",
+        "mp_weapon_wingman", "mp_weapon_autopistol", "mp_weapon_semipistol" , "mp_weapon_smart_pistol", "mp_weapon_wingman_n"
+        "mp_weapon_sniper", "mp_weapon_lstar", "mp_weapon_mastiff", "sp_weapon_arc_tool",
+        "mp_weapon_softball", "mp_weapon_smr", "mp_weapon_epg", "mp_weapon_rocket_launcher", 
     ]
 
     array<string> SpawnedWeapons = []
@@ -958,25 +864,22 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
             SpawnedWeapons.append( WeaponClass ); CleanWeaponData.append( WeaponData )
         }
 
+/*      for (int i = 0; i < CleanWeaponData.len(); i++) {
+            vector Gen_Origin = Origin + < direction.x, direction.y + i * 10, direction.z >
 
+            entity rack = CreateWeaponRack( Gen_Origin , Angles , CleanWeaponData[i].ref )
+            thread OnPickupFromRackThread( GetWeaponFromRack( rack ), CleanWeaponData[i].ref )
 
-        //for (int i = 0; i < CleanWeaponData.len(); i++) {
-//
-        //    vector Gen_Origin = Origin + < direction.x, direction.y + i * 10, direction.z >
-//
-        //    entity rack = CreateWeaponRack( Gen_Origin , Angles , CleanWeaponData[i].ref )
-        //    thread OnPickupFromRackThread( GetWeaponFromRack( rack ), CleanWeaponData[i].ref )
-//
-        //    {
-        //        string ammoType = CleanWeaponData[i].ammoType
-        //        if (ammoType == "")
-        //            continue
-//
-        //        int ammoStack = SURVIVAL_Loot_GetLootDataByRef(ammoType).countPerDrop * 4
-        //        entity ammo = SpawnGenericLoot(ammoType, Gen_Origin + < 32, 0, 0 > , < 0, 90, 0 > , ammoStack)
-        //        thread OnPickupGenericThread(ammo, ammoType, ammoStack)
-        //    }
-        //}
+            {
+                string ammoType = CleanWeaponData[i].ammoType
+                if (ammoType == "")
+                    continue
+
+                int ammoStack = SURVIVAL_Loot_GetLootDataByRef(ammoType).countPerDrop * 4
+                entity ammo = SpawnGenericLoot(ammoType, Gen_Origin + < 32, 0, 0 > , < 0, 90, 0 > , ammoStack)
+                thread OnPickupGenericThread(ammo, ammoType, ammoStack)
+            }
+        }*/
     }
 
     int function SpawnEquipment(vector Origin , int maxsteps = 5 , vector stepdir = <0,0,0> , int EquipmentType = eLootType.ARMOR , int tier = -1)
@@ -1013,7 +916,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
         return Data.len()
     }
 
-    // When the weapon is grabbed from the rack -> respawn it
     void function  OnPickupFromRackThread(entity item, string ref) {
         entity rack = item.GetParent()
         item.WaitSignal("OnItemPickup")
@@ -1026,7 +928,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
     }
 
-    // When the item is grabbed -> respawn it
     void function  OnPickupGenericThread(entity item, string ref, int amount = 1) {
         vector pos = item.GetOrigin()
         vector angles = item.GetAngles()
@@ -1040,56 +941,46 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
 #endif
 
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// d8888b. db    db d888888b d888888b  .d88b.  d8b   db .d8888.
-// 88  `8D 88    88 `~~88~~' `~~88~~' .8P  Y8. 888o  88 88'  YP
-// 88oooY' 88    88    88       88    88    88 88V8o 88 `8bo.
-// 88~~~b. 88    88    88       88    88    88 88 V8o88   `Y8b.
-// 88   8D 88b  d88    88       88    `8b  d8' 88  V888 db   8D
-// Y8888P' ~Y8888P'    YP       YP     `Y88P'  VP   V8P `8888Y'
-//
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 #if SERVER
     int CollectedNessy = 0
     int CollectedNessyMax = 0
     int CurMusic = 0
 
     const array<string> SongData = [
-       /*  0 */ "None | None",
-       /*  1 */ "mainmenu_music | Default (Main Menu)",
-       /*  2 */ "MUSIC_Lobby | Default (Lobby)",
-       /*  3 */ "mainmenu_music_Event1 | Event1 (Main Menu)",
-       /*  4 */ "Music_Lobby_Event1 | Event1 (Lobby)",
-       /*  5 */ "mainmenu_music_Event2 | Event2 (Main Menu)",
-       /*  6 */ "Music_Lobby_Event2 | Event2 (Lobby)",
-       /*  7 */ "mainmenu_music_Event3 | Shadow Fall (Main Menu)",
-       /*  8 */ "Music_Lobby_Event3 | Shadow Fall (Lobby)",
-       /*  9 */ "mainmenu_music_Event4 | Holo-Day (Main Menu)",
-       /* 10 */ "Music_Lobby_Event4 | Holo-Day (Lobby)",
-       /* 11 */ "mainmenu_music_Bangalore | Bangalore (Main Menu)",
-       /* 12 */ "Music_Lobby_Bangalore | Bangalore (Lobby)",
-       /* 13 */ "mainmenu_music_Bloodhound | Bloodhound (Main Menu)",
-       /* 14 */ "Music_Lobby_Bloodhound | Bloodhound (Lobby)",
-       /* 15 */ "mainmenu_music_Caustic | Caustic (Main Menu)",
-       /* 16 */ "Music_Lobby_Caustic | Caustic (Lobby)",
-       /* 17 */ "mainmenu_music_Crypto | Crypto (Main Menu)",
-       /* 18 */ "Music_Lobby_Crypto | Crypto (Lobby)",
-       /* 19 */ "mainmenu_music_Gibraltar | Gibraltar (Main Menu)",
-       /* 20 */ "Music_Lobby_Gibraltar | Gibraltar (Lobby)",
-       /* 21 */ "mainmenu_music_Lifeline | Lifeline (Main Menu)",
-       /* 22 */ "Music_Lobby_Lifeline | Lifeline (Lobby)",
-       /* 23 */ "mainmenu_music_Mirage | Mirage (Main Menu)",
-       /* 24 */ "Music_Lobby_Mirage | Mirage (Lobby)",
-       /* 25 */ "Music_TT_Mirage_PartyTrack | Mirage (Town Takeover)",
-       /* 26 */ "mainmenu_music_Octane | Octane (Main Menu)",
-       /* 27 */ "Music_Lobby_Octane | Octane (Lobby)",
-       /* 28 */ "mainmenu_music_Pathfinder | Pathfinder (Main Menu)",
-       /* 29 */ "Music_Lobby_Pathfinder | Pathfinder (Lobby)",
-       /* 30 */ "mainmenu_music_Wattson | Wattson (Main Menu)",
-       /* 31 */ "Music_Lobby_Wattson | Wattson (Lobby)",
-       /* 32 */ "mainmenu_music_Wraith | Wraith (Main Menu)",
-       /* 33 */ "Music_Lobby_Wraith | Wraith (Lobby)",
+       "None | None",
+       "mainmenu_music | Default (Main Menu)",
+       "MUSIC_Lobby | Default (Lobby)",
+       "mainmenu_music_Event1 | Event1 (Main Menu)",
+       "Music_Lobby_Event1 | Event1 (Lobby)",
+       "mainmenu_music_Event2 | Event2 (Main Menu)",
+       "Music_Lobby_Event2 | Event2 (Lobby)",
+       "mainmenu_music_Event3 | Shadow Fall (Main Menu)",
+       "Music_Lobby_Event3 | Shadow Fall (Lobby)",
+       "mainmenu_music_Event4 | Holo-Day (Main Menu)",
+       "Music_Lobby_Event4 | Holo-Day (Lobby)",
+       "mainmenu_music_Bangalore | Bangalore (Main Menu)",
+       "Music_Lobby_Bangalore | Bangalore (Lobby)",
+       "mainmenu_music_Bloodhound | Bloodhound (Main Menu)",
+       "Music_Lobby_Bloodhound | Bloodhound (Lobby)",
+       "mainmenu_music_Caustic | Caustic (Main Menu)",
+       "Music_Lobby_Caustic | Caustic (Lobby)",
+       "mainmenu_music_Crypto | Crypto (Main Menu)",
+       "Music_Lobby_Crypto | Crypto (Lobby)",
+       "mainmenu_music_Gibraltar | Gibraltar (Main Menu)",
+       "Music_Lobby_Gibraltar | Gibraltar (Lobby)",
+       "mainmenu_music_Lifeline | Lifeline (Main Menu)",
+       "Music_Lobby_Lifeline | Lifeline (Lobby)",
+       "mainmenu_music_Mirage | Mirage (Main Menu)",
+       "Music_Lobby_Mirage | Mirage (Lobby)",
+       "Music_TT_Mirage_PartyTrack | Mirage (Town Takeover)",
+       "mainmenu_music_Octane | Octane (Main Menu)",
+       "Music_Lobby_Octane | Octane (Lobby)",
+       "mainmenu_music_Pathfinder | Pathfinder (Main Menu)",
+       "Music_Lobby_Pathfinder | Pathfinder (Lobby)",
+       "mainmenu_music_Wattson | Wattson (Main Menu)",
+       "Music_Lobby_Wattson | Wattson (Lobby)",
+       "mainmenu_music_Wraith | Wraith (Main Menu)",
+       "Music_Lobby_Wraith | Wraith (Lobby)",
     ]
 
     const array<asset> Models = [
@@ -1131,9 +1022,6 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
         foreach(entity util in GetErray("spawn_utility"))
             ScaleBoundingBox( util )
 
-//////////
-////////// ABILITY RECHARGE
-//////////
         entity AbilityReCharger = GetErray("spawn_utility")[0]
         {
             thread LoopFXOnEntity( AbilityReCharger , $"P_mines_Elec_tube_ON" , 5 , <0,0,80>)
@@ -1147,9 +1035,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                     .SetWeaponPrimaryClipCount( user.GetOffhandWeapon( OFFHAND_LEFT ).GetWeaponPrimaryClipCountMax() )
             })
         }
-//////////
-////////// TRASH WEAPONS
-//////////
+
         {
             entity trashbin = GetErray("spawn_utility")[4]
 
@@ -1188,9 +1074,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
             })
         }
-//////////
-////////// AMMO BOX
-//////////
+
         {
             entity ammobox = GetErray("spawn_utility")[5]
 
@@ -1222,9 +1106,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                 }
             })
         }
-//////////
-////////// HeirLooms
-//////////
+
         {
             entity bolo_sword = GetErray("spawn_utility")[6]
             {
@@ -1239,18 +1121,18 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                 })
             }
 
-            //entity data_knife = GetErray("spawn_utility")[11]
-            //{
-            //    ScaleBoundingBox( data_knife )
-//
-            //    string prompt = "%&use% Equip Data Knife"
-            //    MakeObjectUsable( data_knife, prompt )
-            //    SetSurvivalPropHighlight( data_knife, "survival_item_weapon", false )
-//
-            //    AddCallback_OnUseEntity( data_knife , void function(entity panel, entity user, int input) {
-            //        SetPlayerHeirloom( user, 2)
-            //    })
-            //}
+/*          entity data_knife = GetErray("spawn_utility")[11]
+            {
+                ScaleBoundingBox( data_knife )
+
+                string prompt = "%&use% Equip Data Knife"
+                MakeObjectUsable( data_knife, prompt )
+                SetSurvivalPropHighlight( data_knife, "survival_item_weapon", false )
+
+                AddCallback_OnUseEntity( data_knife , void function(entity panel, entity user, int input) {
+                    SetPlayerHeirloom( user, 2)
+                })
+            }*/
 
             /*
             entity combat_katana = GetErray("spawn_utility")[9]
@@ -1276,9 +1158,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
             }
             */
         }
-//////////
-////////// NESSY BUTTONS
-//////////
+
         CollectedNessyMax = GetErray("gm_construct_nessie_secret").len()
         ErrayDisable("gm_construct_nessie_secret_spawn")
         foreach(entity nessy in GetErray("gm_construct_nessie_secret"))
@@ -1299,7 +1179,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                         SpawnNessyBomber( nessyspawn.GetOrigin() )
 
 
-                    string prompt = "%&use% Nessy Smg" // unlock nessy r99
+                    string prompt = "%&use% Nessy Smg"
                     MakeObjectUsable( GetErray("spawn_utility")[3], prompt)
                     HighlightDecoy( GetErray("spawn_utility")[3] , <71,232,65> )
                 }
@@ -1314,9 +1194,7 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                 panel.Dissolve( ENTITY_DISSOLVE_CORE, <0,0,0>, 1000 )
             })
         }
-//////////
-////////// NESSY SMG
-//////////
+
         {
             entity NessySmg = GetErray("spawn_utility")[3]
             NessySmg.SetSkin(4)
@@ -1340,11 +1218,8 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                     }
             })
         }
-//////////
-////////// MUSIC SELECT
-//////////
+
         {
-            // Set Up SongList
             array<string> Songs = []
             array<string> SongTitles = []
 
@@ -1400,16 +1275,16 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
                 int model = 0
                 int skin = 0
-                switch(CurMusic) // hell
+                switch(CurMusic)
                 {
                     case 1: skin = 1 ; break
                     case 2: skin = 2 ; break
                     case 3: skin = 3 ; break
                     case 4: skin = 4 ; break
                     case 5: skin = 5 ; break
-                    case 6: skin = 6 ; break// default
+                    case 6: skin = 6 ; break
                     case 7:
-                    case 8: skin = 11 ; model = 12 ;break // shadow
+                    case 8: skin = 11 ; model = 12 ;break
                     case 9:
                     case 10: model = 13  ;break
                     case 11:
@@ -1467,28 +1342,15 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
         return drone
     }
 #endif
-//
-//C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
-//
-// d8b   db d8888b.  .o88b. Cb .d8888.
-// 888o  88 88  `8D d8P  Y8 `D 88'  YP
-// 88V8o 88 88oodD' 8P       ' `8bo.
-// 88 V8o88 88~~~   8b           `Y8b.
-// 88  V888 88      Y8b  d8    db   8D
-// VP   V8P 88       `Y88P'    `8888Y'
-//
-//
-// C8888D C8888D C8888D C8888D C8888D C8888D C8888D
 #if SERVER
     void function CreateConstructDummy( vector origin , vector angles = ZERO_VECTOR , float respawntime = 0.0)
     {
         entity dummy = CreateEntity( "npc_dummie" )
         {
             SetSpawnOption_AISettings( dummy , "npc_training_dummy")
-            dummy.SetMaxHealth( 255 ) // Red Shield Value
-            dummy.SetHealth( 255 ) // Red Shield Value
+            dummy.SetMaxHealth( 255 )
+            dummy.SetHealth( 255 )
             dummy.EnableNPCFlag( NPC_DISABLE_SENSING | NPC_IGNORE_ALL )
 
             dummy.SetOrigin( origin )
@@ -1669,14 +1531,12 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
 
             DispatchSpawn( spectre )
 
-            array<string> weapons = ["npc_weapon_lstar", "npc_weapon_energy_shotgun", "npc_weapon_hemlok"] //We are giving them original firing range weapons, they are shooting better this way
+            array<string> weapons = ["npc_weapon_lstar", "npc_weapon_energy_shotgun", "npc_weapon_hemlok"]
             string randomWeapon = weapons[RandomInt(weapons.len())]
             spectre.GiveWeapon(randomWeapon, WEAPON_INVENTORY_SLOT_ANY)
         }
     }
 
-
-    // script CreateFrTurret(gp()[0].GetOrigin(), <0,gp()[0].GetAngles().y,0>)
     void function CreateFrTurret( vector origin , vector angles = ZERO_VECTOR)
     {
         entity turret = CreateEntity( "npc_turret_sentry" )
@@ -1824,11 +1684,9 @@ void function CreateSkyFall( entity ent, float radius = 80, bool debugdraw = fal
                     break
             }
 
-            // take away
             player.TakeWeaponByEntNow( w_primary )
             player.TakeOffhandWeapon( OFFHAND_MELEE )
 
-            // give
             player.GiveWeapon( primary , WEAPON_INVENTORY_SLOT_PRIMARY_2 )
             player.GiveOffhandWeapon( melee, OFFHAND_MELEE )
 

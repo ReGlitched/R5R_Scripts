@@ -49,11 +49,8 @@ void function CL_RecruitModeUnitFrames_Init()
 
 void function OnPlayerCreated( entity player )
 {
-	// A team is not guaranteed to be assigned when ClientCodeCallback_OnEntityCreation() calls OnPlayerCreated()
-	// There's still an issue where your teammates can show as dead briefly when first shown because their health isn't set initially.
-	// Should probably make this work on spawn instead.
 	//thread WaitForTeamAssignment( player )
-	Recruit_OnPlayerTeamChanged( player, TEAM_UNASSIGNED, player.GetTeam() ) // todo(dw): this setup (OnPlayerCreated calling OnPlayerTeamChanged) would probably be useful elsewhere, so we should make AddCallback_PlayerClassChanged always get call in that situation
+	Recruit_OnPlayerTeamChanged( player, TEAM_UNASSIGNED, player.GetTeam() ) //TODO: this setup (OnPlayerCreated calling OnPlayerTeamChanged) would probably be useful elsewhere, so we should make AddCallback_PlayerClassChanged always get call in that situation
 
 	if ( IsRecruitMode() && GetLocalClientPlayer() == player )
 		CreateRecruitModeRuis()
@@ -84,10 +81,10 @@ void function Recruit_OnPlayerTeamChanged( entity player, int oldTeam, int newTe
 
 void function CreateRecruitModeRuis()
 {
-	if ( file.recruitModeRuis.len() > 0 ) //OnPlayerCreated is called during spectator
+	if ( file.recruitModeRuis.len() > 0 )
 		return
 
-	int maxTeamSize = GetCurrentPlaylistVarInt( "recruit_max_team_size", 3 ) - 1 //Team Unit Frames are 0 - 1 but only for other teammates.
+	int maxTeamSize = GetCurrentPlaylistVarInt( "recruit_max_team_size", 3 ) - 1
 	for ( int i = 0; i < maxTeamSize; i++ )
 	{
 		var rui = CreatePermanentCockpitPostFXRui( $"ui/unitframe_recruit_mode.rpak", HUD_Z_BASE )
@@ -145,7 +142,7 @@ void function RecruitMode_ChangeTeams( entity reviver, entity target )
 
 void function OnDNAPickupDestroyed( entity player )
 {
-	thread ClearTeamSlot( player ) //Threading off because HandleSquadElimination doesn't work properly with the delayedDNAPickupDestroyed thread.
+	thread ClearTeamSlot( player )
 }
 
 void function ClearTeamSlot( entity player )

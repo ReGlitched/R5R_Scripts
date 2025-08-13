@@ -37,4 +37,4 @@ array<string> function GetPlayerStatArrayString( string player_oid, string statn
 array<float> function GetPlayerStatArrayFloat( string player_oid, string statname ){ return [] }
 array<bool> function GetPlayerStatArrayBool( string player_oid, string statname ){ return [] }
 void function PlayerStatArray_Append( string player_oid, string statname, var value ){}
-#endif // !TRACKER
+#endif

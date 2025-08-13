@@ -22,7 +22,6 @@ void function OnWeaponDeactivate_nessy97( entity weapon )
 
 }
 
-
 void function OnWeaponActivate_arc_accel( entity weapon )
 {
     weapon.PlayWeaponEffect( $"P_wpn_lasercannon_aim_short_blue", $"", "flashlight" )
@@ -75,7 +74,6 @@ var function OnWeaponPrimaryAttack_nessy97( entity weapon, WeaponPrimaryAttackPa
 
 	return 1
 }
-
 
 void function OnWeaponBulletHit_nessy97( entity weapon, WeaponBulletHitParams hitParams )
 {

@@ -31,7 +31,6 @@ void function CodeCallback_MapInit()
 	else if (MapName() == eMaps.mp_rr_olympus_mu1 )
 		MapZones_RegisterDataTable( $"datatable/map_zones/zones_mp_rr_olympus_mu1.rpak" )
 	
-	//Clean up unused ents
 	AddCallback_EntitiesDidLoad( Olympus_OnEntitiesDidLoad )
 	// AddSpawnCallbackEditorClass( "prop_dynamic", "script_loot_marvin", CleanupEnt )
 	// AddSpawnCallbackEditorClass( "prop_dynamic", "script_survival_crafting_workbench_cluster", CleanupEnt )
@@ -54,7 +53,6 @@ void function CodeCallback_MapInit()
 
 void function Olympus_OnEntitiesDidLoad() 
 {
-	//Adjust props
 	array<entity> props
 	entity first = Entities_FindByClassname( null, "prop_dynamic" )
 
@@ -237,13 +235,6 @@ void function CleanupEnt( entity ent )
 	ent.Destroy()
 }
 
-//Warp Tunnels
-// ██     ██  █████  ██████  ██████      ████████ ██    ██ ███    ██ ███    ██ ███████ ██      ███████ 
-// ██     ██ ██   ██ ██   ██ ██   ██        ██    ██    ██ ████   ██ ████   ██ ██      ██      ██      
-// ██  █  ██ ███████ ██████  ██████         ██    ██    ██ ██ ██  ██ ██ ██  ██ █████   ██      ███████ 
-// ██ ███ ██ ██   ██ ██   ██ ██             ██    ██    ██ ██  ██ ██ ██  ██ ██ ██      ██           ██ 
- // ███ ███  ██   ██ ██   ██ ██             ██     ██████  ██   ████ ██   ████ ███████ ███████ ███████
-
 void function InitWarpGateTrigger( entity ent )
 {
 	if( Gamemode() != eGamemodes.SURVIVAL )
@@ -381,10 +372,7 @@ array<entity> function GenerateWarpBasePathForTrigger( entity ent )
 			break
 	}
 
-	// nodes.removebyvalue( nodes[0] ) //Eliminar el nodo verde del comienzo, no es necesario
-	
-	//R5RDEV-1
-	//Eliminar los trigger multiple que se hayan agregado
+	// nodes.removebyvalue( nodes[0] )
 	// foreach( node in nodes )
 	// {
 		// if( node.GetClassName() != "info_target" )
@@ -478,7 +466,7 @@ void function WarpTunnel_MoveEntAlongPath( entity player, array<entity> entNodes
 	#if DEVELOPER
 	foreach( point in trigger.e.warpEntranceSmoothedPath )
 	{
-		DebugDrawSphere( point, 80, 255, 0, 255, true, 999 ) //morado
+		DebugDrawSphere( point, 80, 255, 0, 255, true, 999 )
 	}
 	#endif
 
@@ -489,13 +477,12 @@ void function WarpTunnel_MoveEntAlongPath( entity player, array<entity> entNodes
 	player.SetPredictionEnabled( false )
 	player.FreezeControlsOnServer()
 
-	//Don't re-enable weapons if player is carrying loot.
 	if ( !SURVIVAL_IsPlayerCarryingLoot( player ) && !Bleedout_IsBleedingOut( player )  )
 		HolsterAndDisableWeapons( player )
 
 	entity mover = CreateScriptMover( portalNodes[0], pathAngles[0] )
 
-	mover.EnableNonPhysicsMoveInterpolation( false ) // works around bug R5DEV-49571
+	mover.EnableNonPhysicsMoveInterpolation( false )
 
 	player.e.isInPhaseTunnel = true
 
@@ -569,7 +556,6 @@ void function WarpTunnel_MoveEntAlongPath( entity player, array<entity> entNodes
 
 	player.SetParent( mover, "REF", true )	
 	
-	//Play Warp Screen Flash
 	entity fx = PlayFXOnEntity( $"P_wrth_tt_portal_screen_flash", player )
 
 	float travelSpeed = 3500
@@ -582,7 +568,6 @@ void function WarpTunnel_MoveEntAlongPath( entity player, array<entity> entNodes
 	float startTime = Time()
 	float elapsedTime
 
-	//Phase Shift Player
 	PhaseShift( player, 0.0, 999, eShiftStyle.Gate )
 	
 	int actualmovements
@@ -732,4 +717,3 @@ void function WarpTunnel_OnEndTouch( entity trigger, entity player, entity calle
 		printt( "-out of warp trigger", player )
 	#endif
 }
-

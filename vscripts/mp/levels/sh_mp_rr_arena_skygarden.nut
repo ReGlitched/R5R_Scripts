@@ -21,7 +21,7 @@ void function InitARBarriers()
 {
 	AddSpawnCallback( "func_brush", void function ( entity brush )
 	{
-		brush.MakeVisible()//Destroy()//TODO: Recover this function once we get correct shaders and arenas -LorryLeKral
+		brush.MakeVisible()	//Destroy()//TODO: Recover this function once we get correct shaders and arenas
 	} )
 }
 #endif

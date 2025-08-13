@@ -21,7 +21,6 @@ const string SILO_DOORS_OPEN_SFX = "Desertlands_Fortress_Interactive_Panel"
 const string SILO_ELEVATOR_LOOP_SFX = "Desertlands_MU2_Silo_Ascend_LP"
 const string SILO_ELEVATOR_STOP_SFX = "Desertlands_MU2_Silo_Ascend_End"
 
-//harevster assets
 const float HARVESTER_USE_DURATION = 0.5
 const asset HARVESTER_MODEL = $"mdl/props/crafting_siphon/crafting_siphon.rmdl"
 const string HARVESTER_FULL_IDLE_ANIM = "source_full_idle"
@@ -29,10 +28,8 @@ const string HARVESTER_EMPTY_IDLE_ANIM = "source_empty_idle"
 const string HARVESTER_FULL_TO_EMPTY_ANIM = "source_full_to_empty"
 const string HARVESTER_MINIMAP_SCRIPTNAME = "crafting_harvester_minimap"
 
-//workbench assets
 const asset WORKBENCH_CLUSTER_AIRDROP_MODEL = $"mdl/props/crafting_replicator/crafting_replicator.rmdl"
 
-//audio assets
 const string HARVESTER_AMBIENT_LOOP = "Crafting_Extractor_AmbientLoop"
 const string WORKBENCH_AMBIENT_LOOP = "Crafting_V2_0_Replicator_AmbientLoop"
 const string HARVESTER_COLLECT_1P = "Crafting_Extractor_Collect_1P"
@@ -49,7 +46,6 @@ const string WORKBENCH_CRAFTING_LOOP = "Crafting_Replicator_CraftingLoop"
 const string WORKBENCH_CRAFTING_DOOR_OPEN = "Crafting_V2_0_Replicator_Crafting_Finish_Eject"
 const string WORKBENCH_CRAFTING_DOOR_CLOSE = "Crafting_V2_0_Replicator_Crafting_Close"
 
-//minimap assets
 const asset WORKBENCH_ICON_ASSET = $"rui/hud/gametype_icons/survival/crafting_workbench"
 const asset WORKBENCH_ICON_LIMITED_ASSET = $"rui/hud/gametype_icons/survival/crafting_workbench_limited"
 const asset WORKBENCH_ICON_AIRDROP_ASSET = $"rui/hud/gametype_icons/survival/crafting_workbench_airdrop"
@@ -65,7 +61,6 @@ const asset CRAFTING_SMALL_WORKBENCH_ASSET = $"rui/hud/ping/icon_ping_crafting_h
 global const asset CRAFTING_ZONE_ASSET = $"rui/hud/gametype_icons/survival/crafting_zone"
 const asset CRAFTING_CURRENCY_ASSET = $"rui/hud/gametype_icons/survival/crafting_currency"
 
-//initialization scriptnames
 global const string HARVESTER_SCRIPTNAME = "crafting_harvester"
 
 #if SERVER
@@ -76,9 +71,8 @@ global function Desertlands_MU1_UpdraftInit_Common
 
 
 #if SERVER
-//Copied from _jump_pads. This is being hacked for the geysers.
 const float JUMP_PAD_PUSH_RADIUS = 256.0
-const float JUMP_PAD_PUSH_PROJECTILE_RADIUS = 32.0//98.0
+const float JUMP_PAD_PUSH_PROJECTILE_RADIUS = 32.0
 const float JUMP_PAD_PUSH_VELOCITY = 2000.0
 const float JUMP_PAD_VIEW_PUNCH_SOFT = 25.0
 const float JUMP_PAD_VIEW_PUNCH_HARD = 4.0
@@ -102,13 +96,11 @@ const int NUM_LOOT_DRONES_WITH_VAULT_KEYS = 4
 
 global struct UpdraftTriggerSettings
 {
-	//needs script_server_fps 20 so it feels like retail native implementation, otherwise reduce maxShakeActivationHeight to 375 and liftExitDuration to 1.5
-	
-	float minShakeActivationHeight = 500.0               // At what z-position to start shaking the player's view
-	float maxShakeActivationHeight = 380 //400.0               // At what z-position will the player's view be shaking at the maximum
-	float liftSpeed                = 300.0                   	// Maximum upward speed
-	float liftAcceleration         = 100.0                 		// How fast to accelerate to the maximum upward speed
-	float liftExitDuration         = 1.5 //2.5                   		// After clearing the updraft trigger, how many extra seconds to continue lifting for
+	float minShakeActivationHeight = 500.0
+	float maxShakeActivationHeight = 380
+	float liftSpeed                = 300.0
+	float liftAcceleration         = 100.0
+	float liftExitDuration         = 1.5
 }
 
 struct
@@ -205,8 +197,7 @@ void function SetupSiloPanels()
 		AddCallback_OnUseEntity( panel, CreateSiloPanelFunc( flagsToSet, newPanels ) )
 	}
 
-	// Make sure panels exist before trying to set up doors
-	// TODO: MegC: this is temporary fix to allow art team to compile Desertlands without Zone 1
+	//TODO: this is temporary fix to allow art team to compile Desertlands without Zone 1
 	/*if ( newPanels.len() > 0 )
 	{
 		// character abilities on the doors
@@ -222,7 +213,6 @@ void function SetupSiloPanels()
 			thread WaitForLootInitFinishedAndSetupDoors( mover )
 	}*/
 }
-
 
 void function WaitForLootInitFinishedAndSetupDoors( entity mover )
 {
@@ -261,7 +251,6 @@ void function OnSiloPanelActivate( entity activePanel, array<entity> allPanels, 
 	siloDoorMovers.append( GetEntByScriptName( SILO_DOOR_LEFT_MOVER_SCRIPTNAME ) )
 	siloDoorMovers.append( GetEntByScriptName( SILO_DOOR_RIGHT_MOVER_SCRIPTNAME ) )*/
 
-	// panels
 	foreach ( entity panel in allPanels )
 	{
 		if ( IsValid( panel ) )
@@ -271,7 +260,6 @@ void function OnSiloPanelActivate( entity activePanel, array<entity> allPanels, 
 		}
 	}
 
-	// handle objects on the doors and lift
 	platformMover.SetPusher( true )
 	platformMover.DisallowZiplines()
 
@@ -296,7 +284,6 @@ void function OnSiloPanelActivate( entity activePanel, array<entity> allPanels, 
 		)
 	}*/
 
-	// move the doors and lift
 	foreach	( string flagToSet in flagsToSet )
 		FlagSet( flagToSet )
 
@@ -308,16 +295,14 @@ void function OnSiloPanelActivate( entity activePanel, array<entity> allPanels, 
 
 	EmitSoundOnEntity( platformMover, SILO_ELEVATOR_STOP_SFX )
 
-	// handle abilities on lift
 	//wp.SetWaypointInt( 0, 1 )
 
 	platformMover.AllowZiplines()
 	//AddToAllowedAirdropDynamicEntities( siloPlatform )
 }
-
 #endif
-#if SERVER
 
+#if SERVER
 void function EntitiesDidLoad()
 {
 	
@@ -378,7 +363,6 @@ void function SetupFakeReplicator( entity ent)
 	#endif
 }
 
-
 void function OnRepUse( entity replicator, entity playerUser, int useInputFlags )
 {	
 	replicator.UnsetUsable()
@@ -417,7 +401,6 @@ void function RepAnims( entity replicator, entity playerUser )
 	wait 5
 	replicator.SetUsable()
 }
-
 
 void function SetupFakeCraftingSiphon( entity ent)
 {
@@ -489,10 +472,10 @@ entity function CreateMaterialHarvester( asset model, vector ornull origin = nul
 	materialHarvester.kv.fadedist = fadeDist
 	materialHarvester.kv.renderamt = 255
 	materialHarvester.kv.rendercolor = "255 255 255"
-	materialHarvester.kv.solid = solidType // 0 = no collision, 2 = bounding box, 6 = use vPhysics, 8 = hitboxes only
+	materialHarvester.kv.solid = solidType
 	if ( origin )
 	{
-		// hack: Setting origin twice. SetOrigin needs to happen before DispatchSpawn, otherwise the prop may not touch triggers
+		//HACK: Setting origin twice. SetOrigin needs to happen before DispatchSpawn, otherwise the prop may not touch triggers
 		materialHarvester.SetOrigin( expect vector( origin ) )
 		if ( angles )
 			materialHarvester.SetAngles( expect vector( angles ) )
@@ -503,7 +486,7 @@ entity function CreateMaterialHarvester( asset model, vector ornull origin = nul
 
 	if ( origin )
 	{
-		// hack: Setting origin twice. SetOrigin needs to happen after DispatchSpawn, otherwise origin is snapped to nearest whole unit
+		//HACK: Setting origin twice. SetOrigin needs to happen after DispatchSpawn, otherwise origin is snapped to nearest whole unit
 		materialHarvester.SetOrigin( expect vector( origin ) )
 		if ( angles )
 			materialHarvester.SetAngles( expect vector( angles ) )
@@ -523,7 +506,7 @@ string function Crafting_Harvester_UseTextOverride( entity ent )
 	CustomUsePrompt_Show( ent )
 	CustomUsePrompt_SetSourcePos( ent.GetOrigin() + < 0, 0, 30 > )
 
-	CustomUsePrompt_SetAdditionalText( "%ping% " + Localize( "#COMMS_PING" ) ) //removing for 14.1 due to shared crafting materials removing the need for pinging harvestors for teammates
+	CustomUsePrompt_SetAdditionalText( "%ping% " + Localize( "#COMMS_PING" ) )
 	CustomUsePrompt_SetText( Localize("#CRAFTING_HARVESTER_USE_PROMPT") )
 	CustomUsePrompt_SetLineColor( GetCraftingColor() )
 	CustomUsePrompt_SetHintImage( CRAFTING_CURRENCY_ASSET )
@@ -543,20 +526,6 @@ vector function GetCraftingColor()
 }
 #endif
 
-//=================================================================================================
-//=================================================================================================
-//
-//  ##     ## ##     ##    ##       ######   #######  ##     ## ##     ##  #######  ##    ##
-//  ###   ### ##     ##  ####      ##    ## ##     ## ###   ### ###   ### ##     ## ###   ##
-//  #### #### ##     ##    ##      ##       ##     ## #### #### #### #### ##     ## ####  ##
-//  ## ### ## ##     ##    ##      ##       ##     ## ## ### ## ## ### ## ##     ## ## ## ##
-//  ##     ## ##     ##    ##      ##       ##     ## ##     ## ##     ## ##     ## ##  ####
-//  ##     ## ##     ##    ##      ##    ## ##     ## ##     ## ##     ## ##     ## ##   ###
-//  ##     ##  #######   ######     ######   #######  ##     ## ##     ##  #######  ##    ##
-//
-//=================================================================================================
-//=================================================================================================
-
 #if SERVER
 void function Desertlands_MU1_MapInit_Common()
 {
@@ -572,7 +541,7 @@ void function Desertlands_MU1_MapInit_Common()
 
 	AddDamageCallbackSourceID( eDamageSourceId.burn, OnBurnDamage )
 
-	svGlobal.evacEnabled = false //Need to disable this on a map level if it doesn't support it at all
+	svGlobal.evacEnabled = false
 }
 
 void function OnBurnDamage( entity player, var damageInfo )
@@ -580,7 +549,6 @@ void function OnBurnDamage( entity player, var damageInfo )
 	if ( !player.IsPlayer() )
 		return
 
-	// sky laser shouldn't hurt players in plane
 	if ( player.GetPlayerNetBool( "playerInPlane" ) )
 	{
 		DamageInfo_SetDamage( damageInfo, 0 )
@@ -608,7 +576,6 @@ void function ConveyorRotatorMoverThink( entity mover )
 		if ( l.GetValueForKey( "script_noteworthy" ) == "start" )
 			startNode = l
 	}
-
 
 	float angle1 = VectorToAngles( startNode.GetOrigin() - rotator.GetOrigin() ).y
 	float angle2 = VectorToAngles( endNode.GetOrigin() - rotator.GetOrigin() ).y
@@ -651,7 +618,6 @@ void function Desertlands_MU1_EntitiesLoaded_Common()
 	entity HarvestFX3 = CreatePropDynamic( HARVESTER_BEAM_MDL, <-2541, -11265, 55642>, <0, 0, 0> )
 }
 
-//Geyster stuff
 void function GeyserInit()
 {
 	array<entity> geyserTargets = GetEntArrayByScriptName( "geyser_jump" )
@@ -675,7 +641,7 @@ void function GeyersJumpTriggerArea( entity jumpPad )
 	trigger.SetOwner( jumpPad )
 	trigger.SetRadius( JUMP_PAD_PUSH_RADIUS )
 	trigger.SetAboveHeight( 32 )
-	trigger.SetBelowHeight( 16 ) //need this because the player or jump pad can sink into the ground a tiny bit and we check player feet not half height
+	trigger.SetBelowHeight( 16 )
 	trigger.SetOrigin( origin )
 	trigger.SetAngles( angles )
 	trigger.SetTriggerType( TT_JUMP_PAD )
@@ -702,12 +668,10 @@ void function GeyersJumpTriggerArea( entity jumpPad )
 	WaitForever()
 }
 
-
 void function Geyser_OnJumpPadAreaEnter( entity trigger, entity ent )
 {
 	Geyser_JumpPadPushEnt( trigger, ent, trigger.GetOrigin(), trigger.GetAngles() )
 }
-
 
 void function Geyser_JumpPadPushEnt( entity trigger, entity ent, vector origin, vector angles )
 {
@@ -730,7 +694,6 @@ void function Geyser_JumpPadPushEnt( entity trigger, entity ent, vector origin, 
 		}
 	}
 }
-
 
 void function Geyser_JumpJetsWhileAirborne( entity player )
 {
@@ -810,11 +773,6 @@ bool function Geyser_JumpPad_ShouldPushPlayerOrNPC( entity target )
 
 	return true
 }
-
-
-///////////////////////
-///////////////////////
-//// Updrafts
 
 const string UPDRAFT_TRIGGER_SCRIPT_NAME = "skydive_dust_devil"
 void function Updrafts_Init()
@@ -904,8 +862,6 @@ void function Player_EnterUpdraft( entity trigger, entity player, float minHeigh
 	player.kv.airAcceleration = 1000 
 	HolsterAndDisableWeapons( player )
 	
-	// Play freefall landing anim + jumpjets fx
-	// Can't play the anim and make it move at the same time kral pls help (use wattson temp)
 	// player.Anim_NonScriptedPlay("animseq/humans/class/light/pilot_light_wattson/mp_pilot_freefall_anticipate.rseq" )
 	// thread PlayAnim( player, "animseq/humans/class/light/pilot_light_wattson/mp_pilot_freefall_anticipate.rseq", player, "", 0 )
 	// player.Anim_DisableUpdatePosition()
@@ -918,7 +874,6 @@ void function Player_EnterUpdraft( entity trigger, entity player, float minHeigh
 	
 	thread BurnPlayerOverTime( trigger, player )
 
-	//Jumpjet fx
 	foreach ( string attachment in file.jumpJetAttachments )
 	{
 		int landingFXID = GetParticleSystemIndex( $"P_surv_team_land_jet" )
@@ -941,7 +896,6 @@ void function Player_EnterUpdraft( entity trigger, entity player, float minHeigh
 		WaitFrame()
 	}
 
-	// Player is out of trigger, use liftExitDuration
 	float starttime = Time()
 	float endTime = starttime + liftExitDuration
 	
@@ -968,16 +922,6 @@ vector function ClampVelocity(vector velocity, float maxSpeed)
     return velocity
 }
 #endif
-
-
-                           // 888                                .d888                            888    d8b
-                           // 888                               d88P"                             888    Y8P
-                           // 888                               888                               888
- // .d8888b 888  888 .d8888b  888888 .d88b.  88888b.d88b.       888888 888  888 88888b.   .d8888b 888888 888  .d88b.  88888b.  .d8888b
-// d88P"    888  888 88K      888   d88""88b 888 "888 "88b      888    888  888 888 "88b d88P"    888    888 d88""88b 888 "88b 88K
-// 888      888  888 "Y8888b. 888   888  888 888  888  888      888    888  888 888  888 888      888    888 888  888 888  888 "Y8888b.
-// Y88b.    Y88b 888      X88 Y88b. Y88..88P 888  888  888      888    Y88b 888 888  888 Y88b.    Y88b.  888 Y88..88P 888  888      X88
- // "Y8888P  "Y88888  88888P'  "Y888 "Y88P"  888  888  888      888     "Y88888 888  888  "Y8888P  "Y888 888  "Y88P"  888  888  88888P'
 
 #if SERVER
 void function RespawnItem(entity item, string ref, int amount = 1, int wait_time=6)
@@ -1043,8 +987,7 @@ entity function CreateEditorPropLobby(asset a, vector pos, vector ang, bool mant
     e.SetScriptName("editor_placed_prop")
     e.e.gameModeId = realm
    // printl("[editor]" + string(a) + ";" + positionSerialized + ";" + anglesSerialized + ";" + realm)
-
+   
     return e
 }
-
 #endif

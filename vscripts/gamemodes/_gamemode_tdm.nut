@@ -1,8 +1,6 @@
-// stub script
 global function GamemodeTdm_Init
 global function RateSpawnpoints_Generic
 
-// these comes from gamemode recruit
 global function UpdateSquadDataForTeamChange
 
 void function GamemodeTdm_Init()

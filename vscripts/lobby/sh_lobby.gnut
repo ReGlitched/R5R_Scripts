@@ -192,7 +192,7 @@ string function PrivateMatch_GetSelectedMode()
 
 	return modeName
 }
-#endif // CLIENT
+#endif
 
 bool function PrivateMatch_IsValidMapModeCombo( string mapName, string modeName )
 {
@@ -228,7 +228,6 @@ int function Player_NextAvailableMatchmakingTime( entity player )
 
 int function GetCurrentTimeForPersistence()
 {
-	// Returns the unix timestap offset to the timezone we want to use
 	return GetUnixTimestamp() + DAILY_RESET_TIME_ZONE_OFFSET * SECONDS_PER_HOUR
 }
 

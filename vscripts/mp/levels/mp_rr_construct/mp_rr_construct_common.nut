@@ -60,16 +60,13 @@ void function Construct_MapInit_Common() {
 
     SetVictorySequencePlatformModel($"mdl/dev/empty_model.rmdl", < 0, 0, -10 > , < 0, 0, 0 > )
 
-
     #elseif CLIENT
-
     SetVictorySequenceLocation( <29582.457, 8460.06055, -17332.5371> , < 0, 45, 0 > )
     SetVictorySequenceSunSkyIntensity(1.0, 0.5)
 
     Freefall_SetPlaneHeight( -15327)
     Freefall_SetDisplaySeaHeightForLevel( -15327 )
     SetMinimapBackgroundTileImage($"overviews/mp_rr_canyonlands_bg")
-
     #endif
 
     PrecacheModel( $"mdl/vistas/canyonlands_drop_se.rmdl" )
@@ -97,7 +94,6 @@ void function Construct_MapInit_Common() {
     PrecacheModel( $"mdl/dev/mp_spawn.rmdl" )
     PrecacheModel( $"mdl/military_base/militaryfort_wall_rooftop_01.rmdl" )
 
-
     PrecacheModel( $"mdl/humans/class/medium/pilot_medium_generic.rmdl" )
     PrecacheModel( $"mdl/Humans/class/medium/pilot_medium_bangalore.rmdl" )
     PrecacheModel( $"mdl/humans/class/medium/pilot_medium_bloodhound.rmdl" )
@@ -110,7 +106,6 @@ void function Construct_MapInit_Common() {
     PrecacheModel( $"mdl/humans/class/heavy/pilot_heavy_pathfinder.rmdl" )
     PrecacheModel( $"mdl/Humans/class/light/pilot_light_wattson.rmdl" )
     PrecacheModel( $"mdl/humans/class/light/pilot_light_wraith.rmdl" )
-
 
     PrecacheModel( $"mdl/creatures/spider/spider.rmdl" )
     PrecacheModel( $"mdl/Creatures/prowler/prowler_apex.rmdl" )
@@ -141,9 +136,7 @@ void function Construct_MapInit_Common() {
 
     PrecacheWeapon("mp_weapon_nessy97")
     // PrecacheWeapon("mp_weapon_mobile_hmg")
-
 }
-
 
 void function  EntitiesDidLoad() {
     printt("[Construct] CLIENT & SERVER : EntitiesDidLoad")
@@ -159,7 +152,6 @@ void function Spawn_MP_Construct()
 }
 
 #if SERVER
-
 void function OnObjectSpawned( entity ent)
 {
     thread( void function() : ( ent )
@@ -173,7 +165,6 @@ void function OnObjectSpawned( entity ent)
             ent.Dissolve(ENTITY_DISSOLVE_CORE, < 0, 0, 0 > , 200)
     }())
 }
-
 
 void function OnPlayerKilled( entity victim, entity attacker, var damageInfo)
 {
@@ -214,7 +205,6 @@ void function OnPlayerRespawned( entity player ) {
 
         SetPlayerSettings(player, PLAYER_SETTINGS_DEFAULT)
         */
-
 
         player.SetOrigin( GetEnt("info_player_start").GetOrigin() )
         player.SetAngles( GetEnt("info_player_start").GetAngles() )

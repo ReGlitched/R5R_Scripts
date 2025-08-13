@@ -82,7 +82,6 @@ array<ErrayObject> function RequestErrayCollection( string collection = "all" , 
 
             EOBJ.instance.SetCollisionDetailHigh()
 
-            // check if the model is a door model and create a working door
             CreateDoorFromDynamicProp( EOBJ.instance )
             #endif
          }
@@ -93,7 +92,6 @@ array<ErrayObject> function RequestErrayCollection( string collection = "all" , 
 
    return Erray
 }
-
 
 void function Construct_MAPDATA()
 {
@@ -106,9 +104,8 @@ void function Construct_MAPDATA()
 
    OnThreadEnd( function() : ( ConstructData )
 	{
-
       #if SERVER
-      { // skybox
+      {
 
          array<entity> skyboxprops = GetErray("mp_rr_construct_skybox")
 
@@ -132,7 +129,6 @@ void function Construct_MAPDATA()
          if(zip.GetModelName() == $"mdl/props/pathfinder_zipline/pathfinder_zipline.rmdl")
             zip.SetAngles(zip.GetAngles() + <-90,90,0>)
       }
-
 
       foreach(entity visual in GetErray("gm_construct_visual_colliders"))
       {
@@ -262,7 +258,7 @@ void function Construct_MAPDATA()
             GetErray("npcspawn")[0].GetOrigin(),
             GetErray("npcspawn")[0].GetAngles())
 
-		//FIXME
+		//TODO: FIXME
          // CreateConstructTreasureTick(
             // GetErray("npcspawn")[1].GetOrigin(),
             // GetErray("npcspawn")[1].GetAngles(),
@@ -293,28 +289,23 @@ void function Construct_MAPDATA()
          #endif
       }
 
-   /////////////
-   // General
-   /////////////
-
    #if CLIENT
-   thread( void function() // water
+   thread( void function()
    {
       while( IsValid( GetLocalViewPlayer() ) )
       {
-         // cant register custom netvar using 'tutorialContext' instead
          switch(GetLocalViewPlayer().GetPlayerNetInt("tutorialContext"))
          {
-            case 1: // water
+            case 1:
             SetConVarInt( "dof_overrideParams", 1 )
             SetConVarFloat( "dof_farDepthStart", 0 )
             SetConVarFloat( "dof_farDepthEnd", 1000 )
             break
 
-            case 2: // indoors
+            case 2:
             break
 
-            case -1: // all
+            case -1:
             SetConVarToDefault( "dof_overrideParams" )
    		   SetConVarToDefault( "dof_farDepthStart" )
    		   SetConVarToDefault( "dof_farDepthEnd" )
@@ -327,8 +318,7 @@ void function Construct_MAPDATA()
 
    #if CLIENT
    CreateSounds()
-
-   { // client side grass
+   {
       int grass_count = 0
       int grass_max = 900
       for(int i = 0; i < ConstructData.len(); i++)
@@ -368,4 +358,3 @@ void function CreateSounds()
    }
 #endif
 }
-

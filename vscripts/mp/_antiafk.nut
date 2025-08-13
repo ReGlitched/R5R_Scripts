@@ -45,7 +45,7 @@ void function Flowstate_InitAFKThreadForPlayer( entity player )
 	return
 
 	AfkThread_AddPlayerCallbacks( player )
-	//player.SetSendInputCallbacks( true ) //disabled internal call
+	//player.SetSendInputCallbacks( true )
 	AfkThread_PlayerMoved( player )
 	thread CheckAfkKickThread(player)
 }
@@ -131,7 +131,6 @@ void function CheckAfkKickThread(entity player)
 					}
 					else
 						mAssert( false, "Playlist has afk_to_rest enabled, but mode has rest disabled internally. Try using Gamemode1v1_SetRestEnabled()" )
-						//(mk): We WANT to assert here, because otherwise, this condition will always run with no effect. 
 				}
 				else 
 				{	
@@ -141,7 +140,6 @@ void function CheckAfkKickThread(entity player)
 				
 			default:
 				mAssert( false, "No valid afk rest state returned" )
-				//Scripter issue.
 				break
 		}
 		
