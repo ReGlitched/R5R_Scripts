@@ -57,7 +57,7 @@ void function SimulateRandomDisconnects()
 
 void function SpawnBots( int amount = 1 )
 {
-	string botName = "flowstate"
+	string botName = "Bot"
 	
 	for( int i = 0; i<amount; i++)
 	{
@@ -80,7 +80,7 @@ void function SpawnAllyBots( int amount = 1 )
 {
 	for( int i = 0; i<amount; i++)
 	{
-		ClientCommand( gp()[0], "sv_addbot flowstate -1" )
+		ClientCommand( gp()[0], "sv_addbot Bot -1" )
 		wait 0.1
 	}
 
@@ -100,7 +100,7 @@ void function DEV_SpawnDownedBots( int amount = 1 )
 {
 	for( int i = 0; i<amount; i++)
 	{
-		ClientCommand( gp()[0], "sv_addbot flowstate -1" )
+		ClientCommand( gp()[0], "sv_addbot Bot -1" )
 		wait 0.1
 	}
 
@@ -122,7 +122,7 @@ void function DEV_SpawnSkydivingBots( int amount = 1 )
 {
 	for( int i = 0; i<amount; i++)
 	{
-		ClientCommand( gp()[0], "sv_addbot flowstate -1" )
+		ClientCommand( gp()[0], "sv_addbot Bot -1" )
 		wait 0.1
 	}
 	
@@ -164,7 +164,7 @@ void function DEV_SpawnSkydivingBots( int amount = 1 )
 
 void function SpawnBot( bool customModel = false, bool startSkydive = false, bool makeAlly = false )
 {
-	ClientCommand( gp()[0], "sv_addbot flowstate -1" )
+	ClientCommand( gp()[0], "sv_addbot Bot -1" )
 	
 	thread function () : ( customModel, startSkydive, makeAlly )
 	{
@@ -583,7 +583,6 @@ void function NPCFollowsNPC( entity npc, entity leader )
 
 void function NpcFollowsEntity( entity npc, entity leader )
 {
-	// stop scripted things
 	// if ( IsMultiplayer() )
 		// npc.Signal( "StopHardpointBehavior" )
 
@@ -593,7 +592,6 @@ void function NpcFollowsEntity( entity npc, entity leader )
 		return
 	}
 
-	// follow!
 	int followBehavior = GetDefaultNPCFollowBehavior( npc )
 	npc.InitFollowBehavior( leader, followBehavior )
 	npc.DisableBehavior( "Assault" )
@@ -857,213 +855,6 @@ void function DEV_MoveToAllAINodes( float delay = 0.0, int loglevel = 0 )
       return result
     }
 
-/*
-entity function CreateEditorPilot(asset entity_name,int model_select,int anim_select,vector pos, vector ang)
-{
-    //defaults if nothing is selected
-    array <asset> model_array = [$"mdl/humans/class/medium/pilot_medium_holo.rmdl"]
-    array <string> anim_array = ["mirage_menu_lobby_center_laugh"] // can be pulled from legion and make sure to remove "_0" etc
-
-    Assert( model_select, "No Model Choosen Set to 1!" )
-
-    switch (string(entity_name))  // not the best way of doing this idk
-    {
-        case "pilot_mirage":
-            model_array = [
-                $"mdl/humans/class/medium/pilot_medium_holo.rmdl"
-            ]
-            anim_array = [
-                "mirage_menu_lobby_center_beard",
-                "mirage_menu_lobby_center_laugh",
-                "mirage_menu_lobby_center_picture",
-                "mirage_menu_lobby_center_magic",
-                "pilot_freefall_emote_backflip",
-                "pilot_freefall_emote_backflip"
-            ]
-        break
-
-        case "pilot_gibraltar":
-            model_array = [
-                $"mdl/humans/class/heavy/pilot_heavy_gibraltar.rmdl"
-            ]
-            anim_array = ["gibraltar_menu_lobby_center_slap"]
-        break
-
-        case "pilot_support":
-            model_array = [
-                $"mdl/humans/class/light/pilot_light_support.rmdl"
-            ]
-            anim_array = ["lifeline_idle_UA_dance"]
-        break
-
-        case "pilot_bloodhound":
-            model_array = [
-                $"mdl/humans/class/medium/pilot_medium_bloodhound.rmdl"
-            ]
-            anim_array = ["bloodhound_menu_lobby_center_pet"]
-        break
-
-        case "pilot_bangalore":
-            model_array =[
-                $"mdl/humans/class/medium/pilot_medium_bangalore.rmdl"
-            ]
-            anim_array = ["bangalore_menu_lobby_center_hair"]
-        break
-
-        case "pilot_wraith":
-            model_array = [
-                $"mdl/humans/class/light/pilot_light_wraith.rmdl"
-            ]
-            anim_array = ["wraith_menu_lobby_center_voices"]
-        break
-
-        case "pilot_pathfinder":
-            model_array = [
-                $"mdl/humans/class/heavy/pilot_heavy_pathfinder.rmdl"
-            ]
-            anim_array  = ["pathfinder_menu_lobby_center_hopping"]
-        break
-
-        case "pilot_stim":
-            model_array = [
-                $"mdl/Humans/class/medium/pilot_medium_stim.rmdl"
-            ]
-            anim_array = ["octane_menu_lobby_center_leg"]
-        break
-
-        case "pilot_wattson":
-            model_array = [
-                $"mdl/humans/class/light/pilot_light_wattson.rmdl"
-            ]
-            anim_array = ["wattson_menu_lobby_center_idle"]
-        break
-
-        case "pilot_caustic":
-            model_array = [
-                $"mdl/humans/class/heavy/pilot_heavy_caustic.rmdl"
-            ]
-            anim_array = ["caustic_menu_lobby_center_recorder"]
-        break
-
-        case "pilot_crypto":
-            model_array = [
-                $"mdl/Humans/class/medium/pilot_medium_crypto.rmdl"
-            ]
-            anim_array = ["crypto_menu_lobby_center_drone"]
-        break
-
-        case "npc_tick":
-            model_array = [
-                $"mdl/robots/drone_frag/drone_frag_loot.rmdl",
-                $"mdl/robots/drone_frag/drone_frag_loot_bf.rmdl",
-                $"mdl/robots/drone_frag/drone_frag_loot_halloween.rmdl",
-                $"mdl/robots/drone_frag/drone_frag_loot_halloween.rmdl"
-            ]
-            anim_array = [
-                "sd_search_idle",
-                "sd_angry_idle",
-                "sd_angry_idle",
-                "sp_suicide_spectre_explode_stand"
-            ]
-        break
-
-        default:
-        break
-    }
-
-    asset model
-    for (int m;m < model_array.len();m++) // go trough array
-    {
-        if (model_select == m) // if is selected return anim
-        {
-            model = model_array[m]
-        }
-        else
-        {
-            model = model_array[model_select - 1]
-        }
-    }
-
-    entity ent_prop = CreatePropDynamic(model,pos,ang,SOLID_VPHYSICS,30000)
-    ent_prop.kv.fadedist = 30000 // lower fading
-    ent_prop.e.gameModeId = -1
-    ent_prop.NotSolid() // make the ent's not solid
-    ent_prop.StopPhysics()
-    ent_prop.kv.fadedist = 2000
-    string positionSerialized = pos.x.tostring() + "," + pos.y.tostring() + "," + pos.z.tostring()
-    string anglesSerialized = ang.x.tostring() + "," + ang.y.tostring() + "," + ang.z.tostring()
-
-    if (anim_select != 0 )
-    {
-        string anim
-        for (int a;a < anim_array.len();a++) // go trough array
-        {
-            if (anim_select == a) // if is selected return anim
-            {
-                anim = anim_array[a]
-            }
-            else
-            {
-                anim = anim_array[anim_select - 1]
-            }
-        }
-
-        printl( "[Load0_Pilot]" + string(model) + ";" + anim + ";" + positionSerialized + ";" + anglesSerialized + ";")
-        float RotateLoopSpeed =  15
-        float smalltick = 0.5
-        float bigtick = 2.5
-        switch (anim_select)
-        {
-            //tick
-            case 2: // big gold tick
-                if (string(entity_name) == "npc_tick")
-                {
-                    ent_prop.SetModelScale(bigtick)
-                }
-                thread PlayAnim( ent_prop, anim )
-            break
-
-            case 3: // small spook
-                if (string(entity_name) == "npc_tick")
-                {
-                    ent_prop.SetModelScale(smalltick)
-                }
-                thread PlayAnim( ent_prop, anim )
-            break
-
-            case 4: // small front flip spook
-                if (string(entity_name) == "npc_tick")
-                {
-                    ent_prop.SetModelScale(smalltick)
-                }
-                thread AnimationLoop( ent_prop, anim, RotateLoopSpeed)
-            break
-            //tick end
-
-            case 5: // big boy
-                ent_prop.SetModelScale(7.0)
-                thread BigMirageRotateLoop(ent_prop,anim,RotateLoopSpeed * 8) // rotation
-            break
-
-            case 6: // table smol mirages
-                ent_prop.SetModelScale(0.5)
-                thread PlayAnim( ent_prop, anim )
-                thread MiniMirageRotateLoop(ent_prop,RotateLoopSpeed) // rotation
-            break
-
-            default:
-                thread PlayAnim( ent_prop, anim )
-            break
-        }
-    }
-    else
-    {  // 0 - no animation / t-pose
-        //printl( "[Load0_Pilot]" + string(model) + ";" + positionSerialized + ";" + anglesSerialized + ";")
-    }
-
-    return ent_prop
-}*/
-
     array<entity> function ent_ZipLine(vector startPos,vector endPos,bool pathfinder_model)
     {
 		vector pathfinder_offset = <0,0,120>
@@ -1177,8 +968,7 @@ entity function GenerateRings(asset ring_MODEL,vector origin,float rotate_speed,
 		}
     }
 	return ent_ring
-}
-*/
+}*/
 
     vector wallz_oldorigin_y
     void function CreateInvisibleWall(asset MODEL,vector origin,vector angles,int amount,float spacesize)
@@ -1212,6 +1002,7 @@ entity function GenerateRings(asset ring_MODEL,vector origin,float rotate_speed,
             wallz_oldorigin_y = origin_y
         }
     }
+
 	void function CreateDownWall(asset MODEL,vector origin,vector angles,int amount,float spacesize)
     {
     	Assert( MODEL != null, "No Asset Selected" )
@@ -1657,10 +1448,10 @@ void function DEV_SpawnBTAtCrosshair( bool hotdrop = false )
 	vector angles = Vector( 0, 0, 0 )
 
 	//TitanLoadoutDef loadout = GetTitanLoadoutForCurrentMap()
-	entity npc = CreateNPCTitanFromSettings($"settings/player/mp/titan_survival_buddy.rpak",player.GetTeam(),origin, angles)//CreateAutoTitanForPlayer_FromTitanLoadout( player, loadout, origin, angles )
+	entity npc = CreateNPCTitanFromSettings($"settings/player/mp/titan_survival_buddy.rpak",player.GetTeam(),origin, angles)
 
 	SetSpawnOption_AISettings( npc, "npc_titan_buddy" )
-	npc.SetCollisionAllowed( false )//TODO: Get rid of this when collision is fixed, it causes crash. - Kral
+	npc.SetCollisionAllowed( false )
 
 	//DispatchSpawn( npc )
 	

@@ -1,50 +1,8 @@
-/// =================== ///
-///		Onboarding		///
-/// =================== ///
-
-/*
-	Onboarding handles user interaction from joining until the enabled character selection outros have been completed.
-
-	Everything after that is gamemode-specific.
-	To handle onboarding completion in your gamemode code, use AddCallback_GameStateEnter for eGameState.Playing.
-
-	Onboarding is controlled by playlist vars, define them in the gamemode spec to control.
-	Available playlist vars:
-		General:
-			custom_onboarding							- Completely disable default onboarding sequences, leveraging onboarding on the gamemode.
-		Waiting for players:
-			waiting_for_players_min_wait 				- Minimal time to wait before checking for players.
-			waiting_for_players_timeout_seconds 		- Maximum time to wait for connecting players.
-			waiting_for_players_has_black_screen 		- Select whether the player should have a black background instead of a view of their current origin.
-			waiting_for_players_spawning_enabled		- Select whether the player should be spawned (partial spawn since at this stage no settings have been assigned).
-			waiting_for_players_countdown_seconds		- The countdown before the next onboarding stage.
-			charselect_intro_music_start_time			- The offset from character selection unlock when the character selection music should be started.
-		Character selection:
-			charselect_enabled							- Select whether the default character selection logic should be used. If false, random legends will be assigned.
-			charselect_intro_transition_duration		- The duration of transition from waiting for players to character selection.
-			charselect_intro_countdown_duration			- The duration of the pre legend selection countdown (You choose N'nd).
-			charselect_picking_delay_before_all 		- The duration of delay before the legend pick logic starts.
-			charselect_picking_delay_on_first			- The duration of delay after the first player has picked their legend.
-			character_select_time_min					- Minimal time for player to select their legend.
-			character_select_time_max					- Maximum time for player to select their legend.
-			charselect_picking_delay_after_each_lock	- The duration of delay after any player has picked their legend.
-			charselect_picking_delay_after_all			- The duration of delay after all players have picked their legend.
-			charselect_outro_scene_change_duration		- The duration of delay to switch the scene to next steps.
-		Player squad overview:
-			survival_enable_squad_intro					- Show player squad. If disabled, the player squad duration is skipped.
-			charselect_outro_squad_present_duration		- The duration of player squad data being present on screen.
-		Champion squad overview:
-			survival_enable_gladiator_intros			- Show champion squad. If disabled, the champion squad duration is skipped.
-			charselect_outro_champion_present_duration	- The duration of champion squad data being present on screen.
-		End:
-			charselect_outro_transition_duration		- The duration of transition from past steps to playing state.
-*/
 global function SV_CL_Onboarding_Init
 
 #if SERVER
 	global function TakeLoadoutRelatedWeapons
 	global function GiveLoadoutRelatedWeapons
-	global function GiveLoadoutRelatedWeapons_HaloMod
 	
 	global function DecideRespawnPlayer
 	global function DecideRespawnPlayer_Retail
@@ -89,7 +47,7 @@ global function CharSelect_GetOutroTransitionDuration
 
 global function Survival_GetCharacterSelectDuration
 global function Survival_CharacterSelectEnabled
-//So ideally, don't change this if you don't want prediction to be fucked. Open a PR on Flowstate repo if you have feedback for these vars <3 Cafe
+
 global const table TRUE_TF2_SETTINGS = 
 {
 	//["acceleration"] = 10.0,
@@ -397,66 +355,6 @@ global const table HL1_MOVEMENT =
 	["slideSpeedBoost"] = 0.0,
 	["slideSpeedBoostCap"] = 0.0,
 	["slideVelocityDecay"] = 0.0,
-	["superjumpMinHeight"] = 0.0,
-	["wallrun"] = 0.0
-}
-
-global const table HALO_MOVEMENT_NEW = 
-{
-	["antiMultiJumpHeightFrac"] = 1.0,
-	
-	["automantle"] = 0.0,
-	["automantle_enable"] = 0.0,
-	["climbEnabled"] = 0.0,
-	["climbheight"] = 0.0,
-	
-	["gravityscale"] = 0.7,
-	["jumpheight"] = 75.0,
-	["landslowdownduration"] = 0.0,
-	
-	["player_slideBoostEnabled"] = 1.0,
-	["slideRequiredStartSpeed"] = 200.0,
-	["slideRequiredStartSpeedAir"] = 9999999.0,
-	["slideSpeedBoost"] = 300.0,
-	["slideSpeedBoostCap"] = 350.0,
-
-	["wallrun"] = 0.0
-}
-
-global const table HALO_MOVEMENT = 
-{
-	["acceleration"] = 550.0,
-	["airStrafeAcceleration"] = 0.0,
-	["airStrafeEnabled"] = 0.0,
-	["airStrafeTaperFinish"] = 0.01,
-	["airStrafeTaperStart"] = 0.01,
-	["airacceleration"] = 0.0,
-	["airspeed"] = 0.0,
-	["speed"] = 185.0,
-	["antiMultiJumpHeightFrac"] = 1.0,
-	["automantle"] = 0.0,
-	["automantle_enable"] = 0.0,
-	["climbEnabled"] = 0.0,
-	["climbheight"] = 0.0,
-	["glideEnabled"] = 0.0,
-	["glideRedirectJumpHeightFinishOffset"] = 0.0,
-	["glideRedirectJumpHeightStartOffset"] = 0.0,
-	["glideRedirectSideways"] = 0.0,
-	["glideStrafe"] = 0.0,
-	["glideStrafeTaperFinish"] = 0.0,
-	["glideStrafeTaperStart"] = 0.0,
-	["gravityscale"] = 0.7,
-	["jumpheight"] = 65.0,
-	["landslowdownduration"] = 0.0,
-	["player_slideBoostEnabled"] = 0.0,
-	["skip_speed_reduce"] = 0.0,
-	["skip_time"] = 0.0,
-	["slideRequiredStartSpeed"] = 9999999.0,
-	["slideRequiredStartSpeedAir"] = 9999999.0,
-	["slideSpeedBoost"] = 0.0,
-	["slideSpeedBoostCap"] = 0.0,
-	["slideVelocityDecay"] = 0.0,
-	["superjumpCanUseAfterWallrun"] = 0.0,
 	["superjumpMinHeight"] = 0.0,
 	["wallrun"] = 0.0
 }
@@ -832,11 +730,9 @@ global enum eMovementType
 	CSGO_MOVEMENT_HIGH_AIRACCEL,
 	SURF_SETTINGS,
 	HL1_MOVEMENT,
-	HALO_MOVEMENT,
 	SUPERGLIDE_BOOST_SETTINGS,
 	INSTAGIB_PLAYER_SETTINGS,
-	HAVEFUN_PLAYER_SETTINGS,
-	HALO_MOVEMENT_NEW
+	HAVEFUN_PLAYER_SETTINGS
 }
 
 struct
@@ -855,7 +751,7 @@ void function SV_CL_Onboarding_Init()
 	OnboardingPlaylistSettings_Init()
 	
 	#if SERVER
-		SetAutoReloadState( false ) //(mk): let native know
+		SetAutoReloadState( false )
 		RegisterSignal( "Flowstate_RestartLv4MagazinesThread" )
 		FlagInit( "MinPlayersReached", false )
 		
@@ -876,29 +772,15 @@ void function SV_CL_Onboarding_Init()
 			thread Sequence_WaitingForPlayers()
 		
 		if( Gamemode() == eGamemodes.SURVIVAL )
-			AddCallback_GameStateEnter( eGameState.Postmatch, void function() : (){ SetAutoReloadState( true ) } ) //(mk): check for native reload
+			AddCallback_GameStateEnter( eGameState.Postmatch, void function() : (){ SetAutoReloadState( true ) } )
 	#endif
 }
 
 #if SERVER
-/*
-	███████╗███████╗ ██████╗ ██╗   ██╗███████╗███╗   ██╗ ██████╗███████╗███████╗
-	██╔════╝██╔════╝██╔═══██╗██║   ██║██╔════╝████╗  ██║██╔════╝██╔════╝██╔════╝
-	███████╗█████╗  ██║   ██║██║   ██║█████╗  ██╔██╗ ██║██║     █████╗  ███████╗
-	╚════██║██╔══╝  ██║▄▄ ██║██║   ██║██╔══╝  ██║╚██╗██║██║     ██╔══╝  ╚════██║
-	███████║███████╗╚██████╔╝╚██████╔╝███████╗██║ ╚████║╚██████╗███████╗███████║
-	╚══════╝╚══════╝ ╚══▀▀═╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚══════╝
-	
-	This part describes the onboarding sequences: threaded functions which control the onboarding.
-*/
-
 void function Sequence_WaitingForPlayers()
 {
-	// Wait the absolute minimum delay, if required (0 by default)
 	wait PreGame_GetWaitingForPlayersDelayMin()
 
-	// Start to wait for players.
-	// Countdown will be reached when the minimum amount of players join, or when the maximum delay is reached (if enabled).
 	float timeSpentWaitingForPlayers = 0.0
 	float maximumTimeToSpendToWaitForPlayers = PreGame_GetWaitingForPlayersDelayMax() - PreGame_GetWaitingForPlayersDelayMin()
 
@@ -919,7 +801,6 @@ void function Sequence_WaitingForPlayers()
 			// break
 	}
 
-	// Update to make client aware of the countdown
 	UpdateSequencedTimePoints( Time() )
 
 	bool introCountdownEnabled = CharSelect_GetIntroCountdownDuration() > 0.0
@@ -941,7 +822,7 @@ void function Sequence_WaitingForPlayers()
 		}
 	}
 	
-	#if TRACKER //todo(mk): add OnWaitingForPlayersEnd callbacks
+	#if TRACKER //TODO: add OnWaitingForPlayersEnd callbacks
 		if( bLog() && !Tracker_IsBatchStatsLoaded() && Flowstate_IsTrackerSupportedMode() )
 			waitthread WaitSignalOrTimeout( tracker.signalEnt, Tracker_GetMaxWaitForBatchLoad(), "BatchFetchComplete" )
 	
@@ -1012,14 +893,11 @@ void function Sequence_PickLoadout()
 		SetGlobalNetTime( "characterSelectLockstepStartTime", startTime )
 		SetGlobalNetTime( "characterSelectLockstepEndTime", endTime )
 		
-		//compare player pick with GetLoadoutSlotContentsIndexInternal( playerEHI, entry ) before setting a forced pick
-		// if( pickIndex == 0 ) 
-		// {
-			foreach ( player in GetAllPlayersOfLockstepIndex( pickIndex ) )
-			{
-				Flowstate_AssignUniqueCharacterForPlayer(player, false)
-			}
-		// }
+	
+		foreach ( player in GetAllPlayersOfLockstepIndex( pickIndex ) )
+		{
+			Flowstate_AssignUniqueCharacterForPlayer(player, false)
+		}
 		
 		wait timeSpentOnSelection
 
@@ -1032,12 +910,11 @@ void function Sequence_PickLoadout()
 		wait CharSelect_GetPickingDelayAfterEachLock()
 	}
 
-	// Reset selection step to lock all character selection loadout slots
 	SetGlobalNetInt( "characterSelectLockstepIndex", MAX_TEAM_PLAYERS )
 
 	foreach ( player in GetPlayerArray() )
 		if ( !player.GetPlayerNetBool( "hasLockedInCharacter" ) )
-			Flowstate_AssignUniqueCharacterForPlayer(player, true) // Joined too late, assign a random legend so everything runs fine
+			Flowstate_AssignUniqueCharacterForPlayer(player, true) 
 
 	wait CharSelect_GetPickingDelayAfterAll()
 
@@ -1059,9 +936,6 @@ void function Sequence_PickLoadout()
 
 void function Flowstate_AssignUniqueCharacterForPlayer(entity player, bool lock)
 {
-	// Warning( "Flowstate_AssignUniqueCharacterForPlayer" )
-	// DumpStack()
-	
 	array< ItemFlavor > characters = clone GetAllCharacters()
 
 	for ( int i = characters.len() - 1; i >= 0; i-- )
@@ -1095,7 +969,7 @@ void function Flowstate_AssignUniqueCharacterForPlayer(entity player, bool lock)
 
 	ItemFlavor initialCharacter
 	
-	if( characters.len() == 0) //Shouldn't happen, but just in case. (Teams of more than 10 players probably)
+	if( characters.len() == 0)
 		initialCharacter = GetAllCharacters().getrandom()
 	else
 		initialCharacter = characters.getrandom()
@@ -1112,17 +986,14 @@ void function Sequence_Prematch()
 {
 	SetGameState( eGameState.Prematch )
 
-	// Update future time points now that the delays should be predictable
 	UpdateSequencedTimePoints( Time() )
 
 	if ( CharSelect_ChampionSquadIntroEnabled() )
 		wait CharSelect_GetOutroChampionPresentDuration()
 	
-	// The gamemode handles everything past this point
 	SetGameState( eGameState.Playing )
 }
 
-// Custom logic for sequence orchestration
 void function UpdateSequencedTimePoints( float referenceTime, int gameStateOverride = -1 )
 {
 	SetGlobalNetInt( "gameState", GetGameState() )
@@ -1168,21 +1039,9 @@ void function PlayPickLoadoutMusic( bool introCountdownEnabled )
 	if ( introCountdownEnabled )
 		wait CharSelect_GetIntroTransitionDuration()
 }
-
 #endif
 
 #if SERVER
-/*
-	██████╗  █████╗ ███████╗███████╗    ██████╗ ███████╗███████╗██████╗  █████╗ ██╗    ██╗███╗   ██╗
-	██╔══██╗██╔══██╗██╔════╝██╔════╝    ██╔══██╗██╔════╝██╔════╝██╔══██╗██╔══██╗██║    ██║████╗  ██║
-	██████╔╝███████║███████╗█████╗      ██████╔╝█████╗  ███████╗██████╔╝███████║██║ █╗ ██║██╔██╗ ██║
-	██╔══██╗██╔══██║╚════██║██╔══╝      ██╔══██╗██╔══╝  ╚════██║██╔═══╝ ██╔══██║██║███╗██║██║╚██╗██║
-	██████╔╝██║  ██║███████║███████╗    ██║  ██║███████╗███████║██║     ██║  ██║╚███╔███╔╝██║ ╚████║
-	╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═══╝
-
-	This part describes the base respawn (the bare minimum for a proper respawn) functions.
-*/
-
 void function TakeLoadoutRelatedWeapons( entity player )
 {
 	ItemFlavor character = LoadoutSlot_GetItemFlavor( ToEHI( player ), Loadout_CharacterClass() )
@@ -1256,23 +1115,6 @@ void function GiveLoadoutRelatedWeapons( entity player )
 	}
 }
 
-void function GiveLoadoutRelatedWeapons_HaloMod( entity player )
-{	
-	TakeLoadoutRelatedWeapons(player)
-
-	player.GiveOffhandWeapon( CONSUMABLE_WEAPON_NAME, OFFHAND_SLOT_FOR_CONSUMABLES, [] )
-	
-	player.GiveWeapon( "mp_weapon_melee_survival", WEAPON_INVENTORY_SLOT_PRIMARY_2, [] )
-	player.GiveOffhandWeapon( "melee_pilot_emptyhanded_halo", OFFHAND_MELEE, [] )
-	
-	player.GiveOffhandWeapon( "mp_ability_grapple_master_chief", OFFHAND_TACTICAL )
-	player.GiveOffhandWeapon( "mp_weapon_bubble_bunker_master_chief", OFFHAND_ULTIMATE )
-
-	GivePassive( player, ePassives.PAS_BATTERY_POWERED )
-	
-	// StatusEffect_AddEndless( player, eStatusEffect.minimap_jammed, 1.0 )
-}
-
 array<string> enabledMods = []
 bool script_bHighlight = true
 bool script_bRespawnInitComplete = false
@@ -1321,7 +1163,6 @@ void function DecideRespawnPlayer( entity player, bool giveLoadoutWeapons = true
 	if ( IsAlive( player ) )
 	 	TakeLoadoutRelatedWeapons( player )
 		
-	//(mk): This calls the definitive native code to respawn player, which will first fire "OnRespawnPlayer", and then fire signal "OnSpawned" in CodeCallback_OnPlayerRespawned
 	DoRespawnPlayer( player, null )
 
 	player.p.lastRespawnTime = Time()
@@ -1330,13 +1171,10 @@ void function DecideRespawnPlayer( entity player, bool giveLoadoutWeapons = true
 	asset characterSetFile = CharacterClass_GetSetFile( playerCharacter )
 	player.SetPlayerSettingsWithMods( characterSetFile, enabledMods )
 
-	// Already executed in CodeCallback_OnPlayerRespawned
 	// Remote_CallFunction_NonReplay( player, "ServerCallback_YouRespawned" )
 
 	PlayerStopSpectating( player )
 
-	// ItemFlavor playerCharacterSkin = LoadoutSlot_GetItemFlavor( ToEHI( player ), Loadout_CharacterSkin( playerCharacter ) )
-	// CharacterSkin_Apply( player, playerCharacterSkin )
 	player.AmmoPool_SetCapacity( 65535 )
 
 	if ( giveLoadoutWeapons )
@@ -1352,25 +1190,18 @@ void function DecideRespawnPlayer( entity player, bool giveLoadoutWeapons = true
 	UpdatePlayerCounts()
 		
 	if( player.IsThirdPersonShoulderModeOn() )
-		player.SetThirdPersonShoulderModeOn() // If you respawn in third person, it will automatically revert to first person, so turn it on again
+		player.SetThirdPersonShoulderModeOn()
 
 	#if DEVELOPER
 	SetSkydiveEmotesForAllCharacters( player )
 	#endif
 
-	//Set highlight to mantain retail behavior
 	if( script_bHighlight )
 	{
 		Highlight_SetFriendlyHighlight( player, "sp_friendly_hero" )
 	}
 	
-	Flowstate_ApplyModifiedMovementToPlayer( player ) //(mk)todo: check, shouldn't need to reapply every spawn.
-
-	//if( player.p.assignedCustomModel != -1 )//Custom models cause engine issues, disabling for now til models are updated. - Kral
-	{
-		//Flowstate_SetAssignedCustomModelToPlayer( player, player.p.assignedCustomModel )
-	}
-	//(mk): commented, already signaled in code callback after DoRespawnPlayer fires
+	Flowstate_ApplyModifiedMovementToPlayer( player )
 	
 	// if( Gamemode() != eGamemodes.SURVIVAL && Gamemode() != eGamemodes.WINTEREXPRESS )
 		// player.Signal("OnRespawned")		
@@ -1404,7 +1235,7 @@ bool function DecideRespawnPlayer_Retail( entity player, bool allowSpawnAsObserv
 	if ( PlayerShouldObserve( player ) )
 	{
 		printf( "%s() - PlayerShouldObserve() was true: %s", FUNC_NAME(), string( player ) )
-		if ( true ) //GamemodeUtility_IsSpectatorEnabled() ) review. Cafe
+		if ( true ) 
 		{
 			if ( IsPlayerEliminated( player ) && (GetGameState() == eGameState.Playing) && IsRoundBased() )
 				SendHudMessage( player, "#GAMEMODE_RESPAWN_NEXT_ROUND", -1, 0.4, 255, 255, 255, 255, 1.0, 6.0, 1.0 )
@@ -1526,7 +1357,7 @@ void function Flowstate_SetAssignedCustomModelToPlayer( entity player, int index
 	}()	
 }
 
-void function SetSkydiveEmotesForAllCharacters( entity player ) // You need to unlock the loadout for this to work
+void function SetSkydiveEmotesForAllCharacters( entity player )
 {
 	/*array< array< string > > emoteArrays = [ [ "skydive_emote_bangalore_backflip" ], [ "skydive_emote_bloodhound_backflip" ], [ "skydive_emote_caustic_backflip" ], [ "skydive_emote_gibraltar_backflip" , 
 								"skydive_emote_gibraltar_surf" ], [ "skydive_emote_lifeline_backflip", "skydive_emote_lifeline_windmill" ], [ "skydive_emote_mirage_backflip", 
@@ -1542,18 +1373,6 @@ void function SetSkydiveEmotesForAllCharacters( entity player ) // You need to u
 #endif
 
 #if SERVER
-/*
-	███████╗██████╗ ███████╗ ██████╗████████╗ █████╗ ████████╗██╗███╗   ██╗ ██████╗ 
-	██╔════╝██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██║████╗  ██║██╔════╝ 
-	███████╗██████╔╝█████╗  ██║        ██║   ███████║   ██║   ██║██╔██╗ ██║██║  ███╗
-	╚════██║██╔═══╝ ██╔══╝  ██║        ██║   ██╔══██║   ██║   ██║██║╚██╗██║██║   ██║
-	███████║██║     ███████╗╚██████╗   ██║   ██║  ██║   ██║   ██║██║ ╚████║╚██████╔╝
-	╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
-
-	This part describes the spectator functions.
-*/
-
-
 void function PlayerStopSpectating( entity player )
 {
 	player.SetPlayerNetInt( "spectatorTargetCount", 0 )
@@ -1563,17 +1382,6 @@ void function PlayerStopSpectating( entity player )
 #endif
 
 #if SERVER
-/*
-	██████╗	 █████╗ ██╗     ██╗     ██████╗  █████╗  ██████╗██╗  ██╗███████╗
-	██╔════╝██╔══██╗██║     ██║     ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔════╝
-	██║     ███████║██║     ██║     ██████╔╝███████║██║     █████╔╝ ███████╗
-	██║     ██╔══██║██║     ██║     ██╔══██╗██╔══██║██║     ██╔═██╗ ╚════██║
-	╚██████╗██║  ██║███████╗███████╗██████╔╝██║  ██║╚██████╗██║  ██╗███████║
-	 ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝
-
-	This part describes the onboarding/shared gamemode callbacks.
-*/
-
 void function OnPlayerKilled( entity victim, entity attacker, var damageInfo )
 {
 	if ( !IsValid( victim ) || !IsValid( attacker ) )
@@ -1634,7 +1442,6 @@ void function OnClientConnectionStarted( entity player )
 
 void function OnClientConnected( entity player )
 {
-	// Min players logic
 	int connectedPlayerCount = GetPlayerArray().len()
 
 	SetGlobalNetInt( "connectedPlayerCount", connectedPlayerCount )
@@ -1644,7 +1451,6 @@ void function OnClientConnected( entity player )
 	if ( connectedPlayerCount >= minPlayers && !Flag( "MinPlayersReached" ) )
 		FlagSet( "MinPlayersReached" )
 
-	// Min players logic end
 	AddPlayerMovementEventCallback( player, ePlayerMovementEvents.MANTLE, ResetZiplineUseCountOnMantle )
 	UpdatePlayerCounts()
 	
@@ -1690,8 +1496,6 @@ void function OnClientConnected( entity player )
 		{
 			array<entity> teammates = GetPlayerArrayOfTeam_Alive( player.GetTeam() )
 
-			// If we have no teammates and the plane exists we put the player in the plane
-			// Or, if we have teammates in the plane we also put them in the plane with their team
 			bool putInPlane                  = teammates.len() == 1 && IsValid( Sur_GetPlaneEnt() ) && !Flag( "PlaneAtLaunchPoint" )
 			entity skydiveFollowPlayer
 			bool skydiveFollowPlayerIsLeader = false
@@ -1719,9 +1523,6 @@ void function OnClientConnected( entity player )
 
 			if ( !putInPlane && !IsValid( skydiveFollowPlayer ) )
 			{
-				//If team is on the ground already, means that player has connected too late, which shouldn't be allowed to respawn in the game.
-				//Let's put the player to spectate.
-				
 				if( !IsPlayerEliminated( player ) )
 				{
 					SetTeam( player, TEAM_SPECTATOR )
@@ -1738,7 +1539,7 @@ void function OnClientConnected( entity player )
 			else
 			{
 				DecideRespawnPlayer_Retail( player )
-				GiveBasicSurvivalItems( player ) //If player is put in skydive mode and attached to its team mid-flight, we need to give them basic survival items here otherwise it will spawn without melee and basic items. Cafe
+				GiveBasicSurvivalItems( player )
 			}
 		} 
 		else
@@ -1805,7 +1606,7 @@ void function GiveInitialTeamToPlayer( entity player )
 	if( IsPlayerEliminated( player ) )
 	{
 		EliminatedPlayerData data = GetPlayerEliminatedData( player )
-		SetTeam( player, data.team ) // Assign the player to their pre-death team.
+		SetTeam( player, data.team )
 		
 		#if DEVELOPER
 			printw( "TEAMING - Player was eliminated, assigning old team", data.team )
@@ -1850,7 +1651,7 @@ void function OnCharacterClassChanged( EHI playerEHI, ItemFlavor flavor )
 		if( Gamemode() == eGamemodes.SURVIVAL )
 			DecideRespawnPlayer( player, true )
 		else
-			DecideRespawnPlayer( player, false ) //(mk): Giving loadout related weapons here interferes with every custom gamemode in the codebase. Set to false. If your mode needs loadoutrelated weapons apply them.
+			DecideRespawnPlayer( player, false )
 	}
 }
 
@@ -1901,23 +1702,9 @@ void function UpdatePlayerCounts()
 #endif
 
 #if SERVER || CLIENT
-/*
-	██████╗	 ██████╗ ███╗   ██╗██████╗ ██╗████████╗██╗ ██████╗ ███╗   ██╗ █████╗ ██╗     ███████╗
-	██╔════╝██╔═══██╗████╗  ██║██╔══██╗██║╚══██╔══╝██║██╔═══██╗████╗  ██║██╔══██╗██║     ██╔════╝
-	██║     ██║   ██║██╔██╗ ██║██║  ██║██║   ██║   ██║██║   ██║██╔██╗ ██║███████║██║     ███████╗
-	██║     ██║   ██║██║╚██╗██║██║  ██║██║   ██║   ██║██║   ██║██║╚██╗██║██╔══██║██║     ╚════██║
-	╚██████╗╚██████╔╝██║ ╚████║██████╔╝██║   ██║   ██║╚██████╔╝██║ ╚████║██║  ██║███████╗███████║
-	 ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚══════╝
 
-	This part describes customizable data which are used in sequence logic.
-	The conditional functions usually get the value from the current playlist.
-*/
-
-
-// General
 bool function OnboardingEnabled() 								{ return !GetCurrentPlaylistVarBool( "custom_onboarding", false ) }
 
-// Waiting for players
 bool function PreGame_GetWaitingForPlayersHasBlackScreen()		{ return GetCurrentPlaylistVarBool( "waiting_for_players_has_black_screen", false ) }
 bool function PreGame_GetWaitingForPlayersSpawningEnabled()		{ return GetCurrentPlaylistVarBool( "waiting_for_players_spawning_enabled", false ) }
 bool function PreGame_GetWaitingForPlayersWaitForeverEnabled() 	{ return GetCurrentPlaylistVarBool( "wait_for_players_forever", false ) }
@@ -1925,12 +1712,10 @@ float function PreGame_GetWaitingForPlayersDelayMin()			{ return GetCurrentPlayl
 float function PreGame_GetWaitingForPlayersDelayMax()			{ return GetCurrentPlaylistVarFloat( "waiting_for_players_timeout_seconds", 20.0 ) }
 float function PreGame_GetWaitingForPlayersCountdown()			{ return GetCurrentPlaylistVarFloat( "waiting_for_players_countdown_seconds", 8.0 ) }
 
-// Waiting for players -> character selection
 float function CharSelect_GetIntroMusicStartTime()		 		{ return GetCurrentPlaylistVarFloat( "charselect_intro_music_start_time", -0.8 ) }
 float function CharSelect_GetIntroTransitionDuration()			{ return GetCurrentPlaylistVarFloat( "charselect_intro_transition_duration", 3.0 ) }
 float function CharSelect_GetIntroCountdownDuration()			{ return GetCurrentPlaylistVarFloat( "charselect_intro_countdown_duration", 0.0 ) }
 
-// Character selection
 float function CharSelect_GetPickingDelayBeforeAll()			{ return GetCurrentPlaylistVarFloat( "charselect_picking_delay_before_all", 0.0 ) }
 float function CharSelect_GetPickingDelayOnFirst()				{ return GetCurrentPlaylistVarFloat( "charselect_picking_delay_on_first", 1.5 ) }
 float function CharSelect_GetPickingSingleDurationMax()			{ return GetCurrentPlaylistVarFloat( "character_select_time_max", 8.0 ) }
@@ -1938,7 +1723,6 @@ float function CharSelect_GetPickingSingleDurationMin()			{ return GetCurrentPla
 float function CharSelect_GetPickingDelayAfterEachLock()		{ return GetCurrentPlaylistVarFloat( "charselect_picking_delay_after_each_lock", 0.5 ) }
 float function CharSelect_GetPickingDelayAfterAll()				{ return GetCurrentPlaylistVarFloat( "charselect_picking_delay_after_all", 1.5 ) }
 
-// Character selection -> player squad -> champion squad -> outro
 bool function CharSelect_PostSelectionMusicEnabled()			{ return GetCurrentPlaylistVarBool( "survival_enable_squad_intro_music", true ) }
 bool function CharSelect_PlayerSquadIntroEnabled()				{ return GetCurrentPlaylistVarBool( "survival_enable_squad_intro", true ) }
 bool function CharSelect_ChampionSquadIntroEnabled()			{ return GetCurrentPlaylistVarBool( "survival_enable_gladiator_intros", true ) }
@@ -1947,7 +1731,6 @@ float function CharSelect_GetOutroSquadPresentDuration()		{ return GetCurrentPla
 float function CharSelect_GetOutroChampionPresentDuration()		{ return GetCurrentPlaylistVarFloat( "charselect_outro_champion_present_duration", 8.0 ) }
 float function CharSelect_GetOutroTransitionDuration()			{ return GetCurrentPlaylistVarFloat( "charselect_outro_transition_duration", 3.0 ) }
 
-// Custom logic
 float function Survival_GetCharacterSelectDuration( int pickIndex )
 {
 	float min = CharSelect_GetPickingSingleDurationMin()
@@ -1966,8 +1749,6 @@ bool function Survival_CharacterSelectEnabled()
 
 void function OnboardingPlaylistSettings_Init()
 {
-	//(mk): raising this limit in scripts has been deprecated as of Flowstate v4.5
-	
 	//int limit = 16 //200
 		
 	// #if DEVELOPER
@@ -1990,7 +1771,6 @@ void function SetPlayerSettings( entity player, table settings )
 {
 	foreach( k,v in settings )
 	{
-		//Thanks amos for this implementation <3. Cafe
 		player.SetClassVar( expect string( k ), expect float( v ).tostring() )
 	}
 }
@@ -2083,19 +1863,7 @@ void function Flowstate_ApplyModifiedMovementToPlayer( entity player, bool reset
 			#endif
 			break
 		}
-		case eMovementType.HALO_MOVEMENT: //8
-		{
-			StatusEffect_AddEndless( player, eStatusEffect.move_slow, 0.1 )
-			player.SetMoveSpeedScale( 1.1 )
-			player.DisableMantle()
-			SetPlayerSettings( player, HALO_MOVEMENT )
-
-			#if DEVELOPER
-				printw( "Player movement changed to Halo " + player )
-			#endif
-			break
-		}
-		case eMovementType.SUPERGLIDE_BOOST_SETTINGS: //9
+		case eMovementType.SUPERGLIDE_BOOST_SETTINGS: //8
 		{
 			SetPlayerSettings( player, SUPERGLIDE_BOOST_SETTINGS )
 			
@@ -2104,17 +1872,16 @@ void function Flowstate_ApplyModifiedMovementToPlayer( entity player, bool reset
 			#endif
 			break
 		}
-		case eMovementType.INSTAGIB_PLAYER_SETTINGS: //10
+		case eMovementType.INSTAGIB_PLAYER_SETTINGS: //9
 		{
 			SetPlayerSettings( player, INSTAGIB_PLAYER_SETTINGS )
-			//Disable players collision
 			player.kv.contents = CONTENTS_BULLETCLIP | CONTENTS_MONSTERCLIP | CONTENTS_HITBOX | CONTENTS_BLOCKLOS | CONTENTS_PHYSICSCLIP; //CONTENTS_PLAYERCLIP
 			#if DEVELOPER
 				printw( "Player movement changed to Insta-Gib " + player )
 			#endif
 			break
 		}
-		case eMovementType.HAVEFUN_PLAYER_SETTINGS: //11
+		case eMovementType.HAVEFUN_PLAYER_SETTINGS: //10
 		{
 			SetPlayerSettings( player, HAVEFUN_PLAYER_SETTINGS )
 			
@@ -2123,17 +1890,7 @@ void function Flowstate_ApplyModifiedMovementToPlayer( entity player, bool reset
 			#endif
 			break
 		}
-		case eMovementType.HALO_MOVEMENT_NEW: //HALO BETTER
-		{
-			SetPlayerSettings( player, HALO_MOVEMENT_NEW )
-			player.SetMoveSpeedScale( 1.1 )
-			player.DisableMantle()
-			
-			#if DEVELOPER
-				printw( "Player movement changed to Halo New " + player )
-			#endif
-			break
-		}
+
 	}
 }
 #endif
@@ -2151,7 +1908,6 @@ void function Flowstate_ApplyModifiedMovementToPlayer( entity player, bool reset
 		movementLookupTable[ eMovementType.CSGO_MOVEMENT_HIGH_AIRACCEL ] <- CSGO_MOVEMENT_HIGH_AIRACCEL
 		movementLookupTable[ eMovementType.SURF_SETTINGS ] <- SURF_SETTINGS
 		movementLookupTable[ eMovementType.HL1_MOVEMENT ] <- HL1_MOVEMENT
-		movementLookupTable[ eMovementType.HALO_MOVEMENT ] <- HALO_MOVEMENT
 		movementLookupTable[ eMovementType.SUPERGLIDE_BOOST_SETTINGS ] <- SUPERGLIDE_BOOST_SETTINGS
 		movementLookupTable[ eMovementType.INSTAGIB_PLAYER_SETTINGS ] <- INSTAGIB_PLAYER_SETTINGS
 		movementLookupTable[ eMovementType.HAVEFUN_PLAYER_SETTINGS ] <- HAVEFUN_PLAYER_SETTINGS

@@ -139,6 +139,8 @@ void function SetupDefaultDevCommandsMP()
 		SetupDevMenu( "Equip Legend Abilities", SetDevMenu_Abilities )
 		SetupDevMenu( "Equip Apex Weapons", SetDevMenu_Weapons )
 
+		SetupDevMenu( "Manage Players", SetDevMenu_ManagePlayers )
+		
 		if ( IsSurvivalMenuEnabled() )
 		{
 			SetupDevMenu( "Change Character Class", SetDevMenu_SurvivalCharacter )
@@ -156,8 +158,6 @@ void function SetupDefaultDevCommandsMP()
 			SetupDevMenu( "Custom: Weapons (All)", SetDevMenu_SurvivalLoot, "weapon_custom" )
 			SetupDevMenu( "Custom: Attachments", SetDevMenu_SurvivalLoot, "attachment_custom" )
 		}
-		SetupDevMenu( "Respawn Players", SetDevMenu_RespawnPlayers )
-
 		SetupDevCommand( "Recharge Abilities", "recharge" )
 		SetupDevCommand( "Start Skydive", "script thread SkydiveTest()" )
 
@@ -864,6 +864,21 @@ void function SetupEnemyNPC()
 	SetupDevCommand( "Enemy NPC: Tick", "script DEV_SpawnExplosiveTickAtCrosshair()" )
 }
 
+void function SetDevMenu_ManagePlayers( var _ )
+{
+	ChangeToThisMenu( SetupManagePlayersDevMenu )
+} 
+
+void function SetupManagePlayersDevMenu()
+{
+	SetupDevCommand( "ezlaunch_max", "ezlaunch_max" )
+	SetupDevCommand( "ezlaunch_min", "ezlaunch_min")
+
+	SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
+
+	SetupDevMenu( "Respawn Players", SetDevMenu_RespawnPlayers )
+}
+
 void function SetDevMenu_RespawnPlayers( var _ )
 {
 	ChangeToThisMenu( SetupRespawnPlayersDevMenu )
@@ -910,7 +925,6 @@ void function SetupPrototypesDevMenu()
 	SetupDevCommand( "Spawn Deathbox With Random Loots", "script DEV_SpawnDeathBoxWithRandomLoot(gp()[0])" )
 	SetupDevMenu( "Loot Marvin Debug (Olympus Only)", SetDevMenu_LootMarvin )
 	SetupDevMenu( "Vault System Debug", SetDevMenu_VaultDebug )
-	SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
 	//SetupDevMenu( "Incap Shield Debugging", SetDevMenu_SurvivalIncapShieldBots )
 }
 

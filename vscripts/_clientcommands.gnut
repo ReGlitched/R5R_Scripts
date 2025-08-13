@@ -16,6 +16,8 @@ void function ClientCommands_Init()
 	AddClientCommandCallback( "ShadowForm", ClientCommand_ShadowForm )
 	AddClientCommandCallback( "recharge", ClientCommand_recharge )
 	AddClientCommandCallback( "demigod", ClientCommand_demigod )
+	AddClientCommandCallback( "ezlaunch_max", ClientCommand_ezlaunch_all )
+	AddClientCommandCallback( "ezlaunch_min", ClientCommand_ezlaunch_min )
 }
 
 bool function ClientCommand_noclip( entity player, array<string> args )
@@ -165,4 +167,58 @@ bool function ClientCommand_recharge( entity player, array<string> args )
 	}
 	
 	return true
+}
+
+bool function ClientCommand_ezlaunch_min(entity player, array<string> args)
+{
+    if (!IsValid(player))
+        return false
+
+    if (GetConVarInt("sv_cheats") != 1)
+        return false
+
+    int botCount
+
+    if (Playlist() == ePlaylists.survival)
+        botCount = 13
+    else if (Playlist() == ePlaylists.survival_duos)
+        botCount = 13
+    else if (Playlist() == ePlaylists.survival_solos)
+        botCount = 13
+    else
+        return false
+
+    for (int i = 0; i < botCount; i++)
+    {
+        ClientCommand(gp()[0], "sv_addbot Bot 1")
+    }
+
+    return true
+}
+
+bool function ClientCommand_ezlaunch_all(entity player, array<string> args)
+{
+    if (!IsValid(player))
+        return false
+
+    if (GetConVarInt("sv_cheats") != 1)
+        return false
+
+    int botCount
+
+    if (Playlist() == ePlaylists.survival)
+        botCount = 58
+    else if (Playlist() == ePlaylists.survival_duos)
+        botCount = 58
+    else if (Playlist() == ePlaylists.survival_solos)
+        botCount = 58
+    else
+        return false
+
+    for (int i = 0; i < botCount; i++)
+    {
+        ClientCommand(gp()[0], "sv_addbot Bot 1")
+    }
+
+    return true
 }
